@@ -13,6 +13,7 @@
 /**
  * 使用模板实现的先进先出队列. 
  * 由可变长数组存储队列. 
+ * 实现了数组队列的前向迭代器.
  */
 template<typename E>
 class ArrayQueue
@@ -49,6 +50,38 @@ public:
     friend bool operator!=(const ArrayQueue<T>& lhs, const ArrayQueue<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const ArrayQueue<T>& queue);
+    
+    class iterator : public std::iterator<std::forward_iterator_tag, E>
+    {
+    private:
+        const ArrayQueue* queue;
+        int i;
+    public:
+        iterator() : queue(nullptr), i(0) {}
+        iterator(const ArrayQueue* queue, int i) : queue(queue), i(i) {}
+        iterator(const iterator& that) : queue(that.queue), i(that.i) {}
+        ~iterator() {}
+
+        E& operator*() const
+        { return queue->pq[(queue->head + i) % queue->capacity]; }
+        bool operator==(const iterator& that) const
+        { return queue == that.queue && i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return queue != that.queue || i != that.i; }
+        iterator& operator++()
+        {
+            i++;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator tmp(*this);
+            operator++();
+            return tmp;
+        }
+    };
+    iterator begin() const { return iterator(this, 0); }
+    iterator end() const { return iterator(this, n); }
 };
 
 /**
@@ -81,8 +114,7 @@ ArrayQueue<E>::ArrayQueue(const ArrayQueue& that)
     tail = that.tail;
     capacity = that.capacity;
     pq = new E[capacity];
-    for (int i = 0; i < n; ++i)
-        pq[i] = that.pq[i];
+    std::copy(that.pq, that.pq + n, pq);
 }
 
 /**
@@ -243,7 +275,7 @@ ArrayQueue<E>& ArrayQueue<E>::operator=(ArrayQueue<E> that)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const ArrayQueue<E>& lhs, const ArrayQueue<E>& rhs)
+bool operator==(const ArrayQueue<E>& lhs, const ArrayQueue<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -259,7 +291,7 @@ std::ostream& operator==(const ArrayQueue<E>& lhs, const ArrayQueue<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const ArrayQueue<E>& lhs, const ArrayQueue<E>& rhs)
+bool operator!=(const ArrayQueue<E>& lhs, const ArrayQueue<E>& rhs)
 {
     return !(lhs == rhs);
 }

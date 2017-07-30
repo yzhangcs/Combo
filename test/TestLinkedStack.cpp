@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
-#include "ArrayStack.h"
+#include "LinkedStack.h"
 #include "gtest/gtest.h"
 
 using std::string;
 
-TEST(TestArrayStack, Push)
+TEST(TestLinkedStack, Push)
 {
-    ArrayStack<string> stack;
+    LinkedStack<string> stack;
 
     EXPECT_TRUE(stack.isEmpty());
     for (int i = 0; i < 32; ++i)
@@ -18,9 +18,9 @@ TEST(TestArrayStack, Push)
     EXPECT_EQ(32, stack.size());
 }
 
-TEST(TestArrayStack, Pop)
+TEST(TestLinkedStack, Pop)
 {
-    ArrayStack<string> stack;
+    LinkedStack<string> stack;
     string str;
 
     for (int i = 0; i < 32; ++i)
@@ -38,11 +38,11 @@ TEST(TestArrayStack, Pop)
     EXPECT_THROW(stack.top(), std::out_of_range);
 }
 
-TEST(TestArrayStack, Other)
+TEST(TestLinkedStack, Other)
 {
-    ArrayStack<string> a;
-    ArrayStack<string> b;
-    ArrayStack<string> c;
+    LinkedStack<string> a;
+    LinkedStack<string> b;
+    LinkedStack<string> c;
     string str;
 
     for (int i = 0; i < 10; ++i)

@@ -13,6 +13,7 @@
 /**
  * 使用模板实现的后进先出栈.
  * 由可变长数组存储栈.
+ * 实现了数组栈的前向迭代器.
  */
 template<typename E>
 class ArrayStack
@@ -61,9 +62,9 @@ public:
         E& operator*() const
         { return stack->ps[i]; }
         bool operator==(const iterator& that) const
-        { return stack->ps == that.stack->ps && i == that.i; }
+        { return stack == that.stack && i == that.i; }
         bool operator!=(const iterator& that) const
-        { return stack->ps == that.stack->ps || i != that.i; }
+        { return stack != that.stack || i != that.i; }
         iterator& operator++()
         {
             i++;
@@ -76,8 +77,8 @@ public:
             return tmp;
         }
     };
-    iterator begin() { return iterator(this, 0); }
-    iterator end() { return iterator(this, n); }
+    iterator begin() const { return iterator(this, 0); }
+    iterator end() const { return iterator(this, n); }
 };
 
 /**
@@ -231,7 +232,7 @@ ArrayStack<E>& ArrayStack<E>::operator=(ArrayStack that)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
+bool operator==(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -247,7 +248,7 @@ std::ostream& operator==(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
+bool operator!=(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
 {
     return !(lhs == rhs);
 }

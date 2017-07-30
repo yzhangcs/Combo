@@ -12,7 +12,7 @@
 /**
  * 使用模板实现的链表.
  * 该链表为双向链表，每个结点中有prev和next指针指向前后结点.
- * 实现了链表类的前向迭代器.
+ * 实现了链表的前向迭代器.
  */
 template<typename E>
 class LinkedList
@@ -338,7 +338,7 @@ LinkedList<E> operator+(LinkedList<E> lhs, const LinkedList<E>& rhs)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
+bool operator==(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -354,7 +354,7 @@ std::ostream& operator==(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
+bool operator!=(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
 {
     return !(lhs == rhs);
 }

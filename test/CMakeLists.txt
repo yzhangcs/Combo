@@ -34,6 +34,9 @@ endif()
 # Add test executables
 set(TEST_CPPLIB_LIST
     TestArrayStack
+    TestLinkedStack
+    TestArrayQueue
+    # TestLinkedQueue
     # TestArrayDeque
     # TestLinkedDeque
     # TestBinaryHeap
@@ -41,8 +44,6 @@ set(TEST_CPPLIB_LIST
     # TestArrayList
     # TestLinkedList
     # TestPriorityQueue
-    # TestArrayQueue
-    # TestLinkedQueue
     # TestRandom
     # TestBinarySearchMap
     # TestBinarySearchSet
@@ -59,7 +60,6 @@ set(TEST_CPPLIB_LIST
     # TestQuickSort
     # TestSelectionSort
     # TestShellSort
-    # TestLinkedStack
     # TestTimer
     # TestQuickFind
     # TestQuickUnion

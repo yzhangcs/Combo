@@ -12,6 +12,7 @@
 /**
  * 使用模板实现的先进先出队列. 
  * 由链表存储队列.
+ * 实现了链式队列的前向迭代器.
  */
 template<typename E>
 class LinkedQueue
@@ -48,6 +49,37 @@ public:
     friend bool operator!=(const LinkedQueue<T>& lhs, const LinkedQueue<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const LinkedQueue<T>& queue);
+
+    class iterator : public std::iterator<std::forward_iterator_tag, E>
+    {
+    private:
+        Node* i;
+    public:
+        iterator() : i(nullptr) {}
+        iterator(Node* x) : i(x) {}
+        iterator(const iterator& that) : i(that.i) {}
+        ~iterator() {}
+
+        E& operator*() const
+        { return i->elem; }
+        bool operator==(const iterator& that) const
+        { return i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return i != that.i; }
+        iterator& operator++()
+        {
+            i = i->next;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator tmp(*this);
+            i = i->next;
+            return tmp;
+        }
+    };
+    iterator begin() const { return iterator(head); }
+    iterator end() const { return iterator(tail); }
 };
 
 /**
@@ -229,7 +261,7 @@ LinkedQueue<E>& LinkedQueue<E>::operator=(LinkedQueue<E> that)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
+bool operator==(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -245,7 +277,7 @@ std::ostream& operator==(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
+bool operator!=(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
 {
     return !(lhs == rhs);
 }

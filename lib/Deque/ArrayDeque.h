@@ -289,7 +289,7 @@ ArrayDeque<E>& ArrayDeque<E>::operator=(ArrayDeque<E> that)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
+bool operator==(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -305,7 +305,7 @@ std::ostream& operator==(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
+bool operator!=(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
 {
     return !(lhs == rhs);
 }

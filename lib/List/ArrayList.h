@@ -13,7 +13,7 @@
 /**
  * 使用模板实现的数组列表.
  * 由可变长数组存储列表.
- * 实现了数组列表类的前向迭代器.
+ * 实现了数组列表的前向迭代器.
  */
 template<typename E>
 class ArrayList
@@ -78,9 +78,9 @@ public:
         E& operator*() const
         { return list->pl[i]; }
         bool operator==(const iterator& that) const
-        { return list->pl == that.list->pl && i == that.i; }
+        { return list == that.list && i == that.i; }
         bool operator!=(const iterator& that) const
-        { return list->pl == that.list->pl || i != that.i; }
+        { return list != that.list || i != that.i; }
         iterator& operator++()
         {
             i++;
@@ -93,8 +93,8 @@ public:
             return tmp;
         }
     };
-    iterator begin() { return iterator(this, 0); }
-    iterator end() { return iterator(this, n); }
+    iterator begin() const { return iterator(this, 0); }
+    iterator end() const { return iterator(this, n); }
 };
 
 /**
@@ -335,7 +335,7 @@ ArrayList<E> operator+(ArrayList<E> lhs, const ArrayList<E>& rhs)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const ArrayList<E>& lhs, const ArrayList<E>& rhs)
+bool operator==(const ArrayList<E>& lhs, const ArrayList<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -351,7 +351,7 @@ std::ostream& operator==(const ArrayList<E>& lhs, const ArrayList<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const ArrayList<E>& lhs, const ArrayList<E>& rhs)
+bool operator!=(const ArrayList<E>& lhs, const ArrayList<E>& rhs)
 {
     return !(lhs == rhs);
 }

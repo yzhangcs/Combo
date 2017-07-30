@@ -12,6 +12,7 @@
 /**
  * 使用模板实现的后进先出栈. 
  * 由链表存储栈.
+ * 实现了链式栈的前向迭代器.
  */
 template<typename E>
 class LinkedStack
@@ -46,6 +47,37 @@ public:
     friend bool operator!=(const LinkedStack<T>& lhs, const LinkedStack<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const LinkedStack<T>& stack);
+
+    class iterator : public std::iterator<std::forward_iterator_tag, E>
+    {
+    private:
+        Node* i;
+    public:
+        iterator() : i(nullptr) {}
+        iterator(Node* x) : i(x) {}
+        iterator(const iterator& that) : i(that.i) {}
+        ~iterator() {}
+
+        E& operator*() const
+        { return i->elem; }
+        bool operator==(const iterator& that) const
+        { return i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return i != that.i; }
+        iterator& operator++()
+        {
+            i = i->next;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator tmp(*this);
+            i = i->next;
+            return tmp;
+        }
+    };
+    iterator begin() const { return iterator(head); }
+    iterator end() const { return iterator(nullptr); }
 };
 
 /**
@@ -67,10 +99,15 @@ LinkedStack<E>::LinkedStack()
 template<typename E>
 LinkedStack<E>::LinkedStack(const LinkedStack& that)
 {
-    n = 0;
-    head = nullptr;
-    for (Node* i = that.head; i != nullptr; i = i->next)
-        push(i->elem);
+    Node* aux = new Node(that.head->elem);
+
+    n = that.n;
+    head = aux;
+    for (Node* i = that.head->next; i != nullptr; i = i->next)
+    {
+        aux->next = new Node(i->elem);
+        aux = aux->next;
+    }
 }
 
 /**
@@ -207,7 +244,7 @@ LinkedStack<E>& LinkedStack<E>::operator=(LinkedStack<E> that)
  *         false: 不等
  */
 template<typename E>
-std::ostream& operator==(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
+bool operator==(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -223,7 +260,7 @@ std::ostream& operator==(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-std::ostream& operator!=(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
+bool operator!=(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
 {
     return !(lhs == rhs);
 }
