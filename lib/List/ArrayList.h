@@ -123,8 +123,7 @@ ArrayList<E>::ArrayList(const ArrayList& that)
     n = that.n;
     capacity = that.capacity;
     pl = new E[capacity];
-    for (int i = 0; i < n; ++i)
-        pl[i] = that.pl[i];
+    std::copy(begin(), end(), that.begin());
 }
 
 /**
@@ -143,22 +142,21 @@ ArrayList<E>::ArrayList(ArrayList&& that) noexcept
 }
 
 /**
- * 创建指定容量的新数组，并把原数组内的列表元素复制到新数组.
- * 释放原数组内存.
+ * 创建指定容量的新列表，并移动所有元素到新列表当中.
  *
- * @param size: 新的数组大小
+ * @param size: 新列表容量
  */
 template<typename E>
 void ArrayList<E>::resize(int size)
 {
-    assert(size >= n); // 保证新的数组容量不小于列表当前大小
+    // 保证新的容量不小于列表当前大小
+    assert(size >= n); 
     
-    E* pnew = new E[size];
-
-    std::move(pl, pl + n, pnew); // 移动元素到新的数组
-    delete[] pl; 
-    pl = pnew; // pl指向新数组
-    capacity = size;
+    ArrayList tmp(size);
+    // 将所有元素移动到临时列表
+    std::move(begin(), end(), tmp.begin());
+    tmp.n = n; // 设置临时列表的大小
+    swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
 /**

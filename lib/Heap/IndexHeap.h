@@ -24,8 +24,8 @@ private:
     int n; // 堆当前大小
     int capacity; // 堆容量
     Comparator less; // 比较器
-    int* ph; // 索引指针，以堆的结构存放键索引
-    int* map; // 键对键索引的映射
+    int* pi; // 索引指针，以堆的结构存放键索引
+    int* ki; // 键对键索引的映射
     K* pk; // 键指针
 
     void swim(int i);
@@ -45,7 +45,7 @@ public:
     ~IndexHeap(); // 析构函数
 
     int size() const { return n; } // 返回堆当前大小
-    int indexOfTop() const { return ph[0]; }; // 返回堆顶索引
+    int indexOfTop() const { return pi[0]; }; // 返回堆顶索引
     bool isEmpty() const { return n == 0; } // 判断是否为空堆
     bool contains(int i) const; // 判断指定键索引对应的键是否存在
     void push(K key); // 插入键
@@ -75,13 +75,13 @@ IndexHeap<K>::IndexHeap(int cap, Comparator comp)
     n = 0;
     capacity = cap;
     less = comp;
-    ph = new int[capacity];
-    map = new int[capacity];
+    pi = new int[capacity];
+    ki = new int[capacity];
     pk = new K[capacity];
     for (int i = 0; i < capacity; ++i)
     {
-        ph[i] = i; 
-        map[i] = i; // 初始化索引与映射
+        pi[i] = i; 
+        ki[i] = i; // 初始化索引与映射
     }    
 }
 
@@ -97,15 +97,12 @@ IndexHeap<K>::IndexHeap(const IndexHeap& that)
     n = that.n;
     capacity = that.capacity;
     less = that.less;
-    ph = new K[capacity];
-    map = new int[capacity];
+    pi = new K[capacity];
     pk = new K[capacity];
-    for (int i = 0; i < n; ++i)
-    {
-        ph[i] = that.ph[i];
-        map[i] = that.map[i];
-        pk[i] = that.pk[i];
-    }
+    ki = new int[capacity];
+    std::copy(that.pi, that.pi + n, pi);
+    std::copy(that.pk, that.pk + n, pk);
+    std::copy(that.ki, that.ki + n, ki);
 }
 
 /**
@@ -120,11 +117,11 @@ IndexHeap<K>::IndexHeap(IndexHeap&& that) noexcept
     n = that.n;
     capacity = that.capacity;
     less = that.less;
-    ph = that.ph;
-    map = that.map;
+    pi = that.pi;
+    ki = that.ki;
     pk = that.pk;
-    that.ph = nullptr; 
-    that.map = nullptr;
+    that.pi = nullptr; 
+    that.ki = nullptr;
     that.pk = nullptr; // 指向空指针，退出被析构
 }
 
@@ -134,8 +131,8 @@ IndexHeap<K>::IndexHeap(IndexHeap&& that) noexcept
 template<typename K>
 IndexHeap<K>::~IndexHeap()
 {
-    delete[] ph;
-    delete[] map;
+    delete[] pi;
+    delete[] ki;
     delete[] pk;
 }
 
@@ -148,7 +145,7 @@ IndexHeap<K>::~IndexHeap()
 template<typename K>
 void IndexHeap<K>::swim(int i)
 {
-    while (i > 0 && less(pk[ph[parent(i)]], pk[ph[i]]))
+    while (i > 0 && less(pk[pi[parent(i)]], pk[pi[i]]))
     {
         swap(parent(i), i); // 交换键索引并修改键对键索引的映射
         i = parent(i);
@@ -169,8 +166,8 @@ void IndexHeap<K>::sink(int i)
     while (j < n)
     {
         // y指向最大子女
-        if (j < n - 1 && less(pk[ph[j]], pk[ph[j + 1]])) j++;
-        if (!less(pk[ph[i]], pk[ph[j]])) break;
+        if (j < n - 1 && less(pk[pi[j]], pk[pi[j + 1]])) j++;
+        if (!less(pk[pi[i]], pk[pi[j]])) break;
         swap(i, j); // 交换键索引并修改键对键索引的映射
         i = j; 
         j = lchild(i);
@@ -186,9 +183,9 @@ void IndexHeap<K>::sink(int i)
 template<typename K>
 void IndexHeap<K>::swap(int lhs, int rhs)
 {
-    std::swap(ph[lhs], ph[rhs]) // 交换键索引
-    map[ph[lhs]] = lhs; // 修改映射
-    map[ph[rhs]] = rhs;
+    std::swap(pi[lhs], pi[rhs]) // 交换键索引
+    ki[pi[lhs]] = lhs; // 修改映射
+    ki[pi[rhs]] = rhs;
 }
 
 /**
@@ -204,8 +201,8 @@ bool IndexHeap<K>::isIndexHeap(int root)
     int r = rchild(root);
 
     if (root >= n) return true;
-    if (l < n && less(pk[ph[root]], pk[ph[l]])) return false;
-    if (r < n && less(pk[ph[root]], pk[ph[r]])) return false;
+    if (l < n && less(pk[pi[root]], pk[pi[l]])) return false;
+    if (r < n && less(pk[pi[root]], pk[pi[r]])) return false;
     return isIndexHeap(l) && isIndexHeap(r);
 }
 
@@ -221,7 +218,7 @@ template<typename K>
 bool IndexHeap<K>::contains(int i) const
 { 
     if (!valid(i)) throw std::out_of_range("Heap index out of range.");
-    return map[i] < n; // 键映射的索引不超过n个，超过范围的键索引未指定，对应的键不存在
+    return ki[i] < n; // 键映射的索引不超过n个，超过范围的键索引未指定，对应的键不存在
 }
 
 /**
@@ -235,7 +232,7 @@ template<typename K>
 void IndexHeap<K>::push(K key)
 {
     if (n >= capacity)) throw std::out_of_range("IndexHeap overflow.");
-    pk[ph[n]] = std::move(key); // pk[ph[n]]未存放键，无需修改映射关系
+    pk[pi[n]] = std::move(key); // pk[pi[n]]未存放键，无需修改映射关系
     swim(n++);
     assert(isIndexHeap());
     return true;
@@ -255,7 +252,7 @@ void IndexHeap<K>::push(int i, K key)
 {
     if (!valid(i)) throw std::out_of_range("Heap index out of range.");
     if (contains(i)) throw std::invalid_argument("Heap index already exists.");
-    swap(n, map[i]); // 键索引i不在堆中，加入到堆尾
+    swap(n, ki[i]); // 键索引i不在堆中，加入到堆尾
     pk[i] = std::move(key);
     swim(n++);
     assert(isIndexHeap());
@@ -276,8 +273,8 @@ void IndexHeap<K>::change(int i, K key)
     if (!valid(i)) throw std::out_of_range("Heap index out of range.");
     if (!contains(i)) throw std::invalid_argument("Heap index does not exist.");
     pk[i] = std::move(key);
-    swim(map[i]);
-    sink(map[i]);
+    swim(ki[i]);
+    sink(ki[i]);
     assert(isIndexHeap());
 }
 
@@ -294,7 +291,7 @@ K IndexHeap<K>::pop()
     if (isEmpty()) 
         throw std::out_of_range("Heap underflow.");
 
-    K tmp = pk[ph[0]];
+    K tmp = pk[pi[0]];
 
     swap(0, --n); // 堆顶与堆尾交换
     sink(0); // 下沉调整
@@ -312,7 +309,7 @@ template<typename K>
 k IndexHeap<K>::top()
 {
     if (isEmpty()) throw std::out_of_range("Heap underflow.");
-    return pk[ph[0]];
+    return pk[pi[0]];
 }
 
 /**
@@ -332,9 +329,9 @@ K IndexHeap<K>::delAt(int i)
 
     K tmp = pk[i];
 
-    swap(map[i], --n); // 与堆尾交换
-    swim(map[i]);
-    sink(map[i]);
+    swap(ki[i], --n); // 与堆尾交换
+    swim(ki[i]);
+    sink(ki[i]);
     assert(isIndexHeap());
     return tmp; // 发生NRVO
 }
@@ -367,8 +364,8 @@ void IndexHeap<K>::swap(IndexHeap<K>& that)
     swap(n, that.n);
     swap(capacity, that.capacity);
     swap(less, that.less);
-    swap(ph, that.ph);
-    swap(map, that.map);
+    swap(pi, that.pi);
+    swap(ki, that.ki);
     swap(pk, that.pk);
 }
 
@@ -383,7 +380,7 @@ template<typename K>
 std::ostream& operator<<(std::ostream& os, const IndexHeap<K>& heap)
 {
     for (int i = 0; i < heap.n; ++i)
-        os << heap.pk[heap.ph[i]] << " ";
+        os << heap.pk[heap.pi[i]] << " ";
     return os;
 }
 

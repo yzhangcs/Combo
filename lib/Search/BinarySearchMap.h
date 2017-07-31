@@ -125,11 +125,8 @@ BinarySearchMap<K, V>::BinarySearchMap(const BinarySearchMap& that)
     less = that.less;
     pk = new K[capacity];
     pv = new V[capacity];
-    for (int i = 0; i < n; ++i)
-    {
-        pk[i] = that.pk[i]; // 复制所有键
-        pv[i] = that.pv[i]; // 复制所有值
-    }
+    std::copy(that.pk, that.pk + n, pk); // 复制所有键
+    std::copy(that.pv, that.pv + n, pv); // 复制所有值
 }
 
 /**
@@ -183,7 +180,8 @@ bool BinarySearchMap<K, V>::isSorted()
 template<typename K, typename V>
 void BinarySearchMap<K, V>::resize(int size)
 {
-    assert(size > n); // 保证新的数组容量不小于映射当前大小
+    // 保证新的容量不小于映射当前大小
+    assert(size > n); 
     
     K* pnewk = new K[size];
     V* pnewv = new V[size];

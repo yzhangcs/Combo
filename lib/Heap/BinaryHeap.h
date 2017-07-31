@@ -82,8 +82,7 @@ BinaryHeap<K>::BinaryHeap(const BinaryHeap& that)
     capacity = that.capacity;
     less = that.less;
     ph = new K[capacity];
-    for (int i = 0; i < n; ++i)
-        ph[i] = that.ph[i];
+    std::copy(begin(), end(), that.begin());
 }
 
 /**
@@ -143,22 +142,21 @@ void BinaryHeap<K>::sink(int i)
 }
 
 /**
- * 创建指定容量的新数组，并把原数组内的键复制到新数组.
- * 释放原数组内存.
+ * 创建指定容量的新最大二叉堆，并移动所有元素到新最大二叉堆当中.
  *
- * @param size: 新的数组大小
+ * @param size: 新最大二叉堆容量
  */
 template<typename K>
 void BinaryHeap<K>::resize(int size)
 {
-    assert(size >= n); // 保证新的数组容量不小于堆当前大小
-
-    K* pnew = new K[size];
-
-    std::move(ph, ph + n, pnew); // 移动元素到新的数组
-    delete[] ph; // 释放内存
-    ph = pnew; // ph指向新数组
-    capacity = size;
+    // 保证新的容量不小于最大二叉堆当前大小
+    assert(size >= n); 
+    
+    BinaryHeap tmp(size);
+    // 将所有元素移动到临时最大二叉堆
+    std::move(begin(), end(), tmp.begin());
+    tmp.n = n; // 设置临时最大二叉堆的大小
+    swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
 /**

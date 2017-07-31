@@ -107,8 +107,7 @@ ArrayStack<E>::ArrayStack(const ArrayStack& that)
     n = that.n;
     capacity = that.capacity;
     ps = new E[capacity];
-    for (int i = 0; i < n; ++i)
-        ps[i] = that.ps[i];
+    std::copy(begin(), end(), that.begin());
 }
 
 /**
@@ -127,22 +126,21 @@ ArrayStack<E>::ArrayStack(ArrayStack&& that) noexcept
 }
 
 /**
- * 创建指定容量的新数组，并把原数组内的栈元素复制到新数组.
- * 释放原数组内存.
+ * 创建指定容量的新栈，并移动所有元素到新栈当中.
  *
- * @param size: 新的数组大小
+ * @param size: 新栈容量
  */
 template<typename E>
 void ArrayStack<E>::resize(int size)
 {
-    assert(size >= n); // 保证新的数组容量不小于栈当前大小
+    // 保证新的容量不小于栈当前大小
+    assert(size >= n); 
     
-    E* pnew = new E[size];
-
-    std::move(ps, ps + n, pnew); // 移动元素到新的数组
-    delete[] ps;
-    ps = pnew;
-    capacity = size;
+    ArrayStack tmp(size);
+    // 将所有元素移动到临时栈
+    std::move(begin(), end(), tmp.begin());
+    tmp.n = n; // 设置临时栈的大小
+    swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
 /**

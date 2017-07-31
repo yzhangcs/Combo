@@ -58,9 +58,7 @@ TEST(TestArrayStack, Other)
     EXPECT_TRUE(b != c);
     b.swap(c);
     EXPECT_TRUE(a == c);
-    std::cout << "stack a: ";
-    for (auto i : a) std::cout << i << " ";
-    std::cout << std::endl;    
+    std::cout << "stack a: " << a << std::endl;    
     std::cout << "stack b: ";
     for (auto i : b) std::cout << i << " ";
     std::cout << std::endl;
