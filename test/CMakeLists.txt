@@ -60,7 +60,6 @@ set(TEST_CPPLIB_LIST
     # TestQuickSort
     # TestSelectionSort
     # TestShellSort
-    # TestTimer
     # TestQuickFind
     # TestQuickUnion
     # TestUnionFind

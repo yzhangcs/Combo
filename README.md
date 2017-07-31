@@ -23,13 +23,21 @@ $ git clone git@github.com:zy2625/CppLib.git
 
 2. Build
 
-  * `$ mkdir build && cd build`  
-  * `$ cmake ..` or `$ cmake -DCPPLIB_BUILD_TEST=ON ..` if unit tests are enabled 
-  * `$ make`
+```bash
+$ mkdir build && cd build
+$ cmake ..
+$ make
+```
+or if the unit-test is needed, the workflow should be:
+```bash
+$ mkdir build && cd build
+$ cmake -DCPPLIB_BUILD_TEST=ON ..
+$ make
+```
 
 3. Run
   * `cd ..`
-  * e.g. `./bin/Stack data/tobe.txt`
+  * `./bin/Stack data/tobe.txt`
 
 ## Contents
 
