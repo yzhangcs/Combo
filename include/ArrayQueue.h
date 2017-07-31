@@ -114,7 +114,7 @@ ArrayQueue<E>::ArrayQueue(const ArrayQueue& that)
     tail = that.tail;
     capacity = that.capacity;
     pq = new E[capacity];
-    std::copy(that.pq, that.pq + n, pq);
+    std::copy(begin(), end(), that.begin());
 }
 
 /**
@@ -135,25 +135,21 @@ ArrayQueue<E>::ArrayQueue(ArrayQueue&& that) noexcept
 }
 
 /**
- * 创建指定容量的新数组，并把原数组内的队列元素复制到新数组.
- * 释放原数组内存.
+ * 创建指定容量的新队列，并移动所有元素到新队列当中.
  *
- * @param size: 新的数组大小
+ * @param size: 新队列容量
  */
 template<typename E>
 void ArrayQueue<E>::resize(int size)
 {
-    assert(size >= n); // 保证新的数组容量不小于队列当前大小
+    // 保证新的容量不小于队列当前大小
+    assert(size >= n); 
     
-    E* pnew = new E[size];
-
-    for (int i = 0; i < n; ++i)
-        pnew[i] = std::move(pq[(head + i) % capacity]);
-    delete[] pq; // 释放内存
-    pq = pnew; // pq指向新数组
-    head = 0; // 重置队首索引
-    tail = n; // 重置队尾索引
-    capacity = size;
+    ArrayQueue tmp(size);
+    // 将所有元素移动到临时队列
+    std::move(begin(), end(), tmp.begin());
+    tmp.n = n; // 设置临时队列的大小
+    swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
 /**

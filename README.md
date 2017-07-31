@@ -2,7 +2,7 @@
 
 ## Introduction
 
-C++ library
+C++ Library
 
 ## Platform
 

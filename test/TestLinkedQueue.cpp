@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
-#include "ArrayQueue.h"
+#include "LinkedQueue.h"
 #include "gtest/gtest.h"
 
 using std::string;
 
-TEST(TestArrayQueue, Enqueue)
+TEST(TestLinkedQueue, Enqueue)
 {
-    ArrayQueue<string> queue;
+    LinkedQueue<string> queue;
 
     EXPECT_TRUE(queue.isEmpty());
     for (int i = 0; i < 32; ++i)
@@ -18,9 +18,9 @@ TEST(TestArrayQueue, Enqueue)
     EXPECT_EQ(32, queue.size());
 }
 
-TEST(TestArrayQueue, Dequeue)
+TEST(TestLinkedQueue, Dequeue)
 {
-    ArrayQueue<string> queue;
+    LinkedQueue<string> queue;
     string str;
 
     for (int i = 0; i < 32; ++i)
@@ -38,11 +38,11 @@ TEST(TestArrayQueue, Dequeue)
     EXPECT_THROW(queue.back(), std::out_of_range);
 }
 
-TEST(TestArrayQueue, Other)
+TEST(TestLinkedQueue, Other)
 {
-    ArrayQueue<string> a;
-    ArrayQueue<string> b;
-    ArrayQueue<string> c;
+    LinkedQueue<string> a;
+    LinkedQueue<string> b;
+    LinkedQueue<string> c;
     string str;
 
     for (int i = 0; i < 10; ++i)

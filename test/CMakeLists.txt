@@ -33,16 +33,16 @@ endif()
 
 # Add test executables
 set(TEST_CPPLIB_LIST
-    TestArrayStack
-    TestLinkedStack
-    TestArrayQueue
-    # TestLinkedQueue
     # TestArrayDeque
+    TestArrayQueue
+    TestArrayStack
     # TestLinkedDeque
     # TestBinaryHeap
     # TestIndexHeap
     # TestArrayList
     # TestLinkedList
+    TestLinkedQueue
+    TestLinkedStack
     # TestPriorityQueue
     # TestRandom
     # TestBinarySearchMap

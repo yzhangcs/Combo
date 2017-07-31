@@ -46,15 +46,15 @@ endif ()
 
 # Add executables
 set(CPPLIB_EXEC_LIST
-    Stack
     # Deque
     # Heap
     # List
     # PriorityQueue
-    # Queue
+    Queue
     # Random
     # Search
     # Sort
+    Stack
     # Timer
     # UnionFind
     )
