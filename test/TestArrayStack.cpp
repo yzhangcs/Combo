@@ -46,8 +46,9 @@ TEST(TestArrayStack, Other)
     string str;
 
     for (int i = 0; i < 10; ++i)
-        a.push(std::to_string(i));
+        a.push(std::to_string(i)); 
     b = a;
+    EXPECT_EQ(10, a.size());
     EXPECT_TRUE(a == b);
     a.clear();
     EXPECT_TRUE(a.isEmpty());

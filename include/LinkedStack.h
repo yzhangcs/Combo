@@ -27,7 +27,7 @@ private:
     int n; // 栈大小
     Node* head; // 栈顶指针
 public:
-    LinkedStack(); // 构造函数
+    LinkedStack() : n(0), head(nullptr) {} // 构造函数
     LinkedStack(const LinkedStack& that); // 复制构造函数
     LinkedStack(LinkedStack&& that) noexcept; // 移动构造函数
     ~LinkedStack(); // 析构函数
@@ -79,16 +79,6 @@ public:
     iterator begin() const { return iterator(head); }
     iterator end() const { return iterator(nullptr); }
 };
-
-/**
- * 链式栈构造函数，初始化栈.
- */
-template<typename E>
-LinkedStack<E>::LinkedStack()
-{
-    n = 0;
-    head = nullptr;
-}
 
 /**
  * 链式栈复制构造函数.
@@ -275,9 +265,8 @@ bool operator!=(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const LinkedStack<E>& stack)
 {
-    using Node = typename LinkedStack<E>::Node;
-    for (Node* i = stack.head; i != nullptr; i = i->next)
-        os << i->elem << " ";
+    for (auto i : stack)
+        os << i << " ";
     return os;
 }
 

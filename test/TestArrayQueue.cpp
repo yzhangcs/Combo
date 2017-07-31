@@ -48,6 +48,7 @@ TEST(TestArrayQueue, Other)
     for (int i = 0; i < 10; ++i)
         a.enqueue(std::to_string(i));
     b = a;
+    EXPECT_EQ(10, a.size());
     EXPECT_TRUE(a == b);
     a.clear();
     EXPECT_TRUE(a.isEmpty());

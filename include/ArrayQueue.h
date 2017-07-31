@@ -114,7 +114,7 @@ ArrayQueue<E>::ArrayQueue(const ArrayQueue& that)
     tail = that.tail;
     capacity = that.capacity;
     pq = new E[capacity];
-    std::copy(begin(), end(), that.begin());
+    std::copy(that.begin(), that.end(), begin());
 }
 
 /**

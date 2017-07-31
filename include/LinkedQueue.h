@@ -28,7 +28,7 @@ private:
     Node* head; // 队首指针
     Node* tail; // 队尾指针
 public:
-    LinkedQueue(); // 构造函数
+    LinkedQueue() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
     LinkedQueue(const LinkedQueue& that); // 复制构造函数
     LinkedQueue(LinkedQueue&& that) noexcept; // 移动构造函数
     ~LinkedQueue(); // 析构函数
@@ -81,17 +81,6 @@ public:
     iterator begin() const { return iterator(head); }
     iterator end() const { return iterator(tail); }
 };
-
-/**
- * 链式队列构造函数，初始化队列.
- */
-template<typename E>
-LinkedQueue<E>::LinkedQueue()
-{
-    n = 0;
-    head = nullptr;
-    tail = nullptr;
-}
 
 /**
  * 链式队列复制构造函数.

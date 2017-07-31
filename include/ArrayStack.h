@@ -107,7 +107,7 @@ ArrayStack<E>::ArrayStack(const ArrayStack& that)
     n = that.n;
     capacity = that.capacity;
     ps = new E[capacity];
-    std::copy(begin(), end(), that.begin());
+    std::copy(that.begin(), that.end(), begin());
 }
 
 /**
@@ -261,8 +261,8 @@ bool operator!=(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const ArrayStack<E>& stack)
 {
-    for (int i = 0; i < stack.n; ++i)
-        os << stack.ps[i] << " ";
+    for (auto i : stack)
+        os << i << " ";
     return os;
 }
 
