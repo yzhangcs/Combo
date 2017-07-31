@@ -21,19 +21,20 @@ C++ Library
 $ git clone git@github.com:zy2625/CppLib.git
 ```
 
-2. Build
+2. Build 
 
-```bash
-$ mkdir build && cd build
-$ cmake ..
-$ make
-```
-or if the unit-test is needed, the workflow should be:
-```bash
-$ mkdir build && cd build
-$ cmake -DCPPLIB_BUILD_TEST=ON ..
-$ make
-```
+  * Build samples only:  
+  ```bash
+  $ mkdir build && cd build
+  $ cmake ..
+  $ make
+  ```
+  * If the unit-test is needed, the workflow should be:  
+  ```bash
+  $ mkdir build && cd build
+  $ cmake -DCPPLIB_BUILD_TEST=ON ..
+  $ make
+  ```
 
 3. Run
   * `cd ..`
