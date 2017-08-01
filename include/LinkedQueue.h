@@ -281,9 +281,8 @@ bool operator!=(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const LinkedQueue<E>& queue)
 {
-    using Node = typename LinkedQueue<E>::Node;
-    for (Node* i = queue.head; i != nullptr; i = i->next)
-        os << i->elem << " ";
+    for (auto i : queue)
+        os << i << " ";
     return os;
 }
 

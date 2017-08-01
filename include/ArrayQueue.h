@@ -163,7 +163,7 @@ void ArrayQueue<E>::enqueue(E elem)
 {
     if (n == capacity) 
         resize(capacity * 2);
-    // 元素转换为右值引用，移动元素内容入队
+    // 移动元素入队
     pq[tail++] = std::move(elem); 
     if (tail == capacity) tail = 0;
     n++;
@@ -302,8 +302,8 @@ bool operator!=(const ArrayQueue<E>& lhs, const ArrayQueue<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const ArrayQueue<E>& queue)
 {
-    for (int i = 0; i < queue.n; ++i)
-        os << queue.pq[(queue.head + i) % queue.capacity] << " ";
+    for (auto i : queue)
+        os << i << " ";
     return os;
 }
 

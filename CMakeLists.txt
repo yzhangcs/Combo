@@ -62,3 +62,8 @@ set(CPPLIB_EXEC_LIST
 foreach (exec ${CPPLIB_EXEC_LIST})
     add_executable(${exec} ${PROJECT_SOURCE_DIR}/src/${exec}.cpp ${CPPLIB_HEADERS})
 endforeach ()
+
+add_custom_target(run
+    COMMAND ./bin/Stack ./data/tobe.txt
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)

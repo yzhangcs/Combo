@@ -27,13 +27,13 @@ $ git clone git@github.com:zy2625/CppLib.git
   ```bash
   $ mkdir build && cd build
   $ cmake ..
-  $ make
+  $ make run
   ```
   * If the unit-test is needed, the workflow should be:  
   ```bash
   $ mkdir build && cd build
   $ cmake -DCPPLIB_BUILD_TEST=ON ..
-  $ make
+  $ make test
   ```
 
 3. Run

@@ -13,7 +13,7 @@
 /**
  * 使用模板实现的后进先出栈.
  * 由可变长数组存储栈.
- * 实现了数组栈的前向迭代器.
+ * 实现了数组栈的前向迭代器，方向从栈底开始.
  */
 template<typename E>
 class ArrayStack
@@ -154,7 +154,7 @@ void ArrayStack<E>::push(E elem)
 {
     if (n == capacity) 
         resize(capacity * 2);
-    // 元素转换为右值引用，移动元素内容入栈
+    // 移动元素入栈
     ps[n++] = std::move(elem); 
 }
 
