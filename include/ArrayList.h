@@ -263,8 +263,7 @@ void ArrayList<E>::add(int i, E elem)
     if (n == capacity)
         resize(capacity * 2);
     // 将pl[i]后面的所有元素向数组后面迁移一个位置
-    for (int j = n; j > i; j--)
-        pl[j] = std::move(pl[j - 1]);
+    std::move_backward(begin() + i, end(), end() + 1);
     pl[i] = std::move(elem);
     n++;
 }
@@ -284,8 +283,7 @@ E ArrayList<E>::remove(int i)
 
     E tmp = pl[i];
     // 将pl[i]后面的所有元素向前迁移一个位置
-    for (int j = i; j < n - 1; j++)
-        pl[j] = std::move(pl[j + 1]);
+    std::move(begin() + i + 1, end(), begin() + i);
     n--;
     // 保证约为半满状态，保证n>0
     if (n > 0 && n == capacity / 4)
@@ -362,8 +360,7 @@ template<typename E>
 ArrayList<E>& ArrayList<E>::operator+=(const ArrayList<E>& that)
 {
     resize(capacity + that.capacity);
-    for (int i = 0; i < that.n; ++i)
-        pl[i + n] = that.pl[i];
+    std::copy(that.begin(), that.end(), end())
     n += that.n;
     return *this;
 }

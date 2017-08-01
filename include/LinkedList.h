@@ -322,8 +322,7 @@ LinkedList<E>& LinkedList<E>::operator=(LinkedList<E> that)
 template<typename E>
 LinkedList<E>& LinkedList<E>::operator+=(const LinkedList<E>& that)
 {
-    using Node = typename LinkedList<E>::Node;
-    for (Node* i = that.head; i != nullptr; i = i->next)
+    for (auto i : that)
         add(i);
     return *this;
 }
