@@ -61,10 +61,8 @@ public:
 
         E& operator*() const
         { return stack->ps[i]; }
-        bool operator==(const iterator& that) const
-        { return stack == that.stack && i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return stack != that.stack || i != that.i; }
+        E* operator->() const
+        { return &stack->ps[i]; }
         iterator& operator++()
         {
             i++;
@@ -73,9 +71,13 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            operator++();
+            i++;
             return tmp;
         }
+        bool operator==(const iterator& that) const
+        { return stack == that.stack && i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return stack != that.stack || i != that.i; }
     };
     iterator begin() const { return iterator(this, 0); }
     iterator end() const { return iterator(this, n); }

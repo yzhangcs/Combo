@@ -60,10 +60,8 @@ public:
 
         E& operator*() const
         { return i->elem; }
-        bool operator==(const iterator& that) const
-        { return i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return i != that.i; }
+        E* operator->() const
+        { return &i->elem; }
         iterator& operator++()
         {
             i = i->next;
@@ -75,6 +73,10 @@ public:
             i = i->next;
             return tmp;
         }
+        bool operator==(const iterator& that) const
+        { return i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
     iterator end() const { return iterator(nullptr); }

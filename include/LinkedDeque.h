@@ -11,8 +11,8 @@
 
 /**
  * 使用模板实现的双端队列. 
- * 由链表存储队列.
- * 支持首尾的插入删除操作.
+ * 由链表存储双端队列.
+ * 实现了链表双端队列的双向迭代器.
  */
 template<typename E>
 class LinkedDeque
@@ -49,11 +49,55 @@ public:
     
     LinkedDeque& operator=(LinkedDeque that);
     template <typename T>
-    friend bool operator==(const LinkedStack<T>& lhs, const LinkedStack<T>& rhs);
+    friend bool operator==(const LinkedDeque<T>& lhs, const LinkedDeque<T>& rhs);
     template <typename T>
-    friend bool operator!=(const LinkedStack<T>& lhs, const LinkedStack<T>& rhs);
+    friend bool operator!=(const LinkedDeque<T>& lhs, const LinkedDeque<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const LinkedDeque<T>& deque);
+        
+    class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
+    {
+    private:
+        Node* i;
+    public:
+        iterator() : i(nullptr) {}
+        iterator(Node* x) : i(x) {}
+        iterator(const iterator& that) : i(that.i) {}
+        ~iterator() {}
+
+        E& operator*() const
+        { return i->elem; }
+        E* operator->() const
+        { return &i->elem; }
+        iterator& operator++()
+        {
+            i = i->next;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator tmp(*this);
+            i = i->next;
+            return tmp;
+        }        
+        iterator& operator--()
+        {
+            i = i->prev;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator tmp(*this);
+            i = i->prev;
+            return tmp;
+        }
+        bool operator==(const iterator& that) const
+        { return i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return i != that.i; }
+    };
+    iterator begin() const { return iterator(head); }
+    iterator end() const { return iterator(tail); }
 };
 
 /**
@@ -80,7 +124,7 @@ LinkedDeque<E>::LinkedDeque(const LinkedDeque& that)
     head = nullptr;
     tail = nullptr;
     for (Node* i = that.head; i != nullptr; i = i->next)
-        enqueue(i->elem);
+        addLast(i->elem);
 }
 
 /**

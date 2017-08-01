@@ -12,8 +12,8 @@
 
 /**
  * 使用模板实现的双端队列. 
- * 由可变长数组存储队列. 
- * 支持首尾的插入删除操作.
+ * 由可变长数组存储双端队列. 
+ * 实现了数组双端队列的双向迭代器.
  */
 template<typename E>
 class ArrayDeque
@@ -36,8 +36,7 @@ public:
 
     int size() const { return n; } // 返回队列当前大小
     bool isEmpty() const { return n == 0; } // 判断是否为空队列
-    void enqueue(const E& elem) { addLast(elem); }
-    void enqueue(E elem) { addLast(std::move(elem)); } // 入队函数
+    void endeque(E elem) { addLast(std::move(elem)); } // 入队函数
     void addFirst(E elem); // 添加元素到队首
     void addLast(E elem); // 添加元素到队尾
     E dequeue() { return removeFirst(); } // 出队函数
@@ -55,6 +54,51 @@ public:
     friend bool operator!=(const ArrayDeque<T>& lhs, const ArrayDeque<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const ArrayDeque<T>& deque);
+
+    class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
+    {
+    private:
+        const ArrayDeque* deque;
+        int i;
+    public:
+        iterator() : deque(nullptr), i(0) {}
+        iterator(const ArrayDeque* deque, int i) : deque(deque), i(i) {}
+        iterator(const iterator& that) : deque(that.deque), i(that.i) {}
+        ~iterator() {}
+
+        E& operator*() const
+        { return deque->pq[(deque->head + i) % deque->capacity]; }
+        E* operator->() const
+        { return &deque->pq[(deque->head + i) % deque->capacity]; }
+        iterator& operator++()
+        {
+            i++;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator tmp(*this);
+            i++;
+            return tmp;
+        }        
+        iterator& operator--()
+        {
+            i--;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator tmp(*this);
+            i--;
+            return tmp;
+        }
+        bool operator==(const iterator& that) const
+        { return deque == that.deque && i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return deque != that.deque || i != that.i; }
+    };
+    iterator begin() const { return iterator(this, 0); }
+    iterator end() const { return iterator(this, n); }
 };
 
 /**

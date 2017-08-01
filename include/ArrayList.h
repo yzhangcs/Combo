@@ -13,7 +13,7 @@
 /**
  * 使用模板实现的数组列表.
  * 由可变长数组存储列表.
- * 实现了数组列表的前向迭代器.
+ * 实现了数组列表的随机访问迭代器.
  */
 template<typename E>
 class ArrayList
@@ -64,7 +64,7 @@ public:
     template<typename T>
     friend std::ostream& operator<<(std::ostream& os, const ArrayList<T>& list);
 
-    class iterator : public std::iterator<std::forward_iterator_tag, E>
+    class iterator : public std::iterator<std::random_access_iterator_tag, E>
     {
     private:
         const ArrayList* list;
@@ -77,10 +77,10 @@ public:
 
         E& operator*() const
         { return list->pl[i]; }
-        bool operator==(const iterator& that) const
-        { return list == that.list && i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return list != that.list || i != that.i; }
+        E* operator->() const
+        { return &list->pl[i]; }
+        E& operator[](int pos) const
+        { return list->pl[i + pos]; }
         iterator& operator++()
         {
             i++;
@@ -89,8 +89,67 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            operator++();
+            i++;
             return tmp;
+        }        
+        iterator operator+(int pos)
+        { return iterator(list, i + pos); }
+        iterator operator+=(int pos)
+        {
+            i += pos;
+            return *this;
+        }
+        iterator& operator--()
+        {
+            i--;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator tmp(*this);
+            i--;
+            return tmp;
+        }
+        iterator operator-(int pos) 
+        { return iterator(list, i - pos); }
+        iterator operator-=(int pos) 
+        {
+            i -= pos;
+            return *this;
+        }        
+        int operator-(const iterator& that) 
+        {
+            if (list != that.list)
+                throw std::invalid_argument("List invalid iterator.");
+            return i - that.i;
+        }
+        bool operator==(const iterator& that) const
+        { return list == that.list && i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return list != that.list || i != that.i; }
+        bool operator<(const iterator& that) const
+        {
+            if (list != that.list)
+                throw std::invalid_argument("List invalid iterator.");
+            return i < that.i;
+        }
+        bool operator<=(const iterator& that) const
+        {
+            if (list != that.list)
+                throw std::invalid_argument("List invalid iterator.");
+            return i <= that.i;
+        }
+        bool operator>(const iterator& that) const
+        {
+            if (list != that.list)
+                throw std::invalid_argument("List invalid iterator.");
+            return i > that.i;
+        }
+        bool operator>=(const iterator& that) const
+        {
+            if (list != that.list)
+                throw std::invalid_argument("List invalid iterator.");
+            return i >= that.i;
         }
     };
     iterator begin() const { return iterator(this, 0); }
@@ -186,7 +245,7 @@ template<typename E>
 void ArrayList<E>::set(int i, E elem)
 {
     if (!valid(i)) 
-        throw std::out_of_range("List index out of range.");
+        throw std::out_of_range("List i out of range.");
     pl[i] = std::move(elem);
 }
 
@@ -200,7 +259,7 @@ template<typename E>
 void ArrayList<E>::add(int i, E elem)
 {
     if (!valid(i)) 
-        throw std::out_of_range("List index out of range.");
+        throw std::out_of_range("List i out of range.");
     if (n == capacity)
         resize(capacity * 2);
     // 将pl[i]后面的所有元素向数组后面迁移一个位置
@@ -221,7 +280,7 @@ template<typename E>
 E ArrayList<E>::remove(int i)
 {
     if (!valid(i)) 
-        throw std::out_of_range("List index out of range.");
+        throw std::out_of_range("List i out of range.");
 
     E tmp = pl[i];
     // 将pl[i]后面的所有元素向前迁移一个位置
@@ -245,7 +304,7 @@ template<typename E>
 E ArrayList<E>::get(int i) const
 {
     if (!valid(i)) 
-        throw std::out_of_range("List index out of range.");
+        throw std::out_of_range("List i out of range.");
     return pl[i];
 }
 
@@ -274,7 +333,7 @@ template<typename E>
 E& ArrayList<E>::operator[](int i) const
 {
     if (!valid(i)) 
-        throw std::out_of_range("List index out of range.");
+        throw std::out_of_range("List i out of range.");
     return pl[i];
 }
 

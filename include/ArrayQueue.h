@@ -64,10 +64,8 @@ public:
 
         E& operator*() const
         { return queue->pq[(queue->head + i) % queue->capacity]; }
-        bool operator==(const iterator& that) const
-        { return queue == that.queue && i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return queue != that.queue || i != that.i; }
+        E* operator->() const
+        { return &queue->pq[(queue->head + i) % queue->capacity]; }
         iterator& operator++()
         {
             i++;
@@ -76,9 +74,13 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            operator++();
+            i++;
             return tmp;
         }
+        bool operator==(const iterator& that) const
+        { return queue == that.queue && i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return queue != that.queue || i != that.i; }
     };
     iterator begin() const { return iterator(this, 0); }
     iterator end() const { return iterator(this, n); }

@@ -12,7 +12,7 @@
 /**
  * 使用模板实现的链表.
  * 该链表为双向链表，每个结点中有prev和next指针指向前后结点.
- * 实现了链表的前向迭代器.
+ * 实现了链表的双向迭代器.
  */
 template<typename E>
 class LinkedList
@@ -68,7 +68,8 @@ public:
     template<typename T>
     friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list);
 
-    class iterator : public std::iterator<std::forward_iterator_tag, E>
+    // 链表不支持随机访问
+    class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
     {
     private:
         Node* i;
@@ -80,10 +81,8 @@ public:
 
         E& operator*() const
         { return i->elem; }
-        bool operator==(const iterator& that) const
-        { return i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return i != that.i; }
+        E* operator->() const
+        { return &i->elem; }
         iterator& operator++()
         {
             i = i->next;
@@ -95,6 +94,21 @@ public:
             i = i->next;
             return tmp;
         }
+        iterator& operator--()
+        {
+            i = i->prev;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator tmp(*this);
+            i = i->prev;
+            return tmp;
+        }
+        bool operator==(const iterator& that) const
+        { return i == that.i; }
+        bool operator!=(const iterator& that) const
+        { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
     iterator end() const { return iterator(tail->next); }
