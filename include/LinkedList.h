@@ -40,8 +40,7 @@ public:
     int size() const { return n; } // 返回链表当前大小
     int indexOf(const E& elem) const; // 返回第一次出现该元素的位置
     bool isEmpty() const { return n == 0; } // 判断是否为空链表
-    bool contains(const E& elem) const // 判断表中是否存在该元素
-    { return indexOf(elem) >= 0; }
+    bool contains(const E& elem) const { return indexOf(elem) >= 0; } // 判断表中是否存在该元素
     void set(int i, E elem) { locate(i)->elem = std::move(elem); } // 设置指定位置的元素值
     void add(int i, E elem); // 添加指定元素到指定位置
     void add(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
@@ -230,9 +229,9 @@ void LinkedList<E>::add(int i, E elem)
     Node* pnew = new Node(std::move(elem));
     
     if (i == n) prec = tail; // 位置在链表尾
-    else 
+    else // 位置在链表中
     { 
-        succ = locate(i); // 位置在链表中
+        succ = locate(i); 
         prec = succ->prev;
     }
     if (prec == nullptr) head = pnew; // 位置在链表头
