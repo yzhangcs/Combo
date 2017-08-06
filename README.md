@@ -50,21 +50,21 @@ $ git clone git@github.com:zy2625/CppLib.git
 ## Contents
 
 * [Deque](#deque)
-* [Heap](#heap)
+<!-- * [Heap](#heap) -->
 * [List](#list)
-* [PriorityQueue](#priorityqueue)
+<!-- * [PriorityQueue](#priorityqueue) -->
 * [Queue](#queue)
 * [Random](#random)
 * [Stack](#stack)
 * [Timer](#timer)
-* [UnionFind](#unionfind)
+<!-- * [UnionFind](#unionfind) -->
 
 ## Details
 
 ### Deque
 
-* [ArrayDeque](https://github.com/zy2625/CppLib/blob/master/include/Deque/ArrayDeque.h)
-* [LinkedDeque](https://github.com/zy2625/CppLib/blob/master/include/Deque/LinkedDeque.h)
+* [ArrayDeque](https://github.com/zy2625/CppLib/blob/master/include/ArrayDeque.h)
+* [LinkedDeque](https://github.com/zy2625/CppLib/blob/master/include/LinkedDeque.h)
 
 #### Demo
 
@@ -77,10 +77,10 @@ As queue: to be or not to be (2 left on deque)
 As stack: to be not that or be (2 left on deque)
 ```
 
-### Heap
+<!-- ### Heap
 
-* [BinaryHeap](https://github.com/zy2625/CppLib/blob/master/include/Heap/BinaryHeap.h)
-* [IndexHeap](https://github.com/zy2625/CppLib/blob/master/include/Heap/IndexHeap.h)
+* [BinaryHeap](https://github.com/zy2625/CppLib/blob/master/include/BinaryHeap.h)
+* [IndexHeap](https://github.com/zy2625/CppLib/blob/master/include/IndexHeap.h)
 
 #### Demo
 
@@ -90,12 +90,12 @@ H E A P - E X A M - P L E -
 
 ./bin/Heap data/tinyHeap.txt
 P X P (8 left on heap)
-```
+``` -->
 
 ### List
 
-* [ArrayList](https://github.com/zy2625/CppLib/blob/master/include/List/ArrayList.h)
-* [LinkedList](https://github.com/zy2625/CppLib/blob/master/include/List/LinkedList.h)
+* [ArrayList](https://github.com/zy2625/CppLib/blob/master/include/ArrayList.h)
+* [LinkedList](https://github.com/zy2625/CppLib/blob/master/include/LinkedList.h)
 
 #### Demo
 
@@ -113,9 +113,9 @@ x.removeFirst(): 0 1 2 3 4 5 6 7 8 9 10 11
               y: 0 1 2 3 4 5
 ```
 
-### PriorityQueue
+<!-- ### PriorityQueue
 
-* [PriorityQueue](https://github.com/zy2625/CppLib/blob/master/include/PriorityQueue/PriorityQueue.h)
+* [PriorityQueue](https://github.com/zy2625/CppLib/blob/master/include/PriorityQueue.h)
 
 #### Demo
 
@@ -125,12 +125,12 @@ H E A P - E X A M - P L E -
 
 ./bin/PriorityQueue data/tinyPQ.txt
 Q X P (6 left on priority queue)
-```
+``` -->
 
 ### Queue
 
-* [ArrayQueue](https://github.com/zy2625/CppLib/blob/master/include/Queue/ArrayQueue.h)
-* [LinkedQueue](https://github.com/zy2625/CppLib/blob/master/include/Queue/LinkedQueue.h)
+* [ArrayQueue](https://github.com/zy2625/CppLib/blob/master/include/ArrayQueue.h)
+* [LinkedQueue](https://github.com/zy2625/CppLib/blob/master/include/LinkedQueue.h)
 
 #### Demo
 
@@ -144,7 +144,7 @@ to be or not to be (2 left on queue)
 
 ### Random
 
-* [Random](https://github.com/zy2625/CppLib/blob/master/include/Random/Random.h)
+* [Random](https://github.com/zy2625/CppLib/blob/master/include/Random.h)
 
 #### Demo
 
@@ -175,15 +175,15 @@ Normal Distribution:
 *
 ```
 
-### Search
+<!-- ### Search
 
-* [BinarySearchMap](https://github.com/zy2625/CppLib/blob/master/include/Search/BinarySearchMap.h)
-* [BinarySearchSet](https://github.com/zy2625/CppLib/blob/master/include/Search/BinarySearchSet.h)
-* [BinarySearchTreeMap](https://github.com/zy2625/CppLib/blob/master/include/Search/BinarySearchTreeMap.h)
-* [LinearProbingHashMap](https://github.com/zy2625/CppLib/blob/master/include/Search/LinearProbingHashMap.h)
-* [RedBlackTreeMap](https://github.com/zy2625/CppLib/blob/master/include/Search/RedBlackTreeMap.h)
-* [SeparateChainingHashMap](https://github.com/zy2625/CppLib/blob/master/include/Search/SeparateChainingHashMap.h)
-* [SequentialSearchMap](https://github.com/zy2625/CppLib/blob/master/include/Search/SequentialSearchMap.h)
+* [BinarySearchMap](https://github.com/zy2625/CppLib/blob/master/include/BinarySearchMap.h)
+* [BinarySearchSet](https://github.com/zy2625/CppLib/blob/master/include/BinarySearchSet.h)
+* [BinarySearchTreeMap](https://github.com/zy2625/CppLib/blob/master/include/BinarySearchTreeMap.h)
+* [LinearProbingHashMap](https://github.com/zy2625/CppLib/blob/master/include/LinearProbingHashMap.h)
+* [RedBlackTreeMap](https://github.com/zy2625/CppLib/blob/master/include/RedBlackTreeMap.h)
+* [SeparateChainingHashMap](https://github.com/zy2625/CppLib/blob/master/include/SeparateChainingHashMap.h)
+* [SequentialSearchMap](https://github.com/zy2625/CppLib/blob/master/include/SequentialSearchMap.h)
 
 #### Demo
 
@@ -195,18 +195,18 @@ Domain Name: amazon.com
 IP: 72.21.203.1
 Domain Name: github.com
 Not Found!
-```
+``` -->
 
-### Sort
+<!-- ### Sort
 
-* [BubbleSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/BubbleSort.h)
-* [HeapSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/HeapSort.h)
-* [InsertionSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/InsertionSort.h)
-* [MergeSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/MergeSort.h)
-* [QuickSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/QuickSort.h)
-* [Quick3waySort](https://github.com/zy2625/CppLib/blob/master/include/Sort/Quick3waySort.h)
-* [SelectionSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/SelectionSort.h)
-* [ShellSort](https://github.com/zy2625/CppLib/blob/master/include/Sort/ShellSort.h)
+* [BubbleSort](https://github.com/zy2625/CppLib/blob/master/include/BubbleSort.h)
+* [HeapSort](https://github.com/zy2625/CppLib/blob/master/include/HeapSort.h)
+* [InsertionSort](https://github.com/zy2625/CppLib/blob/master/include/InsertionSort.h)
+* [MergeSort](https://github.com/zy2625/CppLib/blob/master/include/MergeSort.h)
+* [QuickSort](https://github.com/zy2625/CppLib/blob/master/include/QuickSort.h)
+* [Quick3waySort](https://github.com/zy2625/CppLib/blob/master/include/Quick3waySort.h)
+* [SelectionSort](https://github.com/zy2625/CppLib/blob/master/include/SelectionSort.h)
+* [ShellSort](https://github.com/zy2625/CppLib/blob/master/include/ShellSort.h)
 
 #### Demo
 
@@ -222,7 +222,7 @@ MergeSort     0.002  0.006  0.011  0.026  0.053  0.117  0.23   2.041\1.03
 InsertionSort 0.142  0.564  2.104  8.467  35.204 138.59 561.15 3.959\1.98
 SelectionSort 0.26   0.996  4.531  15.89  63.395 255.18 1023.2 3.931\1.97
 BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
-```
+``` -->
 
 ### Stack
 
@@ -258,12 +258,12 @@ Timestamp: 1499677941023
 It takes 0.495s to sum the sqrt 100000000 times
 ```
 
-### UnionFind
+<!-- ### UnionFind
 
-* [QuickFind](https://github.com/zy2625/CppLib/blob/master/include/UnionFind/QuickFind.h)
-* [QuickUnion](https://github.com/zy2625/CppLib/blob/master/include/UnionFind/QuickUnion.h)
-* [UnionFind](https://github.com/zy2625/CppLib/blob/master/include/UnionFind/UnionFind.h)
-* [WeightedUnion](https://github.com/zy2625/CppLib/blob/master/include/UnionFind/WeightedUnion.h)
+* [QuickFind](https://github.com/zy2625/CppLib/blob/master/include/QuickFind.h)
+* [QuickUnion](https://github.com/zy2625/CppLib/blob/master/include/QuickUnion.h)
+* [UnionFind](https://github.com/zy2625/CppLib/blob/master/include/UnionFind.h)
+* [WeightedUnion](https://github.com/zy2625/CppLib/blob/master/include/WeightedUnion.h)
 
 #### Demo
 
@@ -275,4 +275,4 @@ UnionFind     0.001  0.001  0.003  0.01   0.018  0.04   0.057  1.811\0.857
 WeightedUnion 0.001  0.001  0.004  0.009  0.017  0.044  0.089  2.176\1.12
 QuickUnion    0.004  0.013  0.076  0.468  1.516  10.8   47.933 5.023\2.33
 QuickFind     0.004  0.013  0.063  0.22   0.866  3.494  14.106 3.94 \1.98
-```
+``` -->
