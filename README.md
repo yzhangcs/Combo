@@ -18,7 +18,7 @@ C++ Library
 1. Clone
 
 ```bash
-$ git clone git@github.com:zy2625/CppLib.git
+$ git clone https://github.com/zy2625/CppLib.git
 ```
 
 2. Build 
@@ -50,14 +50,14 @@ $ git clone git@github.com:zy2625/CppLib.git
 ## Contents
 
 * [Deque](#deque)
-<!-- * [Heap](#heap) -->
+* [Heap](#heap) 
 * [List](#list)
-<!-- * [PriorityQueue](#priorityqueue) -->
+* [PriorityQueue](#priorityqueue) 
 * [Queue](#queue)
 * [Random](#random)
 * [Stack](#stack)
 * [Timer](#timer)
-<!-- * [UnionFind](#unionfind) -->
+* [UnionFind](#unionfind)  
 
 ## Details
 
@@ -229,12 +229,6 @@ BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
 * [ArrayStack](https://github.com/zy2625/CppLib/blob/master/include/ArrayStack.h)
 * [LinkedStack](https://github.com/zy2625/CppLib/blob/master/include/LinkedStack.h)
 
-| Operation | Time |
-|:---------:|:----:|
-|push()|O(1)|
-|pop() |O(1)|
-|top() |O(1)|
-
 #### Demo
 
 ```
@@ -247,7 +241,7 @@ to be or not to be (2 left on stack)
 
 ### Timer
 
-* [Timer](https://github.com/zy2625/CppLib/blob/master/include/Timer/Timer.h)
+* [Timer](https://github.com/zy2625/CppLib/blob/master/include/Timer.h)
 
 #### Demo
 
@@ -257,8 +251,8 @@ Timestamp: 1499677940528
 Timestamp: 1499677941023
 It takes 0.495s to sum the sqrt 100000000 times
 ```
-
-<!-- ### UnionFind
+ 
+### UnionFind
 
 * [QuickFind](https://github.com/zy2625/CppLib/blob/master/include/QuickFind.h)
 * [QuickUnion](https://github.com/zy2625/CppLib/blob/master/include/QuickUnion.h)
@@ -275,4 +269,4 @@ UnionFind     0.001  0.001  0.003  0.01   0.018  0.04   0.057  1.811\0.857
 WeightedUnion 0.001  0.001  0.004  0.009  0.017  0.044  0.089  2.176\1.12
 QuickUnion    0.004  0.013  0.076  0.468  1.516  10.8   47.933 5.023\2.33
 QuickFind     0.004  0.013  0.063  0.22   0.866  3.494  14.106 3.94 \1.98
-``` -->
+```  
