@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
-#include "ArrayList.h"
+#include "Vector.h"
 #include "gtest/gtest.h"
 
 using std::string;
 
-TEST(TestArrayList, Push)
+TEST(TestVector, Push)
 {
-    ArrayList<string> stack;
+    Vector<string> stack;
 
     EXPECT_TRUE(stack.isEmpty());
     for (int i = 0; i < 32; ++i)
@@ -18,9 +18,9 @@ TEST(TestArrayList, Push)
     EXPECT_EQ(32, stack.size());
 }
 
-TEST(TestArrayList, Pop)
+TEST(TestVector, Pop)
 {
-    ArrayList<string> stack;
+    Vector<string> stack;
     string str;
 
     for (int i = 0; i < 32; ++i)
@@ -38,11 +38,11 @@ TEST(TestArrayList, Pop)
     EXPECT_THROW(stack.top(), std::out_of_range);
 }
 
-TEST(TestArrayList, Other)
+TEST(TestVector, Other)
 {
-    ArrayList<string> a;
-    ArrayList<string> b;
-    ArrayList<string> c;
+    Vector<string> a;
+    Vector<string> b;
+    Vector<string> c;
     string str;
 
     for (int i = 0; i < 10; ++i)

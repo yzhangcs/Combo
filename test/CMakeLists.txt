@@ -39,8 +39,8 @@ set(TEST_CPPLIB_LIST
     # TestLinkedDeque
     # TestBinaryHeap
     # TestIndexHeap
-    # TestArrayList
-    # TestLinkedList
+    # TestVector
+    # TestList
     TestLinkedQueue
     TestLinkedStack
     # TestPriorityQueue

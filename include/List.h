@@ -1,5 +1,5 @@
 /*******************************************************************************
- * LinkedList.h
+ * List.h
  *
  * Author: zhangyu
  * Date: 2017.4.25
@@ -10,12 +10,11 @@
 #include <iterator>
 
 /**
- * 使用模板实现的链表.
- * 该链表为双向链表，每个结点中有prev和next指针指向前后结点.
+ * 使用模板实现的双向链表.
  * 实现了链表的双向迭代器.
  */
 template<typename E>
-class LinkedList
+class List
 {
 private:
     struct Node
@@ -32,10 +31,10 @@ private:
     Node* locate(int i) const; // 定位指定元素
     bool valid(int i) const { return i >= 0 && i < n; } // 检查索引是否合法
 public:
-    LinkedList() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
-    LinkedList(const LinkedList& that); // 复制构造函数
-    LinkedList(LinkedList&& that) noexcept; // 移动构造函数
-    ~LinkedList(); // 析构函数
+    List() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
+    List(const List& that); // 复制构造函数
+    List(List&& that) noexcept; // 移动构造函数
+    ~List(); // 析构函数
 
     int size() const { return n; } // 返回链表当前大小
     int indexOf(const E& elem) const; // 返回第一次出现该元素的位置
@@ -52,20 +51,20 @@ public:
     E get(int i) const { return locate(i)->elem; } // 返回指定位置的元素值
     E front() const { return locate(0)->elem; } // 返回链表头部元素
     E back() const { return locate(n - 1)->elem; } // 返回链表尾部元素
-    void swap(LinkedList& that); // 内容与另一个LinkedDeque对象交换
+    void swap(List& that); // 内容与另一个LinkedDeque对象交换
     void clear(); // 清空链表
     
     E& operator[](int i) const { return locate(i)->elem; };
-    LinkedList& operator=(LinkedList that);
-    LinkedList& operator+=(const LinkedList& that);
+    List& operator=(List that);
+    List& operator+=(const List& that);
     template<typename T>
-    friend LinkedList<T> operator+(LinkedList<T> lhs, const LinkedList<T>& rhs);
+    friend List<T> operator+(List<T> lhs, const List<T>& rhs);
     template <typename T>
-    friend bool operator==(const LinkedList<T>& lhs, const LinkedList<T>& rhs);
+    friend bool operator==(const List<T>& lhs, const List<T>& rhs);
     template <typename T>
-    friend bool operator!=(const LinkedList<T>& lhs, const LinkedList<T>& rhs);
+    friend bool operator!=(const List<T>& lhs, const List<T>& rhs);
     template<typename T>
-    friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list);
+    friend std::ostream& operator<<(std::ostream& os, const List<T>& list);
 
     // 链表不支持随机访问
     class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
@@ -120,7 +119,7 @@ public:
  * @param that: 被复制的链表
  */
 template<typename E>
-LinkedList<E>::LinkedList(const LinkedList& that)
+List<E>::List(const List& that)
 {
     n = 0;
     head = nullptr;
@@ -136,7 +135,7 @@ LinkedList<E>::LinkedList(const LinkedList& that)
  * @param that: 被移动的链表
  */
 template<typename E>
-LinkedList<E>::LinkedList(LinkedList&& that) noexcept
+List<E>::List(List&& that) noexcept
 {
     n = that.n;
     head = that.head;
@@ -149,7 +148,7 @@ LinkedList<E>::LinkedList(LinkedList&& that) noexcept
  * 链表析构函数.
  */
 template<typename E>
-LinkedList<E>::~LinkedList()
+List<E>::~List()
 {
     Node* aux = nullptr;
 
@@ -171,7 +170,7 @@ LinkedList<E>::~LinkedList()
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-typename LinkedList<E>::Node* LinkedList<E>::locate(int i) const
+typename List<E>::Node* List<E>::locate(int i) const
 {
     if (!valid(i)) 
         throw std::out_of_range("List index out of range.");
@@ -202,7 +201,7 @@ typename LinkedList<E>::Node* LinkedList<E>::locate(int i) const
  *         -1: 找不到该元素
  */
 template<typename E>
-int LinkedList<E>::indexOf(const E& elem) const
+int List<E>::indexOf(const E& elem) const
 {
     int i = 0;
 
@@ -222,7 +221,7 @@ int LinkedList<E>::indexOf(const E& elem) const
  *        elem: 要添加的元素
  */
 template<typename E>
-void LinkedList<E>::add(int i, E elem)
+void List<E>::add(int i, E elem)
 {
     Node* prec = nullptr;
     Node* succ = nullptr; // 指定位置的前驱和后继
@@ -250,7 +249,7 @@ void LinkedList<E>::add(int i, E elem)
  * @return 移除的元素
  */
 template<typename E>
-E LinkedList<E>::remove(int i)
+E List<E>::remove(int i)
 {
     Node* pold = locate(i);
     Node* prec = pold->prev;
@@ -267,12 +266,12 @@ E LinkedList<E>::remove(int i)
 }
 
 /**
- * 交换当前LinkedList对象和另一个LinkedList对象.
+ * 交换当前List对象和另一个List对象.
  *
- * @param that: LinkedList对象that
+ * @param that: List对象that
  */
 template<typename E>
-void LinkedList<E>::swap(LinkedList<E>& that)
+void List<E>::swap(List<E>& that)
 {
     using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
     swap(n, that.n);
@@ -284,7 +283,7 @@ void LinkedList<E>::swap(LinkedList<E>& that)
  * 清空该链表元素.
  */
 template<typename E>
-void LinkedList<E>::clear()
+void List<E>::clear()
 {
     Node* aux = nullptr;
 
@@ -299,13 +298,13 @@ void LinkedList<E>::clear()
 
 /**
  * =操作符重载.
- * 让当前LinkedList对象等于给定LinkedList对象that.
+ * 让当前List对象等于给定List对象that.
  *
- * @param that: LinkedList对象that
- * @return 当前LinkedList对象
+ * @param that: List对象that
+ * @return 当前List对象
  */
 template<typename E>
-LinkedList<E>& LinkedList<E>::operator=(LinkedList<E> that)
+List<E>& List<E>::operator=(List<E> that)
 {
     swap(that); // *this与that互相交换，退出时that被析构
     return *this;
@@ -315,11 +314,11 @@ LinkedList<E>& LinkedList<E>::operator=(LinkedList<E> that)
  * +=操作符重载.
  * 复制另一个对象所有元素,添加到当前对象.
  *
- * @param that: LinkedList对象that
- * @return 当前LinkedList对象
+ * @param that: List对象that
+ * @return 当前List对象
  */
 template<typename E>
-LinkedList<E>& LinkedList<E>::operator+=(const LinkedList<E>& that)
+List<E>& List<E>::operator+=(const List<E>& that)
 {
     for (auto i : that)
         add(i);
@@ -330,27 +329,27 @@ LinkedList<E>& LinkedList<E>::operator+=(const LinkedList<E>& that)
  * +操作符重载.
  * 返回一个包含lhs和rhs所有元素的对象.
  *
- * @param lhs: LinkedList对象lhs
- *        rhs: LinkedList对象rhs
- * @return 包含lhs和rhs所有元素的LinkedList对象
+ * @param lhs: List对象lhs
+ *        rhs: List对象rhs
+ * @return 包含lhs和rhs所有元素的List对象
  */
 template<typename E>
-LinkedList<E> operator+(LinkedList<E> lhs, const LinkedList<E>& rhs)
+List<E> operator+(List<E> lhs, const List<E>& rhs)
 {
     lhs += rhs;
     return lhs;
 }
 
 /**
- * ==操作符重载函数，比较两个LinkedList对象是否相等.
+ * ==操作符重载函数，比较两个List对象是否相等.
  *
- * @param lhs: LinkedList对象lhs
- *        rhs: LinkedList对象rhs
+ * @param lhs: List对象lhs
+ *        rhs: List对象rhs
  * @return true: 相等
  *         false: 不等
  */
 template<typename E>
-bool operator==(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
+bool operator==(const List<E>& lhs, const List<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -358,15 +357,15 @@ bool operator==(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
 }
 
 /**
- * !=操作符重载函数，比较两个LinkedList对象是否不等.
+ * !=操作符重载函数，比较两个List对象是否不等.
  *
- * @param lhs: LinkedList对象lhs
- *        rhs: LinkedList对象rhs
+ * @param lhs: List对象lhs
+ *        rhs: List对象rhs
  * @return true: 不等
  *         false: 相等
  */
 template<typename E>
-bool operator!=(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
+bool operator!=(const List<E>& lhs, const List<E>& rhs)
 {
     return !(lhs == rhs);
 }
@@ -379,7 +378,7 @@ bool operator!=(const LinkedList<E>& lhs, const LinkedList<E>& rhs)
  * @return 输出流对象
  */
 template<typename E>
-std::ostream& operator<<(std::ostream& os, const LinkedList<E>& list)
+std::ostream& operator<<(std::ostream& os, const List<E>& list)
 {
     for (auto i : list)
         os << i << " ";
@@ -387,13 +386,13 @@ std::ostream& operator<<(std::ostream& os, const LinkedList<E>& list)
 }
 
 /**
- * 交换两个LinkedList对象.
+ * 交换两个List对象.
  *
- * @param lhs: LinkedList对象lhs
- *        rhs: LinkedList对象rhs
+ * @param lhs: List对象lhs
+ *        rhs: List对象rhs
  */
 template<typename E>
-void swap(LinkedList<E>& lhs, LinkedList<E>& rhs)
+void swap(List<E>& lhs, List<E>& rhs)
 {
     lhs.swap(rhs);
 }

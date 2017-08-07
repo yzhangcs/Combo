@@ -58,6 +58,7 @@ $ git clone https://github.com/zy2625/CppLib.git
 * [Stack](#stack)
 * [Timer](#timer)
 * [UnionFind](#unionfind)  
+* [Vector](#vector)  
 
 ## Details
 
@@ -66,7 +67,7 @@ $ git clone https://github.com/zy2625/CppLib.git
 * [ArrayDeque](https://github.com/zy2625/CppLib/blob/master/include/ArrayDeque.h)
 * [LinkedDeque](https://github.com/zy2625/CppLib/blob/master/include/LinkedDeque.h)
 
-#### Demo
+#### Usage
 
 ```
 $ more data/tobe.txt
@@ -82,7 +83,7 @@ As stack: to be not that or be (2 left on deque)
 * [BinaryHeap](https://github.com/zy2625/CppLib/blob/master/include/BinaryHeap.h)
 * [IndexHeap](https://github.com/zy2625/CppLib/blob/master/include/IndexHeap.h)
 
-#### Demo
+#### Usage
 
 ```
 $ more data/tinyHeap.txt
@@ -92,12 +93,12 @@ H E A P - E X A M - P L E -
 P X P (8 left on heap)
 ``` -->
 
-### List
+<!-- ### List
 
-* [ArrayList](https://github.com/zy2625/CppLib/blob/master/include/ArrayList.h)
-* [LinkedList](https://github.com/zy2625/CppLib/blob/master/include/LinkedList.h)
+* [Vector](https://github.com/zy2625/CppLib/blob/master/include/Vector.h)
+* [List](https://github.com/zy2625/CppLib/blob/master/include/List.h)
 
-#### Demo
+#### Usage
 
 ```
 ./bin/List
@@ -111,13 +112,13 @@ x.removeFirst(): 0 1 2 3 4 5 6 7 8 9 10 11
          x += y: 0 1 2 3 4 5 0 1 2 3 4 5
               x: 0 1 2 3 4 5 0 1 2 3 4 5
               y: 0 1 2 3 4 5
-```
+``` -->
 
 <!-- ### PriorityQueue
 
 * [PriorityQueue](https://github.com/zy2625/CppLib/blob/master/include/PriorityQueue.h)
 
-#### Demo
+#### Usage
 
 ```
 $ more data/tinyPQ.txt
@@ -132,7 +133,7 @@ Q X P (6 left on priority queue)
 * [ArrayQueue](https://github.com/zy2625/CppLib/blob/master/include/ArrayQueue.h)
 * [LinkedQueue](https://github.com/zy2625/CppLib/blob/master/include/LinkedQueue.h)
 
-#### Demo
+#### Usage
 
 ```
 $ more data/tobe.txt
@@ -146,7 +147,7 @@ to be or not to be (2 left on queue)
 
 * [Random](https://github.com/zy2625/CppLib/blob/master/include/Random.h)
 
-#### Demo
+#### Usage
 
 ```
 ./bin/Random
@@ -185,7 +186,7 @@ Normal Distribution:
 * [SeparateChainingHashMap](https://github.com/zy2625/CppLib/blob/master/include/SeparateChainingHashMap.h)
 * [SequentialSearchMap](https://github.com/zy2625/CppLib/blob/master/include/SequentialSearchMap.h)
 
-#### Demo
+#### Usage
 
 ```
 ./bin/Search data/ip.csv
@@ -208,7 +209,7 @@ Not Found!
 * [SelectionSort](https://github.com/zy2625/CppLib/blob/master/include/SelectionSort.h)
 * [ShellSort](https://github.com/zy2625/CppLib/blob/master/include/ShellSort.h)
 
-#### Demo
+#### Usage
 
 ```
 ./bin/Sort
@@ -229,7 +230,7 @@ BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
 * [ArrayStack](https://github.com/zy2625/CppLib/blob/master/include/ArrayStack.h)
 * [LinkedStack](https://github.com/zy2625/CppLib/blob/master/include/LinkedStack.h)
 
-#### Demo
+#### Usage
 
 ```
 $ more data/tobe.txt
@@ -243,7 +244,7 @@ to be or not to be (2 left on stack)
 
 * [Timer](https://github.com/zy2625/CppLib/blob/master/include/Timer.h)
 
-#### Demo
+#### Usage
 
 ```
 ./bin/Timer
@@ -259,7 +260,7 @@ It takes 0.495s to sum the sqrt 100000000 times
 * [UnionFind](https://github.com/zy2625/CppLib/blob/master/include/UnionFind.h)
 * [WeightedUnion](https://github.com/zy2625/CppLib/blob/master/include/WeightedUnion.h)
 
-#### Demo
+#### Usage
 
 ```
 ./bin/UnionFind

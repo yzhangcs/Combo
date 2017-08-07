@@ -61,10 +61,12 @@ public:
     
     // 随机打乱数组所有元素
     template<typename E, int n>
-    static void shuffle(E (&elems)[n]); 
+    static void shuffle(E (&elems)[n]) { shuffle(elems, 0, n)); } 
     // 随机打乱数组指定范围的元素
     template<typename E, int n>
     static void shuffle(E (&elems)[n], int lo, int hi); 
+    template<typename RandomAccessIterator>
+    static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi); 
 };
 
 size_t Random::seed = time(nullptr); // 默认使用时间作为种子
@@ -187,19 +189,6 @@ double Random::exponential(double lambda)
 }
 
 /**
- * 使用Kunth-Shuffle随机打乱数组所有元素.
- * 数组元素类型由模板的类型参数指定，数组长度为n，由非类型参数指定.
- *
- * @param elems: 一个长度为n的数组
- */
-template<typename E, int n>
-void Random::shuffle(E (&elems)[n])
-{
-    for (int i = 0; i < n; ++i)
-        swap(elems[random(i + 1)], elems[i]);
-}
-
-/**
  * 使用Kunth-Shuffle随机打乱数组指定范围的元素.
  * 数组元素类型由模板的类型参数指定，数组长度为n，由非类型参数指定.
  *
@@ -214,4 +203,21 @@ void Random::shuffle(E (&elems)[n], int lo, int hi)
     using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
     for (int i = lo; i < hi; ++i)
         swap(elems[random(lo, i + 1)], elems[i]);
+}
+
+/**
+ * 使用Kunth-Shuffle随机打乱由两个迭代器指定的范围的元素.
+ * 迭代器满足RandomAccessIterator的要求.
+ *
+ * @param lo: 左边界迭代器（包含）
+ *        hi: 右边界迭代器（不包含）
+ */
+template<typename RandomAccessIterator>
+static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi)
+{
+    int n = hi - lo;
+
+    using std::swap;
+    for (int i = 0; i < n; ++i) 
+        swap(lo[random(i + 1)], lo[i]);
 }

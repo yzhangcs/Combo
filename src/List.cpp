@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Compilation:  g++ -IList demo.cpp -o demo
  * Execution:    ./demo
- * Dependencies: ArrayList.h LinkedList.h
+ * Dependencies: Vector.h List.h
  *
  * A demo of the list.
  *
@@ -20,17 +20,17 @@
 
 #include <iomanip>
 #include <iostream>
-#include "ArrayList.h"
-#include "LinkedList.h"
+#include "Vector.h"
+#include "List.h"
 
 using namespace std;
 
 int main()
 {
-    ArrayList<int> x = ArrayList<int>();
-    ArrayList<int> y = ArrayList<int>(x);
-    // LinkedList<int> x = LinkedList<int>();
-    // LinkedList<int> y = LinkedList<int>(x);
+    Vector<int> x = Vector<int>();
+    Vector<int> y = Vector<int>(x);
+    // List<int> x = List<int>();
+    // List<int> y = List<int>(x);
     int tmp;
 
     cout << setw(17) << "x.addLast(): ";
