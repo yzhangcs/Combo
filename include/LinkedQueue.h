@@ -81,7 +81,7 @@ public:
         { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(tail); }
+    iterator end() const { return iterator(tail->next); }
 };
 
 /**
@@ -96,8 +96,8 @@ LinkedQueue<E>::LinkedQueue(const LinkedQueue& that)
     n = 0;
     head = nullptr;
     tail = nullptr;
-    for (Node* i = that.head; i != nullptr; i = i->next)
-        enqueue(i->elem);
+    for (auto i : that)
+        enqueue(i);
 }
 
 /**

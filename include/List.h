@@ -125,8 +125,8 @@ List<E>::List(const List& that)
     n = 0;
     head = nullptr;
     tail = nullptr;
-    for (Node* i = that.head->next; i != nullptr; i = i->next)
-        addLast(i->elem);
+    for (auto i : that)
+        addLast(i);
 }
 
 /**
