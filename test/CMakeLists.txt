@@ -33,44 +33,46 @@ endif()
 
 # Add test executables
 set(TEST_CPPLIB_LIST
-    # TestArrayDeque
-    TestArrayQueue
-    TestArrayStack
-    # TestLinkedDeque
-    # TestBinaryHeap
-    # TestIndexHeap
-    # TestVector
-    # TestList
-    TestLinkedQueue
-    TestLinkedStack
-    # TestPriorityQueue
-    # TestRandom
-    # TestBinarySearchMap
-    # TestBinarySearchSet
-    # TestBinarySearchTreeMap
-    # TestLinearProbingHashMap
-    # TestRedBlackTreeMap
-    # TestSeperateChainingHashMap
-    # TestSequentialSearchMap
-    # TestBubbleSort
-    # TestHeapSort
-    # TestInsertionSort
-    # TestMergeSort
-    # TestQuick3WaySort
-    # TestQuickSort
-    # TestSelectionSort
-    # TestShellSort
-    # TestQuickFind
-    # TestQuickUnion
-    # TestUnionFind
-    # TestWeightedUnion
+    # TestArrayDeque.cpp
+    TestArrayQueue.cpp
+    TestArrayStack.cpp
+    # TestLinkedDeque.cpp
+    # TestBinaryHeap.cpp
+    # TestIndexHeap.cpp
+    # TestVector.cpp
+    # TestList.cpp
+    TestLinkedQueue.cpp
+    TestLinkedStack.cpp
+    # TestPriorityQueue.cpp
+    # TestRandom.cpp
+    # TestBinarySearchMap.cpp
+    # TestBinarySearchSet.cpp
+    # TestBinarySearchTreeMap.cpp
+    # TestLinearProbingHashMap.cpp
+    # TestRedBlackTreeMap.cpp
+    # TestSeperateChainingHashMap.cpp
+    # TestSequentialSearchMap.cpp
+    # TestBubbleSort.cpp
+    # TestHeapSort.cpp
+    # TestInsertionSort.cpp
+    # TestMergeSort.cpp
+    # TestQuick3WaySort.cpp
+    # TestQuickSort.cpp
+    # TestSelectionSort.cpp
+    # TestShellSort.cpp
+    # TestQuickFind.cpp
+    # TestQuickUnion.cpp
+    # TestUnionFind.cpp
+    # TestWeightedUnion.cpp
     )
 
-
-message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")
 # Link against gtest or gtest_main as needed.
-foreach (test ${TEST_CPPLIB_LIST})
-    add_executable(${test} ${test}.cpp ${CPPLIB_HEADERS})
-    target_link_libraries(${test} gtest_main)
-    add_test(${test} ${EXECUTABLE_OUTPUT_PATH}/${test})
+foreach (src ${TEST_CPPLIB_LIST})
+    get_filename_component(name ${src} NAME_WE)
+    add_executable(${name} ${src} ${CPPLIB_HEADERS})
+    target_link_libraries(${name} gtest_main)
+    add_test(${name} ${EXECUTABLE_OUTPUT_PATH}/${name})
 endforeach ()
+
+add_executable(Test ${TEST_CPPLIB_LIST} ${CPPLIB_HEADERS})
+target_link_libraries(Test gtest_main)

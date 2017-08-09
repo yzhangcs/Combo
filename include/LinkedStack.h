@@ -21,16 +21,18 @@ private:
     struct Node
     {
         E elem;
+        Node* prev;
         Node* next;
-        Node(E elem) : elem(std::move(elem)), next(nullptr) {}
+        Node(E elem) : elem(std::move(elem)), prev(nullptr), next(nullptr) {}
     };
     int n; // 栈大小
-    Node* head; // 栈顶指针
+    Node* head; // 头指针指向栈顶
+    Node* tail; // 尾指针指向栈底
 public:
-    LinkedStack() : n(0), head(nullptr) {} // 构造函数
+    LinkedStack() : n(0), head(nullptr), tail(nullptr){} // 构造函数
     LinkedStack(const LinkedStack& that); // 复制构造函数
     LinkedStack(LinkedStack&& that) noexcept; // 移动构造函数
-    ~LinkedStack(); // 析构函数
+    ~LinkedStack() { clear(); } // 析构函数
 
     int size() const { return n; } // 返回栈当前大小
     bool isEmpty() const { return n == 0; } // 判断是否为空栈
@@ -79,7 +81,7 @@ public:
         { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(nullptr); }
+    iterator end() const { return iterator(tail->next); }
 };
 
 /**
@@ -91,15 +93,11 @@ public:
 template<typename E>
 LinkedStack<E>::LinkedStack(const LinkedStack& that)
 {
-    Node* aux = new Node(that.head->elem);
-
-    n = that.n;
-    head = aux;
-    for (Node* i = that.head->next; i != nullptr; i = i->next)
-    {
-        aux->next = new Node(i->elem);
-        aux = aux->next;
-    }
+    n = 0;
+    head = nullptr;
+    tail = nullptr;
+    for (auto i : that)
+        push(i);
 }
 
 /**
@@ -113,23 +111,9 @@ LinkedStack<E>::LinkedStack(LinkedStack&& that) noexcept
 {
     n = that.n;
     head = that.head;
-    that.head = nullptr; // 指向空指针，退出被析构
-}
-
-/**
- * 链式栈析构函数.
- */
-template<typename E>
-LinkedStack<E>::~LinkedStack()
-{
-    Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
-    {
-        aux = head;
-        head = head->next;
-        delete aux;
-    }
+    tail = that.tail;
+    that.head = nullptr;
+    that.tail = nullptr; // 指向空指针，退出被析构
 }
 
 /**
@@ -140,10 +124,16 @@ LinkedStack<E>::~LinkedStack()
 template<typename E>
 void LinkedStack<E>::push(E elem)
 {
-    Node* pold = head;
+    Node* pold = tail;
 
-    head = new Node(std::move(elem));
-    head->next = pold;
+    tail = new Node(std::move(elem));
+    if (isEmpty())
+        head = tail;
+    else
+    {
+        pold->next = tail;
+        tail->prev = pold;
+    }
     n++;
 }
 
@@ -159,10 +149,12 @@ E LinkedStack<E>::pop()
     if (isEmpty()) 
         throw std::out_of_range("Stack underflow.");
 
-    Node* pold = head;
-    E tmp = head->elem;
+    Node* pold = tail;
+    E tmp = tail->elem;
 
-    head = head->next;
+    tail = tail->prev;
+    if (tail != nullptr) tail->next = nullptr;
+    else                 head = tail;
     delete pold;
     n--;
     return tmp; // 发生NRVO
@@ -179,7 +171,7 @@ E LinkedStack<E>::top()
 {
     if (isEmpty()) 
         throw std::out_of_range("Stack underflow.");
-    return head->elem;
+    return tail->elem;
 }
 
 /**
@@ -193,6 +185,7 @@ void LinkedStack<E>::swap(LinkedStack& that)
     using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
     swap(n, that.n);
     swap(head, that.head);
+    swap(tail, that.tail);
 }
 
 /**
@@ -202,13 +195,14 @@ template<typename E>
 void LinkedStack<E>::clear()
 {
     Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
+    // 释放每个结点内存
+    while (head != nullptr) 
     {
         aux = head;
         head = head->next;
         delete aux;
     }
+    tail = nullptr;
     n = 0;
 }
 

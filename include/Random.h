@@ -61,7 +61,7 @@ public:
     
     // 随机打乱数组所有元素
     template<typename E, int n>
-    static void shuffle(E (&elems)[n]) { shuffle(elems, 0, n)); } 
+    static void shuffle(E (&elems)[n]) { shuffle(elems, 0, n); } 
     // 随机打乱数组指定范围的元素
     template<typename E, int n>
     static void shuffle(E (&elems)[n], int lo, int hi); 
@@ -202,7 +202,7 @@ void Random::shuffle(E (&elems)[n], int lo, int hi)
     assert(lo >= 0 && hi <= n && lo <= hi);
     using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
     for (int i = lo; i < hi; ++i)
-        swap(elems[random(lo, i + 1)], elems[i]);
+        swap(elems[Random::random(lo, i + 1)], elems[i]);
 }
 
 /**
@@ -219,5 +219,5 @@ static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi)
 
     using std::swap;
     for (int i = 0; i < n; ++i) 
-        swap(lo[random(i + 1)], lo[i]);
+        swap(lo[Random::random(i + 1)], lo[i]);
 }

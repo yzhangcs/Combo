@@ -29,10 +29,10 @@ private:
     Node* head; // 队首指针
     Node* tail; // 队尾指针
 public:
-    LinkedDeque(); // 构造函数
+    LinkedDeque() : n(0), head(nullptr), tail(nullptr){} // 构造函数
     LinkedDeque(const LinkedDeque& that); // 复制构造函数
     LinkedDeque(LinkedDeque&& that) noexcept; // 移动构造函数
-    ~LinkedDeque(); // 析构函数
+    ~LinkedDeque() { clear(); } // 析构函数
 
     int size() const { return n; } // 返回队列当前大小
     bool isEmpty() const { return n == 0; } // 判断是否为空队列
@@ -97,19 +97,8 @@ public:
         { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(tail); }
+    iterator end() const { return iterator(tail->next); }
 };
-
-/**
- * 链式双端队列构造函数，初始化双端队列.
- */
-template<typename E>
-LinkedDeque<E>::LinkedDeque()
-{
-    n = 0;
-    head = nullptr;
-    tail = nullptr;
-}
 
 /**
  * 链式双端队列复制构造函数.
@@ -123,8 +112,8 @@ LinkedDeque<E>::LinkedDeque(const LinkedDeque& that)
     n = 0;
     head = nullptr;
     tail = nullptr;
-    for (Node* i = that.head; i != nullptr; i = i->next)
-        addLast(i->elem);
+    for (auto i : that)
+        addLast(i);
 }
 
 /**
@@ -141,22 +130,6 @@ LinkedDeque<E>::LinkedDeque(LinkedDeque&& that) noexcept
     tail = that.tail;
     that.head = nullptr;
     that.tail = nullptr; // 指向空指针，退出被析构
-}
-
-/**
- * 链式双端队列析构函数.
- */
-template<typename E>
-LinkedDeque<E>::~LinkedDeque()
-{
-    Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
-    {
-        aux = head;
-        head = head->next;
-        delete aux;
-    }
 }
 
 /**
@@ -296,8 +269,8 @@ template<typename E>
 void LinkedDeque<E>::clear()
 {
     Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
+    // 释放每个结点内存
+    while (head != nullptr) 
     {
         aux = head;
         head = head->next;

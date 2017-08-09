@@ -34,7 +34,7 @@ public:
     List() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
     List(const List& that); // 复制构造函数
     List(List&& that) noexcept; // 移动构造函数
-    ~List(); // 析构函数
+    ~List() { clear(); } // 析构函数
 
     int size() const { return n; } // 返回链表当前大小
     int indexOf(const E& elem) const; // 返回第一次出现该元素的位置
@@ -69,6 +69,7 @@ public:
     // 链表不支持随机访问
     class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
     {
+        friend class List;
     private:
         Node* i;
     public:
@@ -145,28 +146,11 @@ List<E>::List(List&& that) noexcept
 }
 
 /**
- * 链表析构函数.
- */
-template<typename E>
-List<E>::~List()
-{
-    Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
-    {
-        aux = head;
-        head = head->next;
-        delete aux;
-    }
-}
-
-/**
  * 定位指定位置的元素.
  * 返回指向该位置元素的指针.
  *
  * @param i: 指定元素的索引
- * @return pl: 定位成功，返回指向该位置的元素的指针
- *         nullptr: 定位失败，返回指向空元素的指针
+ * @return 指向该位置元素的指针
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
@@ -174,22 +158,7 @@ typename List<E>::Node* List<E>::locate(int i) const
 {
     if (!valid(i)) 
         throw std::out_of_range("List index out of range.");
-
-    Node* pl = nullptr;
-
-    if (i < (n >> 1))
-    {
-        pl = head;
-        for (int j = 0; j < i; ++j)
-            pl = pl->next;
-    }
-    else
-    {
-        pl = tail;
-        for (int j = n - 1; j > i; --j)
-            pl = pl->prev;
-    }
-    return pl;
+    return std::next(begin(), i).i;;
 }
 
 /**
@@ -286,13 +255,14 @@ template<typename E>
 void List<E>::clear()
 {
     Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
+    // 释放每个结点内存
+    while (head != nullptr) 
     {
         aux = head;
         head = head->next;
         delete aux;
     }
+    tail = nullptr;
     n = 0;
 }
 

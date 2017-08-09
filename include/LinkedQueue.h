@@ -31,7 +31,7 @@ public:
     LinkedQueue() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
     LinkedQueue(const LinkedQueue& that); // 复制构造函数
     LinkedQueue(LinkedQueue&& that) noexcept; // 移动构造函数
-    ~LinkedQueue(); // 析构函数
+    ~LinkedQueue() { clear(); } // 析构函数
 
     int size() const { return n; } // 返回队列当前大小
     bool isEmpty() const { return n == 0; } // 判断是否为空队列
@@ -114,22 +114,6 @@ LinkedQueue<E>::LinkedQueue(LinkedQueue&& that) noexcept
     tail = that.tail;
     that.head = nullptr;
     that.tail = nullptr; // 指向空指针，退出被析构
-}
-
-/**
- * 链式队列析构函数.
- */
-template<typename E>
-LinkedQueue<E>::~LinkedQueue()
-{
-    Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
-    {
-        aux = head;
-        head = head->next;
-        delete aux;
-    }
 }
 
 /**
@@ -218,8 +202,8 @@ template<typename E>
 void LinkedQueue<E>::clear()
 {
     Node* aux = nullptr;
-
-    while (head != nullptr) // 释放每个结点内存
+    // 释放每个结点内存
+    while (head != nullptr) 
     {
         aux = head;
         head = head->next;
