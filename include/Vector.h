@@ -314,7 +314,8 @@ E Vector<E>::get(int i) const
 template<typename E>
 void Vector<E>::swap(Vector<E>& that)
 {
-    using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
+    // 如果没有针对类型的特化swap，则使用std::swap
+    using std::swap; 
     swap(n, that.n);
     swap(capacity, that.capacity);
     swap(pl, that.pl);

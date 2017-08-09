@@ -29,7 +29,7 @@ private:
     Node* head; // 头指针指向栈顶
     Node* tail; // 尾指针指向栈底
 public:
-    LinkedStack() : n(0), head(nullptr), tail(nullptr){} // 构造函数
+    LinkedStack() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
     LinkedStack(const LinkedStack& that); // 复制构造函数
     LinkedStack(LinkedStack&& that) noexcept; // 移动构造函数
     ~LinkedStack() { clear(); } // 析构函数
@@ -182,7 +182,8 @@ E LinkedStack<E>::top()
 template<typename E>
 void LinkedStack<E>::swap(LinkedStack& that)
 {
-    using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
+    // 如果没有针对类型的特化swap，则使用std::swap
+    using std::swap; 
     swap(n, that.n);
     swap(head, that.head);
     swap(tail, that.tail);

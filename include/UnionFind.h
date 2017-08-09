@@ -153,7 +153,8 @@ void UnionFind::join(int p, int q)
  */
 void UnionFind::swap(UnionFind& that)
 {
-    using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
+    // 如果没有针对类型的特化swap，则使用std::swap
+    using std::swap; 
     swap(n, that.n);
     swap(components, that.components);
     swap(id, that.id);

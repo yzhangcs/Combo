@@ -285,7 +285,8 @@ E ArrayDeque<E>::back()
 template<typename E>
 void ArrayDeque<E>::swap(ArrayDeque<E>& that)
 {
-    using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
+    // 如果没有针对类型的特化swap，则使用std::swap
+    using std::swap; 
     swap(n, that.n);
     swap(head, that.head);
     swap(tail, that.tail);

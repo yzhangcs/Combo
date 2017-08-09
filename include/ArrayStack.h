@@ -202,7 +202,8 @@ E ArrayStack<E>::top()
 template<typename E>
 void ArrayStack<E>::swap(ArrayStack<E>& that)
 {
-    using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
+    // 如果没有针对类型的特化swap，则使用std::swap
+    using std::swap; 
     swap(n, that.n);
     swap(capacity, that.capacity);
     swap(ps, that.ps);

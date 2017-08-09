@@ -200,7 +200,8 @@ template<typename E, int n>
 void Random::shuffle(E (&elems)[n], int lo, int hi)
 {
     assert(lo >= 0 && hi <= n && lo <= hi);
-    using std::swap; // 如果没有针对类型的特化swap，则使用std::swap
+    // 如果没有针对类型的特化swap，则使用std::swap
+    using std::swap; 
     for (int i = lo; i < hi; ++i)
         swap(elems[Random::random(lo, i + 1)], elems[i]);
 }
