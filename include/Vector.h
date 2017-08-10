@@ -89,7 +89,7 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i++;
+            ++*this;
             return tmp;
         }        
         iterator operator+(int pos)
@@ -107,7 +107,7 @@ public:
         iterator operator--(int)
         {
             iterator tmp(*this);
-            i--;
+            --*this;
             return tmp;
         }
         iterator operator-(int pos) 
@@ -346,7 +346,8 @@ E& Vector<E>::operator[](int i) const
 template<typename E>
 Vector<E>& Vector<E>::operator=(Vector<E> that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

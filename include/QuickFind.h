@@ -156,7 +156,8 @@ void QuickFind::swap(QuickFind& that)
  */
 QuickFind& QuickFind::operator=(QuickFind that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

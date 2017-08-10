@@ -90,18 +90,18 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i = i->next;
+            ++*this;
             return tmp;
         }
         iterator& operator--()
         {
-            i = i->prev;
+            i = (i == nullptr) ? tail : i->prev;
             return *this;
         }
         iterator operator--(int)
         {
             iterator tmp(*this);
-            i = i->prev;
+            --*this;
             return tmp;
         }
         bool operator==(const iterator& that) const
@@ -110,7 +110,7 @@ public:
         { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(tail->next); }
+    iterator end() const { return iterator(nullptr); }
 };
 
 /**
@@ -277,7 +277,8 @@ void List<E>::clear()
 template<typename E>
 List<E>& List<E>::operator=(List<E> that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

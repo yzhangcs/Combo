@@ -138,7 +138,8 @@ void QuickUnion::swap(QuickUnion& that)
  */
 QuickUnion& QuickUnion::operator=(QuickUnion that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

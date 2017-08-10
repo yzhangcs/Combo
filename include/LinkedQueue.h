@@ -72,7 +72,7 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i = i->next;
+            ++*this;
             return tmp;
         }
         bool operator==(const iterator& that) const
@@ -81,7 +81,7 @@ public:
         { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(tail->next); }
+    iterator end() const { return iterator(nullptr); }
 };
 
 /**
@@ -224,7 +224,8 @@ void LinkedQueue<E>::clear()
 template<typename E>
 LinkedQueue<E>& LinkedQueue<E>::operator=(LinkedQueue<E> that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

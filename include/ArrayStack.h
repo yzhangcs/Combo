@@ -71,7 +71,7 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i++;
+            ++*this;
             return tmp;
         }
         bool operator==(const iterator& that) const
@@ -220,7 +220,8 @@ template<typename E>
 ArrayStack<E>& ArrayStack<E>::operator=(ArrayStack that)
 {
     // 按值传参，传入右值时会有「复制消除」
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

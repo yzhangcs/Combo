@@ -77,18 +77,18 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i = i->next;
+            ++*this;
             return tmp;
         }        
         iterator& operator--()
         {
-            i = i->prev;
+            i = (i == nullptr) ? tail : i->prev;
             return *this;
         }
         iterator operator--(int)
         {
             iterator tmp(*this);
-            i = i->prev;
+            --*this;
             return tmp;
         }
         bool operator==(const iterator& that) const
@@ -97,7 +97,7 @@ public:
         { return i != that.i; }
     };
     iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(tail->next); }
+    iterator end() const { return iterator(nullptr); }
 };
 
 /**
@@ -264,7 +264,7 @@ void LinkedDeque<E>::swap(LinkedDeque<E>& that)
 }
 
 /**
- * 清空该队列元素.
+ * 清空该双端队列元素.
  */
 template<typename E>
 void LinkedDeque<E>::clear()
@@ -291,12 +291,43 @@ void LinkedDeque<E>::clear()
 template<typename E>
 LinkedDeque<E>& LinkedDeque<E>::operator=(LinkedDeque<E> that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 
 /**
- * <<操作符重载函数，打印所有队列元素.
+ * ==操作符重载函数，比较两个LinkedDeque对象是否相等.
+ *
+ * @param lhs: LinkedDeque对象lhs
+ *        rhs: LinkedDeque对象rhs
+ * @return true: 相等
+ *         false: 不等
+ */
+template<typename E>
+bool operator==(const LinkedDeque<E>& lhs, const LinkedDeque<E>& rhs)
+{
+    if (&lhs == &rhs)             return true;
+    if (lhs.size() != rhs.size()) return false;
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+/**
+ * !=操作符重载函数，比较两个LinkedDeque对象是否不等.
+ *
+ * @param lhs: LinkedDeque对象lhs
+ *        rhs: LinkedDeque对象rhs
+ * @return true: 不等
+ *         false: 相等
+ */
+template<typename E>
+bool operator!=(const LinkedDeque<E>& lhs, const LinkedDeque<E>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+/**
+ * <<操作符重载函数，打印所有双端队列元素.
  *
  * @param os: 输出流对象
  *        deque: 要输出的队列

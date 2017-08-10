@@ -170,7 +170,8 @@ void UnionFind::swap(UnionFind& that)
  */
 UnionFind& UnionFind::operator=(UnionFind that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

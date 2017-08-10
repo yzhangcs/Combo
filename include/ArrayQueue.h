@@ -74,7 +74,7 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i++;
+            ++*this;
             return tmp;
         }
         bool operator==(const iterator& that) const
@@ -150,7 +150,9 @@ void ArrayQueue<E>::resize(int size)
     ArrayQueue tmp(size);
     // 将所有元素移动到临时队列
     std::move(begin(), end(), tmp.begin());
-    tmp.n = n; // 设置临时队列的大小
+    tmp.n = n; 
+    tmp.head = 0; 
+    tmp.tail = n; // 设置临时队列的大小和首尾索引
     swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
@@ -261,7 +263,8 @@ void ArrayQueue<E>::clear()
 template<typename E>
 ArrayQueue<E>& ArrayQueue<E>::operator=(ArrayQueue<E> that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 

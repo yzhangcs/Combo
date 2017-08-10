@@ -13,17 +13,29 @@ protected:
     ArrayStack<string> b;
     ArrayStack<string> c;
     string str;    
+    int scale;
 public:
-    virtual void SetUp() {}
+    virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
+
+    void push_n(ArrayStack<string>& s, int n)
+    {
+        for (int i = 0; i < n; ++i)
+            s.push(std::to_string(i));
+    }
+    void pop_n(ArrayStack<string>& s, int n)
+    {
+        for (int i = 0; i < n; ++i)
+            s.pop();
+    }
 };
 
 TEST_F(TestArrayStack, Basic)
 {
     EXPECT_NO_THROW({
         ArrayStack<string> s1;
-        ArrayStack<string> s2(30);
-        ArrayStack<string> s3(a);
+        ArrayStack<string> s2(s1);
+        ArrayStack<string> s3(30);
         ArrayStack<string> s4(ArrayStack<string>());
 
         s1 = s2;
@@ -35,13 +47,13 @@ TEST_F(TestArrayStack, ElementAccess)
 {
     EXPECT_THROW(stack.top(), std::out_of_range);
     EXPECT_NO_THROW({
-        for (int i = 0; i < 32; ++i)
+        for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
             stack.push(str);
             EXPECT_EQ(str, stack.top());
         }
-        for (int i = 0; i < 32; ++i)
+        for (int i = 0; i < scale; ++i)
         {
             str = stack.top();
             EXPECT_EQ(str, stack.pop());
@@ -52,13 +64,13 @@ TEST_F(TestArrayStack, ElementAccess)
 
 TEST_F(TestArrayStack, Iterators)
 {
+    EXPECT_EQ(stack.begin(), stack.end());
+    push_n(stack, scale);
+    EXPECT_NE(stack.begin(), stack.end());  
+
     auto it = stack.begin();
 
-    EXPECT_EQ(it, stack.end());
-    for (int i = 0; i < 32; ++i)
-        stack.push(std::to_string(i));  
-    EXPECT_NE(it, stack.end());  
-    for (int i = 0; i < 32; ++i)
+    for (int i = 0; i < scale; ++i)
         EXPECT_EQ(std::to_string(i), *(it++));
     EXPECT_EQ(it, stack.end());
 }
@@ -67,13 +79,9 @@ TEST_F(TestArrayStack, Capacity)
 {
     EXPECT_TRUE(stack.isEmpty());
     EXPECT_EQ(0, stack.size());
-    for (int i = 0; i < 32; ++i)
-    { 
-        EXPECT_EQ(i, stack.size());
-        stack.push(std::to_string(i)); 
-    }
-    for (int i = 0; i < 32; ++i)
-        stack.pop();
+    push_n(stack, scale);
+    EXPECT_EQ(scale, stack.size());
+    pop_n(stack, scale);
     EXPECT_TRUE(stack.isEmpty());
 }
 
@@ -81,33 +89,28 @@ TEST_F(TestArrayStack, Modifiers)
 {
     EXPECT_THROW(stack.pop(), std::out_of_range);
     EXPECT_NO_THROW({
-        for (int i = 0; i < 32; ++i)
-            stack.push(std::to_string(i));
-        for (int i = 0; i < 32; ++i)
-            stack.pop();
+        push_n(stack, scale);
+        pop_n(stack, scale);
     });
     EXPECT_THROW(stack.pop(), std::out_of_range);
-    stack.push(std::to_string(0));
+
+    push_n(stack, scale);
     stack.clear();
     EXPECT_TRUE(stack.isEmpty());
     EXPECT_EQ(0, stack.size());
     EXPECT_THROW(stack.pop(), std::out_of_range);
-    
-    auto it = b.begin();
 
-    for (int i = 0; i < 32; ++i)
-        a.push(std::to_string(i));
+    push_n(a, scale);
     b.swap(a);
-    EXPECT_EQ(32, b.size());
-    for (int i = 0; i < 32; ++i)
-        EXPECT_EQ(std::to_string(i), *(it++));
+    EXPECT_EQ(scale, b.size());
+    for (int i = scale; i > 0; --i)
+        EXPECT_EQ(std::to_string(i - 1), b.pop());
 }
 
 TEST_F(TestArrayStack, Other)
 {
     using std::swap;
-    for (int i = 0; i < 32; ++i)
-        a.push(std::to_string(i));
+    push_n(a, scale);
     c = a;
     EXPECT_TRUE(c == a && c != b);
     b.swap(a);

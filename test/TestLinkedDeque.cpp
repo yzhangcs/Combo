@@ -1,24 +1,24 @@
 #include <iostream>
 #include <string>
-#include "ArrayDeque.h"
+#include "LinkedDeque.h"
 #include "gtest/gtest.h"
 
 using std::string;
 
-class TestArrayDeque : public testing::Test 
+class TestLinkedDeque : public testing::Test 
 {
 protected:
-    ArrayDeque<string> deque;
-    ArrayDeque<string> a;
-    ArrayDeque<string> b;
-    ArrayDeque<string> c;
+    LinkedDeque<string> deque;
+    LinkedDeque<string> a;
+    LinkedDeque<string> b;
+    LinkedDeque<string> c;
     string str;    
     int scale;
 public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void add_n(ArrayDeque<string>& s, int n, bool isForward)
+    void add_n(LinkedDeque<string>& s, int n, bool isForward)
     {
         if (isForward)
         {
@@ -31,7 +31,7 @@ public:
                 s.addFirst(std::to_string(i));
         }
     }
-    void remove_n(ArrayDeque<string>& s, int n, bool isForward)
+    void remove_n(LinkedDeque<string>& s, int n, bool isForward)
     {
         if (isForward)
         {
@@ -46,20 +46,19 @@ public:
     }
 };
 
-TEST_F(TestArrayDeque, Basic)
+TEST_F(TestLinkedDeque, Basic)
 {
     EXPECT_NO_THROW({
-        ArrayDeque<string> s1;
-        ArrayDeque<string> s2(s1);
-        ArrayDeque<string> s3(30);
-        ArrayDeque<string> s4(ArrayDeque<string>());
+        LinkedDeque<string> s1;
+        LinkedDeque<string> s2(s1);
+        LinkedDeque<string> s3(LinkedDeque<string>());
 
-        s1 = s2;
-        s2 = ArrayDeque<string>(15);
+        // s1 = s2;
+        // s2 = LinkedDeque<string>();
     });
 }
 
-TEST_F(TestArrayDeque, ElementAccess)
+TEST_F(TestLinkedDeque, ElementAccess)
 {
     EXPECT_THROW(deque.front(), std::out_of_range);
     EXPECT_THROW(deque.back(), std::out_of_range);
@@ -91,7 +90,7 @@ TEST_F(TestArrayDeque, ElementAccess)
     EXPECT_THROW(deque.back(), std::out_of_range);
 }
 
-TEST_F(TestArrayDeque, Iterators)
+TEST_F(TestLinkedDeque, Iterators)
 {
     EXPECT_EQ(deque.begin(), deque.end());
     add_n(deque, scale, true);
@@ -108,7 +107,7 @@ TEST_F(TestArrayDeque, Iterators)
     EXPECT_EQ(ed, deque.begin());
 }
 
-TEST_F(TestArrayDeque, Capacity)
+TEST_F(TestLinkedDeque, Capacity)
 {
     EXPECT_TRUE(deque.isEmpty());
     EXPECT_EQ(0, deque.size());
@@ -122,7 +121,7 @@ TEST_F(TestArrayDeque, Capacity)
     EXPECT_TRUE(deque.isEmpty());
 }
 
-TEST_F(TestArrayDeque, Modifiers)
+TEST_F(TestLinkedDeque, Modifiers)
 {
     EXPECT_THROW(deque.dequeue(), std::out_of_range);
     EXPECT_NO_THROW({
@@ -146,7 +145,7 @@ TEST_F(TestArrayDeque, Modifiers)
         EXPECT_EQ(std::to_string(i), b.dequeue());
 }
 
-TEST_F(TestArrayDeque, Other)
+TEST_F(TestLinkedDeque, Other)
 {
     using std::swap;
     add_n(a, scale, true);

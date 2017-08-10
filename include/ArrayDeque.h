@@ -67,9 +67,9 @@ public:
         ~iterator() {}
 
         E& operator*() const
-        { return deque->pq[(deque->head + i) % deque->capacity]; }
+        { return deque->pd[(deque->head + i) % deque->capacity]; }
         E* operator->() const
-        { return &deque->pq[(deque->head + i) % deque->capacity]; }
+        { return &deque->pd[(deque->head + i) % deque->capacity]; }
         iterator& operator++()
         {
             i++;
@@ -78,7 +78,7 @@ public:
         iterator operator++(int)
         {
             iterator tmp(*this);
-            i++;
+            ++*this;
             return tmp;
         }        
         iterator& operator--()
@@ -89,7 +89,7 @@ public:
         iterator operator--(int)
         {
             iterator tmp(*this);
-            i--;
+            --*this;
             return tmp;
         }
         bool operator==(const iterator& that) const
@@ -165,7 +165,9 @@ void ArrayDeque<E>::resize(int size)
     ArrayDeque tmp(size);
     // 将所有元素移动到临时双端队列
     std::move(begin(), end(), tmp.begin());
-    tmp.n = n; // 设置临时双端队列的大小
+    tmp.n = n; 
+    tmp.head = 0; 
+    tmp.tail = n; // 设置临时双端队列的大小和首尾索引
     swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
@@ -295,7 +297,7 @@ void ArrayDeque<E>::swap(ArrayDeque<E>& that)
 }
 
 /**
- * 清空该队列元素.
+ * 清空该双端队列元素.
  * 不释放空间，队列容量保持不变.
  */
 template<typename E>
@@ -316,7 +318,8 @@ void ArrayDeque<E>::clear()
 template<typename E>
 ArrayDeque<E>& ArrayDeque<E>::operator=(ArrayDeque<E> that)
 {
-    swap(that); // *this与that互相交换，退出时that被析构
+    // *this与that互相交换，退出时that被析构
+    swap(that);
     return *this;
 }
 
@@ -351,7 +354,7 @@ bool operator!=(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
 }
 
 /**
- * <<操作符重载函数，打印所有队列元素.
+ * <<操作符重载函数，打印所有双端队列元素.
  *
  * @param os: 输出流对象
  *        deque: 要输出的队列
