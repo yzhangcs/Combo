@@ -23,13 +23,13 @@ $ git clone https://github.com/zy2625/CppLib.git
 
 2. Build 
 
-    * Build samples only:  
+    * Samples only:  
     ```bash
     $ mkdir build && cd build
     $ cmake ..
     $ make
     ```
-    * If the unit-test is needed, the workflow should be:  
+    * Additional tests:  
     ```bash
     $ mkdir build && cd build
     $ cmake -DCPPLIB_BUILD_TEST=ON ..
@@ -37,7 +37,7 @@ $ git clone https://github.com/zy2625/CppLib.git
     ```
 
 3. Run
-    * Run all targets:
+    * All targets:
       * Specific target
       ```bash
       $ cd .. && ./bin/Stack ./data/tobe.txt
@@ -46,7 +46,7 @@ $ git clone https://github.com/zy2625/CppLib.git
       ```bash
       $ make run
       ```
-    * Run all tests:
+    * All tests:
       * Detailed output
       ```bash
       $ cd .. && ./bin/Test
@@ -111,10 +111,10 @@ P X P (8 left on heap)
 
 ```
 ./bin/List
-    x.addLast(): 0 1 2 3 4 5 6 7 8 9 10 11
-x.removeFirst(): 0 1 2 3 4 5 6 7 8 9 10 11
-   x.addFirst(): 11 10 9 8 7 6 5 4 3 2 1 0
- x.removeLast(): 0 1 2 3 4 5 6 7 8 9 10 11
+    x.insertBack(): 0 1 2 3 4 5 6 7 8 9 10 11
+x.removeFront(): 0 1 2 3 4 5 6 7 8 9 10 11
+   x.insertFront(): 11 10 9 8 7 6 5 4 3 2 1 0
+ x.removeBack(): 0 1 2 3 4 5 6 7 8 9 10 11
         x.add(): 0 1 2 3 4 5
           y = x: 0 1 2 3 4 5
           x + y: 0 1 2 3 4 5 0 1 2 3 4 5

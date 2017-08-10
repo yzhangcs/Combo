@@ -46,9 +46,9 @@ int main(int argc, char* argv[])
     for (auto i : buf)
     {
         if (i != "-")
-            demo.addLast(i);
+            demo.insertBack(i);
         else
-            cout << demo.removeFirst() << " ";
+            cout << demo.removeFront() << " ";
     }
     cout << "(" << demo.size() << " left on deque)" << endl;
     demo.clear();
@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
     for (auto i : buf)
     {
         if (elem != "-")
-            demo.addLast(i);
+            demo.insertBack(i);
         else
-            cout << demo.removeLast() << " ";
+            cout << demo.removeBack() << " ";
     }
     cout << "(" << demo.size() << " left on deque)" << endl;
     fin.close();

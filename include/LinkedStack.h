@@ -18,14 +18,19 @@ template<typename E>
 class LinkedStack
 {
 private:
+    struct NodeBase
+    {
+        Node* prev;
+        Node* next;
+        Node(E elem) : prev(this), next(this) {}
+    }
     struct Node
     {
         E elem;
-        Node* prev;
-        Node* next;
         Node(E elem) : elem(std::move(elem)), prev(nullptr), next(nullptr) {}
     };
     int n; // 栈大小
+    Node* sentinel //
     Node* head; // 头指针指向栈顶
     Node* tail; // 尾指针指向栈底
 public:

@@ -43,11 +43,11 @@ public:
     void set(int i, E elem) { locate(i)->elem = std::move(elem); } // 设置指定位置的元素值
     void add(int i, E elem); // 添加指定元素到指定位置
     void add(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
-    void addFirst(E elem) { add(0, std::move(elem)); } // 添加元素到链表头部
-    void addLast(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
+    void insertFront(E elem) { add(0, std::move(elem)); } // 添加元素到链表头部
+    void insertBack(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
     E remove(int i); // 移除指定位置的元素
-    E removeFirst() { return remove(0); } // 移除链表头部元素
-    E removeLast() { return remove(n - 1); } // 移除链表尾部元素
+    E removeFront() { return remove(0); } // 移除链表头部元素
+    E removeBack() { return remove(n - 1); } // 移除链表尾部元素
     E get(int i) const { return locate(i)->elem; } // 返回指定位置的元素值
     E front() const { return locate(0)->elem; } // 返回链表头部元素
     E back() const { return locate(n - 1)->elem; } // 返回链表尾部元素
@@ -126,7 +126,7 @@ List<E>::List(const List& that)
     head = nullptr;
     tail = nullptr;
     for (auto i : that)
-        addLast(i);
+        insertBack(i);
 }
 
 /**

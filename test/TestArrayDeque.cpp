@@ -23,12 +23,12 @@ public:
         if (isForward)
         {
             for (int i = 0; i < n; ++i) 
-                s.addLast(std::to_string(i));
+                s.insertBack(std::to_string(i));
         }
         else
         {
             for (int i = 0; i < n; ++i) 
-                s.addFirst(std::to_string(i));
+                s.insertFront(std::to_string(i));
         }
     }
     void remove_n(ArrayDeque<string>& s, int n, bool isForward)
@@ -36,12 +36,12 @@ public:
         if (isForward)
         {
             for (int i = 0; i < n; ++i) 
-                s.removeLast();
+                s.removeBack();
         }
         else
         {
             for (int i = 0; i < n; ++i) 
-                s.removeFirst();
+                s.removeFront();
         }
     }
 };
@@ -67,24 +67,24 @@ TEST_F(TestArrayDeque, ElementAccess)
         for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
-            deque.addLast(str);
+            deque.insertBack(str);
             EXPECT_EQ(str, deque.back());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
-            deque.addFirst(str);
+            deque.insertFront(str);
             EXPECT_EQ(str, deque.front());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = deque.front();
-            EXPECT_EQ(str, deque.removeFirst());
+            EXPECT_EQ(str, deque.removeFront());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = deque.back();
-            EXPECT_EQ(str, deque.removeLast());
+            EXPECT_EQ(str, deque.removeBack());
         }
     });
     EXPECT_THROW(deque.front(), std::out_of_range);

@@ -36,12 +36,12 @@ public:
 
     int size() const { return n; } // 返回队列当前大小
     bool isEmpty() const { return n == 0; } // 判断是否为空队列
-    void enqueue(E elem) { addLast(std::move(elem)); } // 入队函数
-    void addFirst(E elem); // 添加元素到队首
-    void addLast(E elem); // 添加元素到队尾
-    E dequeue() { return removeFirst(); } // 出队函数
-    E removeFirst(); // 队首元素出队
-    E removeLast(); // 队尾元素出队
+    void enqueue(E elem) { insertBack(std::move(elem)); } // 入队函数
+    void insertFront(E elem); // 添加元素到队首
+    void insertBack(E elem); // 添加元素到队尾
+    E dequeue() { return removeFront(); } // 出队函数
+    E removeFront(); // 队首元素出队
+    E removeBack(); // 队尾元素出队
     E front(); // 返回队首
     E back(); // 返回队尾
     void swap(LinkedDeque& that); // 内容与另一个LinkedDeque对象交换
@@ -113,7 +113,7 @@ LinkedDeque<E>::LinkedDeque(const LinkedDeque& that)
     head = nullptr;
     tail = nullptr;
     for (auto i : that)
-        addLast(i);
+        insertBack(i);
 }
 
 /**
@@ -138,7 +138,7 @@ LinkedDeque<E>::LinkedDeque(LinkedDeque&& that) noexcept
  * @param elem: 要添加到队首的元素
  */
 template<typename E>
-void LinkedDeque<E>::addFirst(E elem)
+void LinkedDeque<E>::insertFront(E elem)
 {
     Node* pold = head;
 
@@ -159,7 +159,7 @@ void LinkedDeque<E>::addFirst(E elem)
  * @param elem: 要添加到队尾的元素
  */
 template<typename E>
-void LinkedDeque<E>::addLast(E elem)
+void LinkedDeque<E>::insertBack(E elem)
 {
     Node* pold = tail;
 
@@ -181,7 +181,7 @@ void LinkedDeque<E>::addLast(E elem)
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E LinkedDeque<E>::removeFirst()
+E LinkedDeque<E>::removeFront()
 {
     if (isEmpty()) 
         throw std::out_of_range("Deque underflow.");
@@ -204,7 +204,7 @@ E LinkedDeque<E>::removeFirst()
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E LinkedDeque<E>::removeLast()
+E LinkedDeque<E>::removeBack()
 {
     if (isEmpty()) 
         throw std::out_of_range("Deque underflow.");
