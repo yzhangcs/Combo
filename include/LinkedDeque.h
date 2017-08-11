@@ -26,26 +26,26 @@ class LinkedDeque
         Node(E elem) : elem(std::move(elem)), prev(this), next(this) {}
     };
 private:
-    int n; // 队列大小
+    int n; // 双端队列大小
     Node* sentinel; // 哨兵指针
 public:
-    LinkedDeque() : n(0), sentinel(new Node) {} // 构造函数
-    LinkedDeque(const LinkedDeque& that); // 复制构造函数
-    LinkedDeque(LinkedDeque&& that) noexcept; // 移动构造函数
-    ~LinkedDeque(); // 析构函数
+    LinkedDeque() : n(0), sentinel(new Node) {}
+    LinkedDeque(const LinkedDeque& that);
+    LinkedDeque(LinkedDeque&& that) noexcept;
+    ~LinkedDeque();
 
-    int size() const { return n; } // 返回队列当前大小
-    bool isEmpty() const { return n == 0; } // 判断是否为空队列
-    void enqueue(E elem) { insertBack(std::move(elem)); } // 入队函数
+    int size() const { return n; } // 返回双端队列当前大小
+    bool empty() const { return n == 0; } // 判断是否为空双端队列
     void insertFront(E elem); // 添加元素到队首
     void insertBack(E elem); // 添加元素到队尾
-    E dequeue() { return removeFront(); } // 出队函数
+    void enqueue(E elem) { insertBack(std::move(elem)); } // 入队函数
     E removeFront(); // 队首元素出队
     E removeBack(); // 队尾元素出队
-    E front(); // 返回队首
-    E back(); // 返回队尾
+    E dequeue() { return removeFront(); } // 出队函数
+    E& front(); // 返回队首引用
+    E& back(); // 返回队尾引用
     void swap(LinkedDeque& that); // 内容与另一个LinkedDeque对象交换
-    void clear(); // 清空队列
+    void clear(); // 清空双端队列
     
     LinkedDeque& operator=(LinkedDeque that);
     template <typename T>
@@ -102,9 +102,9 @@ public:
 
 /**
  * 链式双端队列复制构造函数.
- * 复制另一个队列作为初始化的值.
+ * 复制另一个双端队列作为初始化的值.
  *
- * @param that: 被复制的队列
+ * @param that: 被复制的双端队列
  */
 template<typename E>
 LinkedDeque<E>::LinkedDeque(const LinkedDeque& that)
@@ -117,9 +117,9 @@ LinkedDeque<E>::LinkedDeque(const LinkedDeque& that)
 
 /**
  * 链式双端队列移动构造函数.
- * 移动另一个队列，其资源所有权转移到新创建的对象.
+ * 移动另一个双端队列，其资源所有权转移到新创建的对象.
  *
- * @param that: 被移动的队列
+ * @param that: 被移动的双端队列
  */
 template<typename E>
 LinkedDeque<E>::LinkedDeque(LinkedDeque&& that) noexcept
@@ -185,8 +185,8 @@ void LinkedDeque<E>::insertBack(E elem)
 template<typename E>
 E LinkedDeque<E>::removeFront()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedDeque::removeFront() underflow.");
 
     Node* pold = sentinel->next;
     Node* succ = pold->next;
@@ -208,8 +208,8 @@ E LinkedDeque<E>::removeFront()
 template<typename E>
 E LinkedDeque<E>::removeBack()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedDeque::removeBack() underflow.");
 
     Node* pold = sentinel->prev;
     Node* prec = pold->prev;
@@ -223,30 +223,30 @@ E LinkedDeque<E>::removeBack()
 }
 
 /**
- * 返回队首元素.
+ * 返回队首引用.
  *
- * @return 队首元素
+ * @return 队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E LinkedDeque<E>::front()
+E& LinkedDeque<E>::front()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedDeque::front() underflow.");
     return *begin();
 }
 
 /**
- * 返回队尾元素.
+ * 返回队尾引用.
  *
- * @return 队尾元素
+ * @return 队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E LinkedDeque<E>::back()
+E& LinkedDeque<E>::back()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedDeque::back() underflow.");
     return *std::prev(end());
 }
 
@@ -270,7 +270,7 @@ void LinkedDeque<E>::swap(LinkedDeque<E>& that)
 template<typename E>
 void LinkedDeque<E>::clear()
 {
-    if (isEmpty()) return;
+    if (empty()) return;
     if (sentinel == nullptr) return;
 
     Node* current = sentinel->next;
@@ -334,7 +334,7 @@ bool operator!=(const LinkedDeque<E>& lhs, const LinkedDeque<E>& rhs)
  * <<操作符重载函数，打印所有双端队列元素.
  *
  * @param os: 输出流对象
- *        deque: 要输出的队列
+ *        deque: 要输出的双端队列
  * @return 输出流对象
  */
 template<typename E>

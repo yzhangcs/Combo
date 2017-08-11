@@ -20,31 +20,32 @@ class ArrayDeque
 {
     static const int DEFAULT_CAPACITY = 10; // 默认双端队列容量
 private:
-    int n;        // 队列大小
-    int head;     // 队首索引
-    int tail;     // 队尾索引
-    int capacity; // 队列容量
-    E* pd;        // 队列指针
+    int n;    // 队列大小
+    int N;    // 队列容量
+    int head; // 队首索引
+    int tail; // 队尾索引
+    E* pd;    // 双端队列指针
     
-    void resize(int size); // 调整队列容量
+    void resize(int size); // 调整双端队列容量
 public:
-    explicit ArrayDeque(int cap = DEFAULT_CAPACITY); // 构造函数
-    ArrayDeque(const ArrayDeque& that); // 复制构造函数
-    ArrayDeque(ArrayDeque&& that) noexcept; // 移动构造函数
-    ~ArrayDeque() { delete[] pd; } // 析构函数
+    explicit ArrayDeque(int cap = DEFAULT_CAPACITY); 
+    ArrayDeque(const ArrayDeque& that);
+    ArrayDeque(ArrayDeque&& that) noexcept;
+    ~ArrayDeque() { delete[] pd; }
 
-    int size() const { return n; } // 返回队列当前大小
-    bool isEmpty() const { return n == 0; } // 判断是否为空队列
-    void endeque(E elem) { insertBack(std::move(elem)); } // 入队函数
+    int size() const { return n; } // 返回双端队列当前大小
+    int capacity() const { return N; } // 返回双端队列容量
+    bool empty() const { return n == 0; } // 判断是否为空双端队列
     void insertFront(E elem); // 添加元素到队首
     void insertBack(E elem); // 添加元素到队尾
-    E dequeue() { return removeFront(); } // 出队函数
+    void endeque(E elem) { insertBack(std::move(elem)); } // 入队函数
     E removeFront(); // 队首元素出队
     E removeBack(); // 队尾元素出队
-    E front(); // 返回队首
-    E back(); // 返回队尾
+    E dequeue() { return removeFront(); } // 出队函数
+    E& front(); // 返回队首引用
+    E& back(); // 返回队尾引用
     void swap(ArrayDeque& that); // 内容与另一个ArrayDeque对象交换
-    void clear(); // 清空队列，不释放空间，队列容量不变
+    void clear(); // 清空双端队列，不释放空间，双端队列容量不变
     
     ArrayDeque& operator=(ArrayDeque that);
     template <typename T>
@@ -66,9 +67,9 @@ public:
         ~iterator() {}
 
         E& operator*() const
-        { return deque->pd[(deque->head + i) % deque->capacity]; }
+        { return deque->pd[(deque->head + i) % deque->N]; }
         E* operator->() const
-        { return &deque->pd[(deque->head + i) % deque->capacity]; }
+        { return &deque->pd[(deque->head + i) % deque->N]; }
         iterator& operator++()
         {
             i++;
@@ -101,51 +102,51 @@ public:
 };
 
 /**
- * 数组双端队列构造函数，初始化队列.
- * 队列初始容量为10.
+ * 数组双端队列构造函数，初始化双端队列.
+ * 双端队列初始容量为10.
  *
- * @param cap: 指定队列容量
+ * @param cap: 指定双端队列容量
  */
 template<typename E>
 ArrayDeque<E>::ArrayDeque(int cap)
 {
     n = 0;
+    N = cap; // 默认容量为10
     head = 0;
     tail = 0;
-    capacity = cap; // 默认容量为10
-    pd = new E[capacity];
+    pd = new E[N];
 }
 
 /**
  * 数组双端队列复制构造函数.
- * 复制另一个队列作为初始化的值.
+ * 复制另一个双端队列作为初始化的值.
  *
- * @param that: 被复制的队列
+ * @param that: 被复制的双端队列
  */
 template<typename E>
 ArrayDeque<E>::ArrayDeque(const ArrayDeque& that)
 {
     n = that.n;
+    N = that.N;
     head = that.head;
     tail = that.tail;
-    capacity = that.capacity;
-    pd = new E[capacity];
+    pd = new E[N];
     std::copy(that.begin(), that.end(), begin());
 }
 
 /**
  * 数组双端队列移动构造函数.
- * 移动另一个队列，其资源所有权转移到新创建的对象.
+ * 移动另一个双端队列，其资源所有权转移到新创建的对象.
  *
- * @param that: 被移动的队列
+ * @param that: 被移动的双端队列
  */
 template<typename E>
 ArrayDeque<E>::ArrayDeque(ArrayDeque&& that) noexcept
 {
     n = that.n;
+    N = that.N;
     head = that.head;
     tail = that.tail;
-    capacity = that.capacity;
     pd = that.pd;
     that.pd = nullptr; // 指向空指针，退出被析构
 }
@@ -172,16 +173,16 @@ void ArrayDeque<E>::resize(int size)
 
 /**
  * 添加元素到队首.
- * 当队列达到最大容量，扩容队列到两倍容量后，再将元素入队.
+ * 当双端队列达到最大容量，扩容双端队列到两倍容量后，再将元素入队.
  *
  * @param elem: 要添加到队首的元素
  */
 template<typename E>
 void ArrayDeque<E>::insertFront(E elem)
 {
-    if (n == capacity)
-        resize(capacity * 2);
-    if (--head < 0) head = capacity - 1;
+    if (n == N)
+        resize(N * 2);
+    if (--head < 0) head = N - 1;
     // 移动元素入队
     pd[head] = std::move(elem);
     n++;
@@ -189,23 +190,23 @@ void ArrayDeque<E>::insertFront(E elem)
 
 /**
  * 添加元素到队尾.
- * 当队列达到最大容量，扩容队列到两倍容量后，再将元素入队.
+ * 当双端队列达到最大容量，扩容双端队列到两倍容量后，再将元素入队.
  *
  * @param elem: 要添加到队尾的元素
  */
 template<typename E>
 void ArrayDeque<E>::insertBack(E elem)
 {
-    if (n == capacity)
-        resize(capacity * 2);
+    if (n == N)
+        resize(N * 2);
     pd[tail++] = std::move(elem);
-    if (tail == capacity) tail = 0;
+    if (tail == N) tail = 0;
     n++;
 }
 
 /**
  * 让队首元素出队.
- * 当队列达到1/4容量，缩小队列容量.
+ * 当双端队列达到1/4容量，缩小双端队列容量.
  *
  * @return 出队队首
  * @throws std::out_of_range: 队空
@@ -213,22 +214,22 @@ void ArrayDeque<E>::insertBack(E elem)
 template<typename E>
 E ArrayDeque<E>::removeFront()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
+    if (empty()) 
+        throw std::out_of_range("ArrayDeque::removeFront() underflow.");
 
     E tmp = pd[head++];
 
-    if (head == capacity) head = 0;
+    if (head == N) head = 0;
     n--;
-    // 保证队列始终约为半满状态，保证n>0
-    if (n > 0 && n == capacity / 4) 
-        resize(capacity / 2);
+    // 保证双端队列始终约为半满状态，保证n>0
+    if (n > 0 && n == N / 4) 
+        resize(N / 2);
     return tmp; // 发生NRVO
 }
 
 /**
  * 让队尾元素出队.
- * 当队列达到1/4容量，缩小队列容量.
+ * 当双端队列达到1/4容量，缩小双端队列容量.
  *
  * @return 出队队尾
  * @throws std::out_of_range: 队空
@@ -236,46 +237,46 @@ E ArrayDeque<E>::removeFront()
 template<typename E>
 E ArrayDeque<E>::removeBack()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
+    if (empty()) 
+        throw std::out_of_range("ArrayDeque::removeBack() underflow.");
     if (--tail < 0) 
-        tail = capacity - 1;
+        tail = N - 1;
 
     E tmp = pd[tail];
 
     n--;
-    // 保证队列始终约为半满状态，保证n>0
-    if (n > 0 && n == capacity / 4)
-        resize(capacity / 2);
+    // 保证双端队列始终约为半满状态，保证n>0
+    if (n > 0 && n == N / 4)
+        resize(N / 2);
     return tmp; // 发生NRVO
 }
 
 /**
- * 返回队首元素.
+ * 返回队首引用.
  *
- * @return 队首元素
+ * @return 队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E ArrayDeque<E>::front()
+E& ArrayDeque<E>::front()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
-    return pd[head];
+    if (empty()) 
+        throw std::out_of_range("ArrayDeque::front() underflow.");
+    return *begin();
 }
 
 /**
- * 返回队尾元素.
+ * 返回队尾引用.
  *
- * @return 队尾元素
+ * @return 队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E ArrayDeque<E>::back()
+E& ArrayDeque<E>::back()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Deque underflow.");
-    return pd[(tail + capacity - 1) % capacity]; // 防止取余为负
+    if (empty()) 
+        throw std::out_of_range("ArrayDeque::back() underflow.");
+    return *std::prev(end());
 }
 
 /**
@@ -291,13 +292,13 @@ void ArrayDeque<E>::swap(ArrayDeque<E>& that)
     swap(n, that.n);
     swap(head, that.head);
     swap(tail, that.tail);
-    swap(capacity, that.capacity);
+    swap(N, that.N);
     swap(pd, that.pd);
 }
 
 /**
  * 清空该双端队列元素.
- * 不释放空间，队列容量保持不变.
+ * 不释放空间，双端队列容量保持不变.
  */
 template<typename E>
 void ArrayDeque<E>::clear()
@@ -356,7 +357,7 @@ bool operator!=(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
  * <<操作符重载函数，打印所有双端队列元素.
  *
  * @param os: 输出流对象
- *        deque: 要输出的队列
+ *        deque: 要输出的双端队列
  * @return 输出流对象
  */
 template<typename E>

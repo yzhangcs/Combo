@@ -21,24 +21,25 @@ class ArrayQueue
     static const int DEFAULT_CAPACITY = 10; // 默认队列容量
 private:
     int n;    // 队列大小
+    int N;    // 队列容量
     int head; // 队首索引
     int tail; // 队尾索引
-    int capacity; // 队列容量
     E* pq; // 队列指针
 
     void resize(int size); // 调整队列容量
 public:
-    explicit ArrayQueue(int cap = DEFAULT_CAPACITY); // 构造函数
-    ArrayQueue(const ArrayQueue& that); // 复制构造函数
-    ArrayQueue(ArrayQueue&& that) noexcept; // 移动构造函数
-    ~ArrayQueue() { delete[] pq; } // 析构函数
+    explicit ArrayQueue(int cap = DEFAULT_CAPACITY); 
+    ArrayQueue(const ArrayQueue& that);
+    ArrayQueue(ArrayQueue&& that) noexcept;
+    ~ArrayQueue() { delete[] pq; }
 
     int size() const { return n; } // 返回队列当前大小
-    bool isEmpty() const { return n == 0; } // 判断是否为空队列
+    int capacity() const { return N; } // 返回队列容量
+    bool empty() const { return n == 0; } // 判断是否为空队列
     void enqueue(E elem); // 入队函数
     E dequeue(); // 出队函数
-    E front(); // 返回队首
-    E back(); // 返回队尾
+    E& front(); // 返回队首引用
+    E& back(); // 返回队尾引用
     void swap(ArrayQueue& that); // 内容与另一个ArrayQueue对象交换
     void clear(); // 清空队列，不释放空间，队列容量不变
     
@@ -62,9 +63,9 @@ public:
         ~iterator() {}
 
         E& operator*() const
-        { return queue->pq[(queue->head + i) % queue->capacity]; }
+        { return queue->pq[(queue->head + i) % queue->N]; }
         E* operator->() const
-        { return &queue->pq[(queue->head + i) % queue->capacity]; }
+        { return &queue->pq[(queue->head + i) % queue->N]; }
         iterator& operator++()
         {
             i++;
@@ -95,10 +96,10 @@ template<typename E>
 ArrayQueue<E>::ArrayQueue(int cap)
 {
     n = 0;
+    N = cap; // 默认容量为10
     head = 0;
     tail = 0;
-    capacity = cap; // 默认容量为10
-    pq = new E[capacity];
+    pq = new E[N];
 }
 
 /**
@@ -111,10 +112,10 @@ template<typename E>
 ArrayQueue<E>::ArrayQueue(const ArrayQueue& that)
 {
     n = that.n;
+    N = that.N;
     head = that.head;
     tail = that.tail;
-    capacity = that.capacity;
-    pq = new E[capacity];
+    pq = new E[N];
     std::copy(that.begin(), that.end(), begin());
 }
 
@@ -128,9 +129,9 @@ template<typename E>
 ArrayQueue<E>::ArrayQueue(ArrayQueue&& that) noexcept
 {
     n = that.n;
+    N = that.N;
     head = that.head;
     tail = that.tail;
-    capacity = that.capacity;
     pq = that.pq;
     that.pq = nullptr; // 指向空指针，退出被析构
 }
@@ -164,11 +165,11 @@ void ArrayQueue<E>::resize(int size)
 template<typename E>
 void ArrayQueue<E>::enqueue(E elem)
 {
-    if (n == capacity) 
-        resize(capacity * 2);
+    if (n == N) 
+        resize(N * 2);
     // 移动元素入队
     pq[tail++] = std::move(elem); 
-    if (tail == capacity) tail = 0;
+    if (tail == N) tail = 0;
     n++;
 }
 
@@ -182,45 +183,46 @@ void ArrayQueue<E>::enqueue(E elem)
 template<typename E>
 E ArrayQueue<E>::dequeue()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Queue underflow.");
+    if (empty()) 
+        throw std::rout_of_range("ArrayQueue::dequeue() underflow.");
     
     E tmp = pq[head++];
 
-    if (head == capacity) head = 0;
+    if (head == N) head = 0;
     n--;
     // 保证队列始终约为半满状态，保证n>0
-    if (n > 0 && n == capacity / 4) 
-        resize(capacity / 2);
+    if (n > 0 && n == N / 4) 
+        resize(N / 2);
     return tmp; // 发生NRVO
 }
 
 /**
- * 返回队首元素.
+ * 返回队首引用.
  *
- * @return 队首元素
+ * @return 队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E ArrayQueue<E>::front()
+E& ArrayQueue<E>::front()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Queue underflow.");
+    if (empty()) 
+        throw std::rout_of_range("ArrayQueue::front() underflow.");
     return pq[head];
 }
 
 /**
- * 返回队尾元素.
+ * 返回队尾引用.
  *
- * @return 队尾元素
+ * @return 队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E ArrayQueue<E>::back()
+E& ArrayQueue<E>::back()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Queue underflow.");
-    return pq[(tail + capacity - 1) % capacity]; // 求余可能为负
+    if (empty()) 
+        throw std::rout_of_range("ArrayQueue::back() underflow.");
+    if (tail != 0) return pq[tail - 1];
+    else           return pq[N - 1];
 }
 
 /**
@@ -236,7 +238,7 @@ void ArrayQueue<E>::swap(ArrayQueue<E>& that)
     swap(n, that.n);
     swap(head, that.head);
     swap(tail, that.tail);
-    swap(capacity, that.capacity);
+    swap(N, that.N);
     swap(pq, that.pq);
 }
 

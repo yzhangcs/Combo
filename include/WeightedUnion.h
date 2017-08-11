@@ -22,12 +22,12 @@ private:
     bool valid(int p) const { return p >= 0 && p < n; }
 public:
     explicit WeightedUnion(int size);
-    WeightedUnion(const WeightedUnion& that); // 复制构造函数
-    WeightedUnion(WeightedUnion&& that) noexcept; // 移动构造函数
+    WeightedUnion(const WeightedUnion& that);
+    WeightedUnion(WeightedUnion&& that) noexcept;
     ~WeightedUnion();
 
     // 判断p与q是否属于同一个连通分量
-    bool isConnected(int p, int q) { return find(p) == find(q); }
+    bool connected(int p, int q) { return find(p) == find(q); }
     int count() { return components; } // 返回连通分量数
     int find(int p); // 找到p所属连通分量的标识符
     void join(int p, int q); // 合并p与q所属的连通分量
@@ -110,7 +110,7 @@ WeightedUnion::~WeightedUnion()
 int WeightedUnion::find(int p)
 {
     if (!valid(p)) 
-        throw std::out_of_range("WeightedUnion index out of range.");
+        throw std::out_of_range("WeightedUnion::find() index out of range.");
     // p所属连通分量的根触点的id值作为该连通分量的标识符
     while (p != id[p])
         p = id[p];

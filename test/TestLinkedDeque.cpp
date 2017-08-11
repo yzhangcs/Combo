@@ -18,7 +18,7 @@ public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void add_n(LinkedDeque<string>& s, int n, bool isForward)
+    void insert_n(LinkedDeque<string>& s, int n, bool isForward)
     {
         if (isForward)
         {
@@ -93,7 +93,7 @@ TEST_F(TestLinkedDeque, ElementAccess)
 TEST_F(TestLinkedDeque, Iterators)
 {
     EXPECT_EQ(deque.begin(), deque.end());
-    add_n(deque, scale, true);
+    insert_n(deque, scale, true);
     EXPECT_NE(deque.begin(), deque.end());
     
     auto bg = deque.begin();
@@ -109,36 +109,36 @@ TEST_F(TestLinkedDeque, Iterators)
 
 TEST_F(TestLinkedDeque, Capacity)
 {
-    EXPECT_TRUE(deque.isEmpty());
+    EXPECT_TRUE(deque.empty());
     EXPECT_EQ(0, deque.size());
-    add_n(deque, scale, true);
+    insert_n(deque, scale, true);
     EXPECT_EQ(scale, deque.size());
     remove_n(deque, scale, true);
-    EXPECT_TRUE(deque.isEmpty());
-    add_n(deque, scale, false);
+    EXPECT_TRUE(deque.empty());
+    insert_n(deque, scale, false);
     EXPECT_EQ(scale, deque.size());
     remove_n(deque, scale, false);
-    EXPECT_TRUE(deque.isEmpty());
+    EXPECT_TRUE(deque.empty());
 }
 
 TEST_F(TestLinkedDeque, Modifiers)
 {
     EXPECT_THROW(deque.dequeue(), std::out_of_range);
     EXPECT_NO_THROW({
-        add_n(deque, scale, true);
+        insert_n(deque, scale, true);
         remove_n(deque, scale, true);
-        add_n(deque, scale, false);
+        insert_n(deque, scale, false);
         remove_n(deque, scale, false);
     });
     EXPECT_THROW(deque.dequeue(), std::out_of_range);
 
-    add_n(deque, scale, true);
+    insert_n(deque, scale, true);
     deque.clear();
-    EXPECT_TRUE(deque.isEmpty());
+    EXPECT_TRUE(deque.empty());
     EXPECT_EQ(0, deque.size());
     EXPECT_THROW(deque.dequeue(), std::out_of_range);
 
-    add_n(a, scale, true);
+    insert_n(a, scale, true);
     b.swap(a);
     EXPECT_EQ(scale, b.size());
     for (int i = 0; i < scale; ++i)
@@ -148,7 +148,7 @@ TEST_F(TestLinkedDeque, Modifiers)
 TEST_F(TestLinkedDeque, Other)
 {
     using std::swap;
-    add_n(a, scale, true);
+    insert_n(a, scale, true);
     c = a;
     EXPECT_TRUE(c == a && c != b);
     b.swap(a);

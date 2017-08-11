@@ -79,12 +79,12 @@ TEST_F(TestArrayQueue, Iterators)
 
 TEST_F(TestArrayQueue, Capacity)
 {
-    EXPECT_TRUE(queue.isEmpty());
+    EXPECT_TRUE(queue.empty());
     EXPECT_EQ(0, queue.size());
     enqueue_n(queue, scale);
     EXPECT_EQ(scale, queue.size());
     dequeue_n(queue, scale);
-    EXPECT_TRUE(queue.isEmpty());
+    EXPECT_TRUE(queue.empty());
 }
 
 TEST_F(TestArrayQueue, Modifiers)
@@ -98,7 +98,7 @@ TEST_F(TestArrayQueue, Modifiers)
 
     enqueue_n(queue, scale);
     queue.clear();
-    EXPECT_TRUE(queue.isEmpty());
+    EXPECT_TRUE(queue.empty());
     EXPECT_EQ(0, queue.size());
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
 

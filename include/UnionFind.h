@@ -22,12 +22,12 @@ private:
     bool valid(int p) const { return p >= 0 && p < n; }
 public:
     explicit UnionFind(int size);
-    UnionFind(const UnionFind& that); // 复制构造函数
-    UnionFind(UnionFind&& that) noexcept; // 移动构造函数
+    UnionFind(const UnionFind& that);
+    UnionFind(UnionFind&& that) noexcept;
     ~UnionFind();
 
     // 判断p与q是否属于同一个连通分量
-    bool isConnected(int p, int q) { return find(p) == find(q); } 
+    bool connected(int p, int q) { return find(p) == find(q); } 
     int count() { return components; } // 返回连通分量数
     int find(int p); // 找到p所属连通分量的标识符
     void join(int p, int q); // 合并p与q所属的连通分量
@@ -110,7 +110,7 @@ UnionFind::~UnionFind()
 int UnionFind::find(int p)
 {
     if (!valid(p)) 
-        throw std::out_of_range("UnionFind index out of range.");
+        throw std::out_of_range("UnionFind::find() index out of range.");
     // p所属连通分量的根触点的id值作为该连通分量的标识符
     while (p != id[p])
     {

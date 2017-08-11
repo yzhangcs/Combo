@@ -28,17 +28,17 @@ private:
     Node* head; // 队首指针
     Node* tail; // 队尾指针
 public:
-    LinkedQueue() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
-    LinkedQueue(const LinkedQueue& that); // 复制构造函数
-    LinkedQueue(LinkedQueue&& that) noexcept; // 移动构造函数
-    ~LinkedQueue() { clear(); } // 析构函数
+    LinkedQueue() : n(0), head(nullptr), tail(nullptr) {}
+    LinkedQueue(const LinkedQueue& that);
+    LinkedQueue(LinkedQueue&& that) noexcept;
+    ~LinkedQueue() { clear(); }
 
     int size() const { return n; } // 返回队列当前大小
-    bool isEmpty() const { return n == 0; } // 判断是否为空队列
+    bool empty() const { return n == 0; } // 判断是否为空队列
     void enqueue(E elem); // 入队函数
     E dequeue(); // 出队函数
-    E front(); // 返回队首
-    E back(); // 返回队尾
+    E& front(); // 返回队首引用
+    E& back(); // 返回队尾引用
     void swap(LinkedQueue& that); // 内容与另一个LinkedQueue对象交换
     void clear(); // 清空队列
     
@@ -127,8 +127,8 @@ void LinkedQueue<E>::enqueue(E elem)
     Node* pold = tail;
 
     tail = new Node(std::move(elem));
-    if (isEmpty()) head = tail;
-    else           pold->next = tail;
+    if (empty()) head = tail;
+    else         pold->next = tail;
     n++;
 }
 
@@ -141,8 +141,8 @@ void LinkedQueue<E>::enqueue(E elem)
 template<typename E>
 E LinkedQueue<E>::dequeue()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Queue underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedQueue::dequeue() underflow.");
 
     Node* pold = head;
     E tmp = head->elem;
@@ -154,30 +154,30 @@ E LinkedQueue<E>::dequeue()
 }
 
 /**
- * 返回队首元素.
+ * 返回队首引用.
  *
- * @return 队首元素
+ * @return 队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E LinkedQueue<E>::front()
+E& LinkedQueue<E>::front()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Queue underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedQueue::front() underflow.");
     return head->elem;
 }
 
 /**
- * 返回队尾元素.
+ * 返回队尾引用.
  *
- * @return 队尾元素
+ * @return 队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E LinkedQueue<E>::back()
+E& LinkedQueue<E>::back()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Queue underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedQueue::back() underflow.");
     return tail->elem;
 }
 

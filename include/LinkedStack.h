@@ -29,16 +29,16 @@ private:
     Node* head; // 头指针指向栈顶
     Node* tail; // 尾指针指向栈底
 public:
-    LinkedStack() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
-    LinkedStack(const LinkedStack& that); // 复制构造函数
-    LinkedStack(LinkedStack&& that) noexcept; // 移动构造函数
-    ~LinkedStack() { clear(); } // 析构函数
+    LinkedStack() : n(0), head(nullptr), tail(nullptr) {}
+    LinkedStack(const LinkedStack& that);
+    LinkedStack(LinkedStack&& that) noexcept;
+    ~LinkedStack() { clear(); }
 
     int size() const { return n; } // 返回栈当前大小
-    bool isEmpty() const { return n == 0; } // 判断是否为空栈
+    bool empty() const { return n == 0; } // 判断是否为空栈
     void push(E elem); // 入栈函数
     E pop(); // 出栈函数
-    E top(); // 返回栈顶
+    E& top(); // 返回栈顶引用
     void swap(LinkedStack& that); // 内容与另一个LinkedStack对象交换
     void clear(); // 清空栈
     
@@ -127,7 +127,7 @@ void LinkedStack<E>::push(E elem)
     Node* pold = tail;
 
     tail = new Node(std::move(elem));
-    if (isEmpty())
+    if (empty())
         head = tail;
     else
     {
@@ -146,8 +146,8 @@ void LinkedStack<E>::push(E elem)
 template<typename E>
 E LinkedStack<E>::pop()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Stack underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedStack::pop() underflow.");
 
     Node* pold = tail;
     E tmp = tail->elem;
@@ -161,16 +161,16 @@ E LinkedStack<E>::pop()
 }
 
 /**
- * 返回栈顶元素.
+ * 返回栈顶引用.
  *
- * @return 栈顶元素
+ * @return 栈顶引用
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
-E LinkedStack<E>::top()
+E& LinkedStack<E>::top()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Stack underflow.");
+    if (empty()) 
+        throw std::out_of_range("LinkedStack::top() underflow.");
     return tail->elem;
 }
 

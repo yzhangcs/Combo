@@ -21,12 +21,12 @@ private:
     bool valid(int p) const { return p >= 0 && p < n; }
 public:
     explicit QuickUnion(int size);
-    QuickUnion(const QuickUnion& that); // 复制构造函数
-    QuickUnion(QuickUnion&& that) noexcept; // 移动构造函数
+    QuickUnion(const QuickUnion& that);
+    QuickUnion(QuickUnion&& that) noexcept;
     ~QuickUnion() { delete[] id; }  
 
     // 判断p与q是否属于同一个连通分量
-    bool isConnected(int p, int q) { return find(p) == find(q); } 
+    bool connected(int p, int q) { return find(p) == find(q); } 
     int count() { return components; } // 返回连通分量数
     int find(int p); // 找到p所属连通分量的标识符
     void join(int p, int q); // 合并p与q所属的连通分量
@@ -90,7 +90,7 @@ QuickUnion::QuickUnion(QuickUnion&& that) noexcept
 int QuickUnion::find(int p)
 {
     if (!valid(p)) 
-        throw std::out_of_range("QuickUnion index out of range.");
+        throw std::out_of_range("QuickUnion::find() index out of range.");
     // p所属连通分量的根触点的id值作为该连通分量的标识符
     while (p != id[p])
         p = id[p];

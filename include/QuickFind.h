@@ -21,11 +21,11 @@ private:
     bool valid(int p) const { return p >= 0 && p < n; }
 public:
     explicit QuickFind(int size);
-    QuickFind(const QuickFind& that); // 复制构造函数
-    QuickFind(QuickFind&& that) noexcept; // 移动构造函数
+    QuickFind(const QuickFind& that);
+    QuickFind(QuickFind&& that) noexcept;
     ~QuickFind() { delete[] id; }  
 
-    bool isConnected(int p, int q); // 判断p与q是否属于同一个连通分量
+    bool connected(int p, int q); // 判断p与q是否属于同一个连通分量
     int count() { return components; } // 返回连通分量数
     int find(int p); // 得到p所属连通分量的标识符
     void join(int p, int q); // 合并p与q所属的连通分量
@@ -88,10 +88,10 @@ QuickFind::QuickFind(QuickFind&& that) noexcept
  *         false: 不属于同一个连通分量
  * @throws std::out_of_range: 触点不合法
  */
-bool QuickFind::isConnected(int p, int q)
+bool QuickFind::connected(int p, int q)
 { 
     if (!valid(p) || !valid(q)) 
-        throw std::out_of_range("QuickFind index out of range.");
+        throw std::out_of_range("QuickFind::connected() index out of range.");
     // 相同id值表示属于同一个连通分量
     return id[p] == id[q]; 
 }
@@ -106,7 +106,7 @@ bool QuickFind::isConnected(int p, int q)
 int QuickFind::find(int p)
 {
     if (!valid(p)) 
-        throw std::out_of_range("QuickFind index out of range.");
+        throw std::out_of_range("QuickFind::find() index out of range.");
     return id[p];
 }
 
@@ -120,7 +120,7 @@ int QuickFind::find(int p)
 void QuickFind::join(int p, int q)
 {
     if (!valid(p) || !valid(q)) 
-        throw std::out_of_range("QuickFind index out of range.");
+        throw std::out_of_range("QuickFind::join() index out of range.");
 
     int pid = id[p];
     int qid = id[q];

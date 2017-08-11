@@ -115,7 +115,7 @@ P X P (8 left on heap)
 x.removeFront(): 0 1 2 3 4 5 6 7 8 9 10 11
    x.insertFront(): 11 10 9 8 7 6 5 4 3 2 1 0
  x.removeBack(): 0 1 2 3 4 5 6 7 8 9 10 11
-        x.add(): 0 1 2 3 4 5
+        x.insert(): 0 1 2 3 4 5
           y = x: 0 1 2 3 4 5
           x + y: 0 1 2 3 4 5 0 1 2 3 4 5
          x += y: 0 1 2 3 4 5 0 1 2 3 4 5

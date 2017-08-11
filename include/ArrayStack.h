@@ -18,24 +18,25 @@
 template<typename E>
 class ArrayStack
 {
-    static const int DEFAULT_CAPACITY = 10; // 默认栈容量s
+    static const int DEFAULT_CAPACITY = 10; // 默认栈容量
 private:
     int n; // 栈大小
-    int capacity; // 栈容量
+    int N; // 栈容量
     E* ps; // 栈指针
 
     void resize(int size); // 调整栈容量
 public:
-    explicit ArrayStack(int cap = DEFAULT_CAPACITY); // 构造函数
-    ArrayStack(const ArrayStack& that); // 复制构造函数
-    ArrayStack(ArrayStack&& that) noexcept; // 移动构造函数
-    ~ArrayStack() { delete[] ps; } // 析构函数  
+    explicit ArrayStack(int cap = DEFAULT_CAPACITY); 
+    ArrayStack(const ArrayStack& that);
+    ArrayStack(ArrayStack&& that) noexcept;
+    ~ArrayStack() { delete[] ps; }  
 
     int size() const { return n; } // 返回栈当前大小
-    bool isEmpty() const { return n == 0; } // 判断是否为空栈
+    int capacity() const { return N; } // 返回栈容量
+    bool empty() const { return n == 0; } // 判断是否为空栈
     void push(E elem); // 入栈函数
     E pop(); // 出栈函数
-    E top(); // 返回栈顶
+    E& top(); // 返回栈顶引用
     void swap(ArrayStack& that); // 内容与另一个ArrayStack对象交换
     void clear() { n = 0; } // 清空栈，不释放空间，栈容量不变
 
@@ -92,8 +93,8 @@ template<typename E>
 ArrayStack<E>::ArrayStack(int cap)
 {
     n = 0;
-    capacity = cap; // 默认容量为10
-    ps = new E[capacity];
+    N = cap; // 默认容量为10
+    ps = new E[N];
 }
 
 /**
@@ -106,8 +107,8 @@ template<typename E>
 ArrayStack<E>::ArrayStack(const ArrayStack& that)
 {
     n = that.n;
-    capacity = that.capacity;
-    ps = new E[capacity];
+    N = that.N;
+    ps = new E[N];
     std::copy(that.begin(), that.end(), begin());
 }
 
@@ -121,7 +122,7 @@ template<typename E>
 ArrayStack<E>::ArrayStack(ArrayStack&& that) noexcept
 {
     n = that.n;
-    capacity = that.capacity;
+    N = that.N;
     ps = that.ps;
     that.ps = nullptr; // 指向空指针，退出被析构
 }
@@ -153,8 +154,8 @@ void ArrayStack<E>::resize(int size)
 template<typename E>
 void ArrayStack<E>::push(E elem)
 {
-    if (n == capacity) 
-        resize(capacity * 2);
+    if (n == N) 
+        resize(N * 2);
     // 移动元素入栈
     ps[n++] = std::move(elem); 
 }
@@ -169,27 +170,27 @@ void ArrayStack<E>::push(E elem)
 template<typename E>
 E ArrayStack<E>::pop()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Stack underflow.");
+    if (empty()) 
+        throw std::out_of_range("ArrayStack::pop() underflow.");
 
     E tmp = ps[--n];
     // 保证栈始终约为半满状态，保证n>0
-    if (n > 0 && n == capacity / 4) 
-        resize(capacity / 2);
+    if (n > 0 && n == N / 4) 
+        resize(N / 2);
     return tmp; // 发生NRVO
 }
 
 /**
- * 返回栈顶元素.
+ * 返回栈顶引用.
  *
- * @return 栈顶元素
+ * @return 栈顶引用
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
-E ArrayStack<E>::top()
+E& ArrayStack<E>::top()
 {
-    if (isEmpty()) 
-        throw std::out_of_range("Stack underflow.");
+    if (empty()) 
+        throw std::out_of_range("ArrayStack::top() underflow.");
     return ps[n - 1];
 }
 
@@ -204,7 +205,7 @@ void ArrayStack<E>::swap(ArrayStack<E>& that)
     // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap; 
     swap(n, that.n);
-    swap(capacity, that.capacity);
+    swap(N, that.N);
     swap(ps, that.ps);
 }
 

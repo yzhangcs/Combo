@@ -10,7 +10,7 @@
 #include <iterator>
 
 /**
- * 使用模板实现的双向链表.
+ * 使用模板实现的链表.
  * 实现了链表的双向迭代器.
  */
 template<typename E>
@@ -33,30 +33,27 @@ private:
     Node* locate(int i) const; // 定位指定元素
     bool valid(int i) const { return i >= 0 && i < n; } // 检查索引是否合法
 public:
-    List() : n(0), sentinel(new Node) {} // 构造函数
-    List(const List& that); // 复制构造函数
-    List(List&& that) noexcept; // 移动构造函数
-    ~List() { clear(); } // 析构函数
+    List() : n(0), sentinel(new Node) {}
+    List(const List& that);
+    List(List&& that) noexcept;
+    ~List();
 
     int size() const { return n; } // 返回链表当前大小
-    int find(const E& elem) const; // 返回第一次出现该元素的位置
-    bool isEmpty() const { return n == 0; } // 判断是否为空链表
+    int find(const E& elem) const; // 返回第一次出现指定元素的位置
+    bool empty() const { return n == 0; } // 判断是否为空链表
     bool contains(const E& elem) const { return find(elem) != NPOS; } // 判断表中是否存在该元素
-    void set(int i, E elem) { locate(i)->elem = std::move(elem); } // 设置指定位置的元素值
-    void add(int i, E elem); // 添加指定元素到指定位置
-    void add(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
-    void insertFront(E elem) { add(0, std::move(elem)); } // 添加元素到链表头部
-    void insertBack(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
+    void insert(int i, E elem); // 添加指定元素到指定位置
+    void insert(E elem) { insert(n, std::move(elem)); } // 添加元素到链表尾部
+    void insertFront(E elem) { insert(0, std::move(elem)); } // 添加元素到链表头部
+    void insertBack(E elem) { insert(n, std::move(elem)); } // 添加元素到链表尾部
     E remove(int i); // 移除指定位置的元素
     E removeFront() { return remove(0); } // 移除链表头部元素
     E removeBack() { return remove(n - 1); } // 移除链表尾部元素
-    E get(int i) const { return locate(i)->elem; } // 返回指定位置的元素值
-    E front() const { return locate(0)->elem; } // 返回链表头部元素
-    E back() const { return locate(n - 1)->elem; } // 返回链表尾部元素
-    void swap(List& that); // 内容与另一个LinkedDeque对象交换
+    E& front() const; // 返回链表头部元素的引用
+    E& back() const; // 返回链表尾部元素的引用
+    void swap(List& that); // 内容与另一个LinkedList对象交换
     void clear(); // 清空链表
     
-    E& operator[](int i) const { return locate(i)->elem; };
     List& operator=(List that);
     List& operator+=(const List& that);
     template<typename T>
@@ -156,12 +153,12 @@ template<typename E>
 typename List<E>::Node* List<E>::locate(int i) const
 {
     if (!valid(i)) 
-        throw std::out_of_range("List index out of range.");
+        throw std::out_of_range("List::locate() index out of range.");
     return std::next(begin(), i).pn;;
 }
 
 /**
- * 返回第一次出现该元素的位置索引.
+ * 返回第一次出现指定元素的位置索引.
  * 当不存在该元素时，返回NPOS.
  *
  * @param elem: 要查找的元素
@@ -186,16 +183,18 @@ int List<E>::find(const E& elem) const
  *
  * @param i: 要添加元素的索引
  *        elem: 要添加的元素
+ * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-void List<E>::add(int i, E elem)
+void List<E>::insert(int i, E elem)
 {
     Node* prec = nullptr;
     Node* succ = nullptr; // 指定位置的前驱和后继
-    Node* pnew = new Node(std::move(elem));
+    Node* pnew = nullptr;
     
     if (i == n) succ = sentinel;
     else        succ = locate(i); 
+    pnew = new Node(std::move(elem));
     prec = succ->prev;
     prec->next = pnew;
     pnew->prev = prec;
@@ -209,6 +208,7 @@ void List<E>::add(int i, E elem)
  *
  * @param i: 要移除元素的索引
  * @return 移除的元素
+ * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
 E List<E>::remove(int i)
@@ -223,6 +223,34 @@ E List<E>::remove(int i)
     delete pold;
     n--;
     return tmp; // 发生NRVO
+}
+
+/**
+ * 返回链表头部元素的引用.
+ *
+ * @return 链表头部元素的引用
+ * @throws std::out_of_range: 链表为空
+ */
+template<typename E>
+E& List<E>::front()
+{
+    if (empty()) 
+        throw std::out_of_range("List::front() underflow.");
+    return *begin();
+}
+
+/**
+ * 返回链表尾部元素的引用.
+ *
+ * @return 链表尾部元素的引用
+ * @throws std::out_of_range: 链表为空
+ */
+template<typename E>
+E& List<E>::back()
+{
+    if (empty()) 
+        throw std::out_of_range("List::back() underflow.");
+    return *std::prev(end());
 }
 
 /**
@@ -245,7 +273,7 @@ void List<E>::swap(List<E>& that)
 template<typename E>
 void List<E>::clear()
 {
-    if (isEmpty()) return;
+    if (empty()) return;
     if (sentinel == nullptr) return;
 
     Node* current = sentinel->next;
@@ -286,7 +314,7 @@ template<typename E>
 List<E>& List<E>::operator+=(const List<E>& that)
 {
     for (auto i : that)
-        add(i);
+        insert(i);
     return *this;
 }
 

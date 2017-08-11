@@ -9,7 +9,7 @@ TEST(TestVector, Push)
 {
     Vector<string> stack;
 
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
     for (int i = 0; i < 32; ++i)
     {
         stack.push(std::to_string(i));
@@ -33,7 +33,7 @@ TEST(TestVector, Pop)
             EXPECT_EQ(str, stack.pop());
         }
     });
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
     EXPECT_THROW(stack.pop(), std::out_of_range);
     EXPECT_THROW(stack.top(), std::out_of_range);
 }
@@ -51,7 +51,7 @@ TEST(TestVector, Other)
     EXPECT_EQ(10, a.size());
     EXPECT_TRUE(a == b);
     a.clear();
-    EXPECT_TRUE(a.isEmpty());
+    EXPECT_TRUE(a.empty());
     EXPECT_THROW(a.pop(), std::out_of_range);
     c = b;
     b.pop();

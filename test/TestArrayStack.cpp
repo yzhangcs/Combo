@@ -77,12 +77,12 @@ TEST_F(TestArrayStack, Iterators)
 
 TEST_F(TestArrayStack, Capacity)
 {
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
     push_n(stack, scale);
     EXPECT_EQ(scale, stack.size());
     pop_n(stack, scale);
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
 }
 
 TEST_F(TestArrayStack, Modifiers)
@@ -96,7 +96,7 @@ TEST_F(TestArrayStack, Modifiers)
 
     push_n(stack, scale);
     stack.clear();
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
     EXPECT_THROW(stack.pop(), std::out_of_range);
 

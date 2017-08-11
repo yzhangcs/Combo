@@ -76,12 +76,12 @@ TEST_F(TestLinkedStack, Iterators)
 
 TEST_F(TestLinkedStack, Capacity)
 {
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
     push_n(stack, scale);
     EXPECT_EQ(scale, stack.size());
     pop_n(stack, scale);
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
 }
 
 TEST_F(TestLinkedStack, Modifiers)
@@ -95,7 +95,7 @@ TEST_F(TestLinkedStack, Modifiers)
 
     push_n(stack, scale);
     stack.clear();
-    EXPECT_TRUE(stack.isEmpty());
+    EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
     EXPECT_THROW(stack.pop(), std::out_of_range);
 

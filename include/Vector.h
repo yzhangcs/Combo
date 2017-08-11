@@ -21,33 +21,33 @@ class Vector
     static const int NPOS = -1; // 索引错误指示符
     static const int DEFAULT_CAPACITY = 10; // 默认的Vector容量
 private:
-    int n;        // Vector大小
-    int capacity; // Vector容量
-    E* pl;        // Vector指针
+    int n; // Vector大小
+    int N; // Vector容量
+    E* pl; // Vector指针
     
     void resize(int size); // 调整Vector容量
     bool valid(int i) const { return i >= 0 && i < n; } // 检查索引是否合法
 public:
-    explicit Vector(int cap = DEFAULT_CAPACITY); // 构造函数
-    Vector(const Vector& that); // 复制构造函数
-    Vector(Vector&& that) noexcept; // 移动构造函数
-    ~Vector() { delete[] pl; } // 析构函数
+    explicit Vector(int cap = DEFAULT_CAPACITY); 
+    Vector(const Vector& that);
+    Vector(Vector&& that) noexcept;
+    ~Vector() { delete[] pl; }
 
     int size() const { return n; } // 返回Vector当前大小
-    int find(const E& elem) const; // 返回第一次出现该元素的位置
-    bool isEmpty() const { return n == 0; } // 判断是否为空Vector
+    int capacity() const { return N; } // 返回Vector容量
+    int find(const E& elem) const; // 返回第一次出现指定元素的位置
+    bool empty() const { return n == 0; } // 判断是否为空Vector
     bool contains(const E& elem) const { return find(elem) != NPOS; } // 判断表中是否存在该元素
-    void set(int i, E elem); // 设置指定位置的元素值
-    void add(int i, E elem); // 添加指定元素到指定位置
-    void add(E elem) { add(n, std::move(elem)); } // 添加元素到Vector尾部
-    void insertFront(E elem) { add(0, std::move(elem)); } // 添加元素到Vector头部
-    void insertBack(E elem) { add(n, std::move(elem)); } // 添加元素到Vector尾部
+    void insert(int i, E elem); // 添加指定元素到指定位置
+    void insert(E elem) { insert(n, std::move(elem)); } // 添加元素到Vector尾部
+    void insertFront(E elem) { insert(0, std::move(elem)); } // 添加元素到Vector头部
+    void insertBack(E elem) { insert(n, std::move(elem)); } // 添加元素到Vector尾部
     E remove(int i); // 移除指定位置的元素
     E removeFront() { return remove(0); } // 移除Vector头部元素
     E removeBack() { return remove(n - 1); } // 移除Vector尾部元素
-    E get(int i) const; // 返回指定位置的元素值
-    E front() const { return get(0); } // 返回Vector头部元素
-    E back() const { return get(n - 1); } // 返回Vector尾部元素
+    E& at(int i) const; // 返回指定位置元素的引用
+    E& front() const; // 返回Vector头部元素的引用
+    E& back() const; // 返回Vector尾部元素的引用
     void swap(Vector& that); // 内容与另一个Vector对象交换
     void clear() { n = 0; } // 清空Vector，不释放空间，Vector容量不变
     
@@ -61,25 +61,25 @@ public:
     template <typename T>
     friend bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs);
     template<typename T>
-    friend std::ostream& operator<<(std::ostream& os, const Vector<T>& list);
+    friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vector);
 
     class iterator : public std::iterator<std::random_access_iterator_tag, E>
     {
     private:
-        const Vector* list;
+        const Vector* vector;
         int i;
     public:
-        iterator() : list(nullptr), i(0) {}
-        iterator(const Vector* list, int i) : list(list), i(i) {}
-        iterator(const iterator& that) : list(that.list), i(that.i) {}
+        iterator() : vector(nullptr), i(0) {}
+        iterator(const Vector* vector, int i) : vector(vector), i(i) {}
+        iterator(const iterator& that) : vector(that.vector), i(that.i) {}
         ~iterator() {}
 
         E& operator*() const
-        { return list->pl[i]; }
+        { return vector->pl[i]; }
         E* operator->() const
-        { return &list->pl[i]; }
+        { return &vector->pl[i]; }
         E& operator[](int pos) const
-        { return list->pl[i + pos]; }
+        { return vector->pl[i + pos]; }
         iterator& operator++()
         {
             i++;
@@ -92,7 +92,7 @@ public:
             return tmp;
         }        
         iterator operator+(int pos)
-        { return iterator(list, i + pos); }
+        { return iterator(vector, i + pos); }
         iterator operator+=(int pos)
         {
             i += pos;
@@ -110,7 +110,7 @@ public:
             return tmp;
         }
         iterator operator-(int pos) 
-        { return iterator(list, i - pos); }
+        { return iterator(vector, i - pos); }
         iterator operator-=(int pos) 
         {
             i -= pos;
@@ -118,36 +118,36 @@ public:
         }        
         int operator-(const iterator& that) 
         {
-            if (list != that.list)
-                throw std::invalid_argument("List invalid iterator.");
+            if (vector != that.vector)
+                throw std::invalid_argument("Vector::iterator::operator-() invalid iterator.");
             return i - that.i;
         }
         bool operator==(const iterator& that) const
-        { return list == that.list && i == that.i; }
+        { return vector == that.vector && i == that.i; }
         bool operator!=(const iterator& that) const
-        { return list != that.list || i != that.i; }
+        { return vector != that.vector || i != that.i; }
         bool operator<(const iterator& that) const
         {
-            if (list != that.list)
-                throw std::invalid_argument("List invalid iterator.");
+            if (vector != that.vector)
+                throw std::invalid_argument("Vector::iterator::operator<() invalid iterator.");
             return i < that.i;
         }
         bool operator<=(const iterator& that) const
         {
-            if (list != that.list)
-                throw std::invalid_argument("List invalid iterator.");
+            if (vector != that.vector)
+                throw std::invalid_argument("Vector::iterator::operator<=() invalid iterator.");
             return i <= that.i;
         }
         bool operator>(const iterator& that) const
         {
-            if (list != that.list)
-                throw std::invalid_argument("List invalid iterator.");
+            if (vector != that.vector)
+                throw std::invalid_argument("Vector::iterator::operator>() invalid iterator.");
             return i > that.i;
         }
         bool operator>=(const iterator& that) const
         {
-            if (list != that.list)
-                throw std::invalid_argument("List invalid iterator.");
+            if (vector != that.vector)
+                throw std::invalid_argument("Vector::iterator::operator>=() invalid iterator.");
             return i >= that.i;
         }
     };
@@ -165,8 +165,8 @@ template<typename E>
 Vector<E>::Vector(int cap)
 {
     n = 0;
-    capacity = cap;
-    pl = new E[capacity];
+    N = cap;
+    pl = new E[N];
 }
 
 /**
@@ -179,8 +179,8 @@ template<typename E>
 Vector<E>::Vector(const Vector& that)
 {
     n = that.n;
-    capacity = that.capacity;
-    pl = new E[capacity];
+    N = that.N;
+    pl = new E[N];
     std::copy(that.begin(), that.end(), begin());
 }
 
@@ -194,7 +194,7 @@ template<typename E>
 Vector<E>::Vector(Vector&& that) noexcept
 {
     n = that.n;
-    capacity = that.capacity;
+    N = that.N;
     pl = that.pl;
     that.pl = nullptr; // 指向空指针，退出被析构
 }
@@ -218,7 +218,7 @@ void Vector<E>::resize(int size)
 }
 
 /**
- * 返回第一次出现该元素的位置索引.
+ * 返回第一次出现指定元素的位置索引.
  * 当不存在该元素时，返回NPOS.
  *
  * @param elem: 要查找的元素
@@ -228,24 +228,10 @@ void Vector<E>::resize(int size)
 template<typename E>
 int Vector<E>::find(const E& elem) const
 {
-    for (int i = 0; i < n; ++i)
-        if (pl[i] == elem) return i;
-    return NPOS;
-}
+    auto it = std::find(begin(), end(), elem);
 
-/**
- * 设置指定位置的元素值.
- *
- * @param i: 指定元素的索引
- *        elem: 指定的元素值
- * @throws std::out_of_range: 索引不合法
- */
-template<typename E>
-void Vector<E>::set(int i, E elem)
-{
-    if (!valid(i)) 
-        throw std::out_of_range("List i out of range.");
-    pl[i] = std::move(elem);
+    if (it == end()) return NPOS;
+    else             return std::distance(begin(), it);
 }
 
 /**
@@ -253,17 +239,19 @@ void Vector<E>::set(int i, E elem)
  *
  * @param i: 要添加元素的索引
  *        elem: 要添加的元素
+ * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-void Vector<E>::add(int i, E elem)
+void Vector<E>::insert(int i, E elem)
 {
     if (!valid(i)) 
-        throw std::out_of_range("List i out of range.");
-    if (n == capacity)
-        resize(capacity * 2);
+        throw std::out_of_range("Vector::insert() i out of range.");
+    if (n == N)
+        resize(N * 2);
     // 将pl[i]后面的所有元素向数组后面迁移一个位置
-    std::move_backward(begin() + i, end(), end() + 1);
-    pl[i] = std::move(elem);
+    std::move_backward(std::next(begin(), i), end(), 
+                       std::next(begin(), n));
+    (*this)[i] = std::move(elem);
     n++;
 }
 
@@ -278,31 +266,59 @@ template<typename E>
 E Vector<E>::remove(int i)
 {
     if (!valid(i)) 
-        throw std::out_of_range("List i out of range.");
+        throw std::out_of_range("Vector::remove() i out of range.");
 
-    E tmp = pl[i];
+    E tmp = (*this)[i];
     // 将pl[i]后面的所有元素向前迁移一个位置
-    std::move(begin() + i + 1, end(), begin() + i);
+    std::move(std::next(begin(), i + 1), end(), 
+              std::next(begin(), i));
     n--;
     // 保证约为半满状态，保证n>0
-    if (n > 0 && n == capacity / 4)
-        resize(capacity / 2);
+    if (n > 0 && n == N / 4)
+        resize(N / 2);
     return tmp; // 发生NRVO
 }
 
 /**
- * 返回指定位置的元素.
+ * 返回Vector头部元素的引用.
  *
- * @param i: 指定元素的索引
- * @return 指定位置的元素
+ * @return Vector头部元素的引用
+ * @throws std::out_of_range: Vector为空
+ */
+template<typename E>
+E& Vector<E>::front()
+{
+    if (empty()) 
+        throw std::out_of_range("Vector::front() underflow.");
+    return *begin();
+}
+
+/**
+ * 返回Vector尾部元素的引用.
+ *
+ * @return Vector尾部元素的引用
+ * @throws std::out_of_range: Vector为空
+ */
+template<typename E>
+E& Vector<E>::back()
+{
+    if (empty()) 
+        throw std::out_of_range("Vector::back() underflow.");
+    return *std::prev(end());
+}
+
+/**
+ * 返回Vector指定位置元素的引用，并进行越界检查.
+ *
+ * @return 指定位置元素的引用
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-E Vector<E>::get(int i) const
+E& Vector<E>::at(int i)
 {
     if (!valid(i)) 
-        throw std::out_of_range("List i out of range.");
-    return pl[i];
+        throw std::out_of_range("Vector::at() i out of range.");
+    return (*this)[i];
 }
 
 /**
@@ -316,7 +332,7 @@ void Vector<E>::swap(Vector<E>& that)
     // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap; 
     swap(n, that.n);
-    swap(capacity, that.capacity);
+    swap(N, that.N);
     swap(pl, that.pl);
 }
 
@@ -324,15 +340,12 @@ void Vector<E>::swap(Vector<E>& that)
  * []操作符重载.
  *
  * @param i: []操作符内索引
- * @return 索引指向的元素
- * @throws std::out_of_range: 索引不合法
+ * @return 索引指向元素的引用
  */
 template<typename E>
 E& Vector<E>::operator[](int i) const
 {
-    if (!valid(i)) 
-        throw std::out_of_range("List i out of range.");
-    return pl[i];
+    return *std::next(begin(), i);
 }
 
 /**
@@ -360,7 +373,7 @@ Vector<E>& Vector<E>::operator=(Vector<E> that)
 template<typename E>
 Vector<E>& Vector<E>::operator+=(const Vector<E>& that)
 {
-    resize(capacity + that.capacity);
+    resize(N + that.N);
     std::copy(that.begin(), that.end(), end())
     n += that.n;
     return *this;
@@ -415,13 +428,13 @@ bool operator!=(const Vector<E>& lhs, const Vector<E>& rhs)
  * <<操作符重载函数，打印所有Vector元素.
  *
  * @param os: 输出流对象
- *        list: 要输出的Vector
+ *        vector: 要输出的Vector
  * @return 输出流对象
  */
 template<typename E>
-std::ostream& operator<<(std::ostream& os, const Vector<E>& list)
+std::ostream& operator<<(std::ostream& os, const Vector<E>& vector)
 {
-    for (auto i : list)
+    for (auto i : vector)
         os << i << " ";
     return os;
 }
