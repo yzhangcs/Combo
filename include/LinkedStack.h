@@ -17,20 +17,15 @@
 template<typename E>
 class LinkedStack
 {
-private:
-    struct NodeBase
-    {
-        Node* prev;
-        Node* next;
-        Node(E elem) : prev(this), next(this) {}
-    }
     struct Node
     {
         E elem;
+        Node* prev;
+        Node* next;
         Node(E elem) : elem(std::move(elem)), prev(nullptr), next(nullptr) {}
     };
+private:
     int n; // 栈大小
-    Node* sentinel //
     Node* head; // 头指针指向栈顶
     Node* tail; // 尾指针指向栈底
 public:
@@ -58,20 +53,20 @@ public:
     class iterator : public std::iterator<std::forward_iterator_tag, E>
     {
     private:
-        Node* i;
+        Node* pn;
     public:
-        iterator() : i(nullptr) {}
-        iterator(Node* x) : i(x) {}
-        iterator(const iterator& that) : i(that.i) {}
+        iterator() : pn(nullptr) {}
+        iterator(Node* x) : pn(x) {}
+        iterator(const iterator& that) : pn(that.pn) {}
         ~iterator() {}
 
         E& operator*() const
-        { return i->elem; }
+        { return pn->elem; }
         E* operator->() const
-        { return &i->elem; }
+        { return &pn->elem; }
         iterator& operator++()
         {
-            i = i->next;
+            pn = pn->next;
             return *this;
         }
         iterator operator++(int)
@@ -81,9 +76,9 @@ public:
             return tmp;
         }
         bool operator==(const iterator& that) const
-        { return i == that.i; }
+        { return pn == that.pn; }
         bool operator!=(const iterator& that) const
-        { return i != that.i; }
+        { return pn != that.pn; }
     };
     iterator begin() const { return iterator(head); }
     iterator end() const { return iterator(nullptr); }

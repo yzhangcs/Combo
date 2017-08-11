@@ -18,9 +18,8 @@
 template<typename E>
 class ArrayQueue
 {
-private:
     static const int DEFAULT_CAPACITY = 10; // 默认队列容量
-
+private:
     int n;    // 队列大小
     int head; // 队首索引
     int tail; // 队尾索引

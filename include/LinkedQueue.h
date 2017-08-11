@@ -17,13 +17,13 @@
 template<typename E>
 class LinkedQueue
 {
-private:
     struct Node
     {
         E elem;
         Node* next;
         Node(E elem) : elem(std::move(elem)), next(nullptr) {}
     };
+private:
     int n;      // 队列大小
     Node* head; // 队首指针
     Node* tail; // 队尾指针
@@ -53,20 +53,20 @@ public:
     class iterator : public std::iterator<std::forward_iterator_tag, E>
     {
     private:
-        Node* i;
+        Node* pn;
     public:
-        iterator() : i(nullptr) {}
-        iterator(Node* x) : i(x) {}
-        iterator(const iterator& that) : i(that.i) {}
+        iterator() : pn(nullptr) {}
+        iterator(Node* x) : pn(x) {}
+        iterator(const iterator& that) : pn(that.pn) {}
         ~iterator() {}
 
         E& operator*() const
-        { return i->elem; }
+        { return pn->elem; }
         E* operator->() const
-        { return &i->elem; }
+        { return &pn->elem; }
         iterator& operator++()
         {
-            i = i->next;
+            pn = pn->next;
             return *this;
         }
         iterator operator++(int)
@@ -76,9 +76,9 @@ public:
             return tmp;
         }
         bool operator==(const iterator& that) const
-        { return i == that.i; }
+        { return pn == that.pn; }
         bool operator!=(const iterator& that) const
-        { return i != that.i; }
+        { return pn != that.pn; }
     };
     iterator begin() const { return iterator(head); }
     iterator end() const { return iterator(nullptr); }

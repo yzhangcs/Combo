@@ -17,22 +17,22 @@
 template<typename E>
 class LinkedDeque
 {
-private:
     struct Node
     {
         E elem;
         Node* prev;
         Node* next;
-        Node(E elem) : elem(std::move(elem)), prev(nullptr), next(nullptr) {}
+        Node() : elem(), prev(this), next(this) {}
+        Node(E elem) : elem(std::move(elem)), prev(this), next(this) {}
     };
-    int n;      // 队列大小
-    Node* head; // 队首指针
-    Node* tail; // 队尾指针
+private:
+    int n; // 队列大小
+    Node* sentinel; // 哨兵指针
 public:
-    LinkedDeque() : n(0), head(nullptr), tail(nullptr){} // 构造函数
+    LinkedDeque() : n(0), sentinel(new Node) {} // 构造函数
     LinkedDeque(const LinkedDeque& that); // 复制构造函数
     LinkedDeque(LinkedDeque&& that) noexcept; // 移动构造函数
-    ~LinkedDeque() { clear(); } // 析构函数
+    ~LinkedDeque(); // 析构函数
 
     int size() const { return n; } // 返回队列当前大小
     bool isEmpty() const { return n == 0; } // 判断是否为空队列
@@ -58,20 +58,20 @@ public:
     class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
     {
     private:
-        Node* i;
+        Node* pn;
     public:
-        iterator() : i(nullptr) {}
-        iterator(Node* x) : i(x) {}
-        iterator(const iterator& that) : i(that.i) {}
+        iterator() : pn(nullptr) {}
+        iterator(Node* x) : pn(x) {}
+        iterator(const iterator& that) : pn(that.pn) {}
         ~iterator() {}
 
         E& operator*() const
-        { return i->elem; }
+        { return pn->elem; }
         E* operator->() const
-        { return &i->elem; }
+        { return &pn->elem; }
         iterator& operator++()
         {
-            i = i->next;
+            pn = pn->next;
             return *this;
         }
         iterator operator++(int)
@@ -82,7 +82,7 @@ public:
         }        
         iterator& operator--()
         {
-            i = (i == nullptr) ? tail : i->prev;
+            pn = pn->prev;
             return *this;
         }
         iterator operator--(int)
@@ -92,12 +92,12 @@ public:
             return tmp;
         }
         bool operator==(const iterator& that) const
-        { return i == that.i; }
+        { return pn == that.pn; }
         bool operator!=(const iterator& that) const
-        { return i != that.i; }
+        { return pn != that.pn; }
     };
-    iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(nullptr); }
+    iterator begin() const { return iterator(sentinel->next); }
+    iterator end() const { return iterator(sentinel); }
 };
 
 /**
@@ -110,8 +110,7 @@ template<typename E>
 LinkedDeque<E>::LinkedDeque(const LinkedDeque& that)
 {
     n = 0;
-    head = nullptr;
-    tail = nullptr;
+    sentinel = new Node();
     for (auto i : that)
         insertBack(i);
 }
@@ -126,10 +125,19 @@ template<typename E>
 LinkedDeque<E>::LinkedDeque(LinkedDeque&& that) noexcept
 {
     n = that.n;
-    head = that.head;
-    tail = that.tail;
-    that.head = nullptr;
-    that.tail = nullptr; // 指向空指针，退出被析构
+    sentinel = that.sentinel;
+    that.sentinel = nullptr; // 指向空指针，退出被析构
+}
+
+/**
+ * 链式双端队列析构函数.
+ */
+template<typename E>
+LinkedDeque<E>::~LinkedDeque()
+{
+    clear();
+    delete sentinel;
+    sentinel = nullptr;
 }
 
 /**
@@ -140,16 +148,13 @@ LinkedDeque<E>::LinkedDeque(LinkedDeque&& that) noexcept
 template<typename E>
 void LinkedDeque<E>::insertFront(E elem)
 {
-    Node* pold = head;
+    Node* succ = sentinel->next;
+    Node* pnew = new Node(std::move(elem));
 
-    head = new Node(std::move(elem));
-    if (isEmpty())
-        tail = head;
-    else
-    {
-        pold->prev = head;
-        head->next = pold;
-    }
+    sentinel->next = pnew;
+    pnew->prev = sentinel;
+    pnew->next = succ;
+    succ->prev = pnew;
     n++;
 }
 
@@ -161,16 +166,13 @@ void LinkedDeque<E>::insertFront(E elem)
 template<typename E>
 void LinkedDeque<E>::insertBack(E elem)
 {
-    Node* pold = tail;
+    Node* prec = sentinel->prev;
+    Node* pnew = new Node(std::move(elem));
 
-    tail = new Node(std::move(elem));
-    if (isEmpty())
-        head = tail;
-    else
-    {
-        pold->next = tail;
-        tail->prev = pold;
-    }
+    prec->next = pnew;
+    pnew->prev = prec;
+    pnew->next = sentinel;
+    sentinel->prev = pnew;
     n++;
 }
 
@@ -186,12 +188,12 @@ E LinkedDeque<E>::removeFront()
     if (isEmpty()) 
         throw std::out_of_range("Deque underflow.");
 
-    Node* pold = head;
-    E tmp = head->elem;
+    Node* pold = sentinel->next;
+    Node* succ = pold->next;
+    E tmp = pold->elem;
 
-    head = head->next;
-    if (head != nullptr) head->prev = nullptr;
-    else                 tail = head;
+    sentinel->next = succ;
+    succ->prev = sentinel;
     delete pold;
     n--;
     return tmp; // 发生NRVO
@@ -209,12 +211,12 @@ E LinkedDeque<E>::removeBack()
     if (isEmpty()) 
         throw std::out_of_range("Deque underflow.");
 
-    Node* pold = tail;
-    E tmp = tail->elem;
+    Node* pold = sentinel->prev;
+    Node* prec = pold->prev;
+    E tmp = pold->elem;
 
-    tail = tail->prev;
-    if (tail != nullptr) tail->next = nullptr;
-    else                 head = tail;
+    prec->next = sentinel;
+    sentinel->prev = prec;
     delete pold;
     n--;
     return tmp; // 发生NRVO
@@ -231,7 +233,7 @@ E LinkedDeque<E>::front()
 {
     if (isEmpty()) 
         throw std::out_of_range("Deque underflow.");
-    return head->elem;
+    return *begin();
 }
 
 /**
@@ -245,7 +247,7 @@ E LinkedDeque<E>::back()
 {
     if (isEmpty()) 
         throw std::out_of_range("Deque underflow.");
-    return tail->elem;
+    return *std::prev(end());
 }
 
 /**
@@ -259,8 +261,7 @@ void LinkedDeque<E>::swap(LinkedDeque<E>& that)
     // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap; 
     swap(n, that.n);
-    swap(head, that.head);
-    swap(tail, that.tail);
+    swap(sentinel, that.sentinel);
 }
 
 /**
@@ -269,15 +270,18 @@ void LinkedDeque<E>::swap(LinkedDeque<E>& that)
 template<typename E>
 void LinkedDeque<E>::clear()
 {
-    Node* aux = nullptr;
+    if (isEmpty()) return;
+    if (sentinel == nullptr) return;
+
+    Node* current = sentinel->next;
     // 释放每个结点内存
-    while (head != nullptr) 
+    while (current != sentinel) 
     {
-        aux = head;
-        head = head->next;
-        delete aux;
+        sentinel->next = current->next;
+        delete current;
+        current = sentinel->next;
     }
-    tail = nullptr;
+    sentinel->prev = sentinel;
     n = 0;
 }
 

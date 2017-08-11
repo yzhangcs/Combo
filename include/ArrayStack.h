@@ -18,9 +18,8 @@
 template<typename E>
 class ArrayStack
 {
+    static const int DEFAULT_CAPACITY = 10; // 默认栈容量s
 private:
-    static const int DEFAULT_CAPACITY = 10; // 默认栈容量
-
     int n; // 栈大小
     int capacity; // 栈容量
     E* ps; // 栈指针

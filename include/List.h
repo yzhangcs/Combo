@@ -16,30 +16,32 @@
 template<typename E>
 class List
 {
-private:
     struct Node
     {
         E elem;
         Node* prev;
         Node* next;
-        Node(E elem) : elem(std::move(elem)), prev(nullptr), next(nullptr) {}
+        Node() : elem(), prev(this), next(this) {}
+        Node(E elem) : elem(std::move(elem)), prev(this), next(this) {}
     };
+    
+    static const int NPOS = -1; // 索引错误指示符
+private:
     int n; // 链表大小
-    Node* head; // 头指针
-    Node* tail; // 尾指针
+    Node* sentinel; // 哨兵指针
 
     Node* locate(int i) const; // 定位指定元素
     bool valid(int i) const { return i >= 0 && i < n; } // 检查索引是否合法
 public:
-    List() : n(0), head(nullptr), tail(nullptr) {} // 构造函数
+    List() : n(0), sentinel(new Node) {} // 构造函数
     List(const List& that); // 复制构造函数
     List(List&& that) noexcept; // 移动构造函数
     ~List() { clear(); } // 析构函数
 
     int size() const { return n; } // 返回链表当前大小
-    int indexOf(const E& elem) const; // 返回第一次出现该元素的位置
+    int find(const E& elem) const; // 返回第一次出现该元素的位置
     bool isEmpty() const { return n == 0; } // 判断是否为空链表
-    bool contains(const E& elem) const { return indexOf(elem) >= 0; } // 判断表中是否存在该元素
+    bool contains(const E& elem) const { return find(elem) != NPOS; } // 判断表中是否存在该元素
     void set(int i, E elem) { locate(i)->elem = std::move(elem); } // 设置指定位置的元素值
     void add(int i, E elem); // 添加指定元素到指定位置
     void add(E elem) { add(n, std::move(elem)); } // 添加元素到链表尾部
@@ -71,20 +73,20 @@ public:
     {
         friend class List;
     private:
-        Node* i;
+        Node* pn;
     public:
-        iterator() : i(nullptr) {}
-        iterator(Node* x) : i(x) {}
-        iterator(const iterator& that) : i(that.i) {}
+        iterator() : pn(nullptr) {}
+        iterator(Node* x) : pn(x) {}
+        iterator(const iterator& that) : pn(that.pn) {}
         ~iterator() {}
 
         E& operator*() const
-        { return i->elem; }
+        { return pn->elem; }
         E* operator->() const
-        { return &i->elem; }
+        { return &pn->elem; }
         iterator& operator++()
         {
-            i = i->next;
+            pn = pn->next;
             return *this;
         }
         iterator operator++(int)
@@ -95,7 +97,7 @@ public:
         }
         iterator& operator--()
         {
-            i = (i == nullptr) ? tail : i->prev;
+            pn = (pn == nullptr) ? tail : pn->prev;
             return *this;
         }
         iterator operator--(int)
@@ -105,12 +107,12 @@ public:
             return tmp;
         }
         bool operator==(const iterator& that) const
-        { return i == that.i; }
+        { return pn == that.pn; }
         bool operator!=(const iterator& that) const
-        { return i != that.i; }
+        { return pn != that.pn; }
     };
-    iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(nullptr); }
+    iterator begin() const { return iterator(sentinel->next); }
+    iterator end() const { return iterator(sentinel); }
 };
 
 /**
@@ -123,8 +125,7 @@ template<typename E>
 List<E>::List(const List& that)
 {
     n = 0;
-    head = nullptr;
-    tail = nullptr;
+    sentinel = new Node();
     for (auto i : that)
         insertBack(i);
 }
@@ -139,10 +140,8 @@ template<typename E>
 List<E>::List(List&& that) noexcept
 {
     n = that.n;
-    head = that.head;
-    tail = that.tail;
-    that.head = nullptr;
-    that.tail = nullptr; // 指向空指针，退出被析构
+    sentinel = that.sentinel;
+    that.sentinel = nullptr; // 指向空指针，退出被析构
 }
 
 /**
@@ -158,29 +157,28 @@ typename List<E>::Node* List<E>::locate(int i) const
 {
     if (!valid(i)) 
         throw std::out_of_range("List index out of range.");
-    return std::next(begin(), i).i;;
+    return std::next(begin(), i).pn;;
 }
 
 /**
  * 返回第一次出现该元素的位置索引.
- * 当不存在该元素时，返回-1.
+ * 当不存在该元素时，返回NPOS.
  *
  * @param elem: 要查找的元素
  * @return i: 要查找的元素的索引
- *         -1: 找不到该元素
+ *         NPOS: 找不到该元素
  */
 template<typename E>
-int List<E>::indexOf(const E& elem) const
+int List<E>::find(const E& elem) const
 {
-    int i = 0;
+    int index = 0;
 
-    for (Node* x = head; x != nullptr; x = x->next)
+    for (auto i : *this)
     {
-        if (x->elem == elem)
-            return i;
-        i++;
+        if (i == elem) return index;
+        else           index++;
     }
-    return -1;
+    return NPOS;
 }
 
 /**
@@ -196,18 +194,13 @@ void List<E>::add(int i, E elem)
     Node* succ = nullptr; // 指定位置的前驱和后继
     Node* pnew = new Node(std::move(elem));
     
-    if (i == n) prec = tail; // 位置在链表尾
-    else // 位置在链表中
-    { 
-        succ = locate(i); 
-        prec = succ->prev;
-    }
-    if (prec == nullptr) head = pnew; // 位置在链表头
-    else                 prec->next = pnew;
-    pnew->next = succ;
-    if (succ == nullptr) tail = pnew; // 位置在链表尾
-    else                 succ->prev = pnew;
+    if (i == n) succ = sentinel;
+    else        succ = locate(i); 
+    prec = succ->prev;
+    prec->next = pnew;
     pnew->prev = prec;
+    pnew->next = succ;
+    succ->prev = pnew;
     n++;
 }
 
@@ -225,10 +218,8 @@ E List<E>::remove(int i)
     Node* succ = pold->next; // 指定位置的前驱和后继
     E tmp = pold->elem;
 
-    if (prec == nullptr) head = succ; // 位置在链表头
-    else                 prec->next = succ;
-    if (succ == nullptr) tail = prec; // 位置在链表尾
-    else                 succ->prev = prec;
+    prec->next = succ;
+    succ->prev = prec;
     delete pold;
     n--;
     return tmp; // 发生NRVO
@@ -245,8 +236,7 @@ void List<E>::swap(List<E>& that)
     // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap; 
     swap(n, that.n);
-    swap(head, that.head);
-    swap(tail, that.tail);
+    swap(sentinel, that.sentinel);
 }
 
 /**
@@ -255,15 +245,18 @@ void List<E>::swap(List<E>& that)
 template<typename E>
 void List<E>::clear()
 {
-    Node* aux = nullptr;
+    if (isEmpty()) return;
+    if (sentinel == nullptr) return;
+
+    Node* current = sentinel->next;
     // 释放每个结点内存
-    while (head != nullptr) 
+    while (current != sentinel) 
     {
-        aux = head;
-        head = head->next;
-        delete aux;
+        sentinel->next = current->next;
+        delete current;
+        current = sentinel->next;
     }
-    tail = nullptr;
+    sentinel->prev = sentinel;
     n = 0;
 }
 

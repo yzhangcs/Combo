@@ -18,9 +18,9 @@
 template<typename E>
 class Vector
 {
-private:
+    static const int NPOS = -1; // 索引错误指示符
     static const int DEFAULT_CAPACITY = 10; // 默认的Vector容量
-
+private:
     int n;        // Vector大小
     int capacity; // Vector容量
     E* pl;        // Vector指针
@@ -34,10 +34,9 @@ public:
     ~Vector() { delete[] pl; } // 析构函数
 
     int size() const { return n; } // 返回Vector当前大小
-    int indexOf(const E& elem) const; // 返回第一次出现该元素的位置
+    int find(const E& elem) const; // 返回第一次出现该元素的位置
     bool isEmpty() const { return n == 0; } // 判断是否为空Vector
-    bool contains(const E& elem) const // 判断表中是否存在该元素
-    { return indexOf(elem) >= 0; }
+    bool contains(const E& elem) const { return find(elem) != NPOS; } // 判断表中是否存在该元素
     void set(int i, E elem); // 设置指定位置的元素值
     void add(int i, E elem); // 添加指定元素到指定位置
     void add(E elem) { add(n, std::move(elem)); } // 添加元素到Vector尾部
@@ -220,18 +219,18 @@ void Vector<E>::resize(int size)
 
 /**
  * 返回第一次出现该元素的位置索引.
- * 当不存在该元素时，返回-1.
+ * 当不存在该元素时，返回NPOS.
  *
  * @param elem: 要查找的元素
  * @return i: 要查找的元素的索引
- *         -1: 找不到该元素
+ *         NPOS: 找不到该元素
  */
 template<typename E>
-int Vector<E>::indexOf(const E& elem) const
+int Vector<E>::find(const E& elem) const
 {
     for (int i = 0; i < n; ++i)
         if (pl[i] == elem) return i;
-    return -1;
+    return NPOS;
 }
 
 /**
