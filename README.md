@@ -37,21 +37,21 @@ $ git clone https://github.com/zy2625/CppLib.git
     ```
 
 3. Run
-    * All targets:
-      * Specific target
+    * targets:
+      * specific target
       ```bash
       $ cd .. && ./bin/Stack ./data/tobe.txt
       ```
-      * Custom target
+      * custom target
       ```bash
       $ make run
       ```
-    * All tests:
-      * Detailed output
+    * tests:
+      * detailed output
       ```bash
       $ cd .. && ./bin/Test
       ```
-      * Test summary
+      * test summary
       ```bash
       $ make test
       ```

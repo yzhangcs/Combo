@@ -6,39 +6,33 @@
  ******************************************************************************/
 
 #pragma once
-#include <cassert>
 #include <iostream>
-#include <iterator>
+#include "Vector.h"
 
 /**
  * 使用模板实现的后进先出栈.
  * 由动态连续数组存储栈.
- * 实现了数组栈的前向迭代器.
  */
 template<typename E>
 class ArrayStack
 {
     static const int DEFAULT_CAPACITY = 10; // 默认栈容量
 private:
-    int n; // 栈大小
-    int N; // 栈容量
-    E* ps; // 栈指针
-
-    void resize(int size); // 调整栈容量
+    Vector<E> container;
 public:
-    explicit ArrayStack(int cap = DEFAULT_CAPACITY); 
-    ArrayStack(const ArrayStack& that);
-    ArrayStack(ArrayStack&& that) noexcept;
-    ~ArrayStack() { delete[] ps; }  
+    explicit ArrayStack(int cap = DEFAULT_CAPACITY) : container(cap) {}
+    ArrayStack(const ArrayStack& that) : container(that.container) {}
+    ArrayStack(ArrayStack&& that) noexcept : container(std::move(that.container)) {}
+    ~ArrayStack() {} 
 
     // 返回栈当前大小
-    int size() const { return n; } 
+    int size() const { return container.size(); } 
     // 返回栈容量
-    int capacity() const { return N; } 
+    int capacity() const { return container.capacity(); } 
     // 判断是否为空栈
-    bool empty() const { return n == 0; } 
+    bool empty() const { return container.empty(); } 
     // 入栈函数
-    void push(E elem); 
+    void push(E elem) { container.insertBack(elem); } 
     // 出栈函数
     E pop(); 
     // 返回栈顶引用
@@ -46,9 +40,9 @@ public:
     // 返回const栈顶引用
     const E& top() const ; 
     // 内容与另一个ArrayStack对象交换
-    void swap(ArrayStack& that); 
+    void swap(ArrayStack& that) { container.swap(that.container); }
     // 清空栈，不释放空间，栈容量不变
-    void clear() { n = 0; } 
+    void clear() { container.clear(); }
 
     ArrayStack& operator=(ArrayStack that);
     template <typename T>
@@ -57,118 +51,7 @@ public:
     friend bool operator!=(const ArrayStack<T>& lhs, const ArrayStack<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const ArrayStack<T>& stack);
-
-    class iterator : public std::iterator<std::forward_iterator_tag, E>
-    {
-    private:
-        const ArrayStack* stack;
-        int i;
-    public:
-        iterator() : stack(nullptr), i(0) {}
-        iterator(const ArrayStack* stack, int i) : stack(stack), i(i) {}
-        iterator(const iterator& that) : stack(that.stack), i(that.i) {}
-        ~iterator() {}
-
-        E& operator*() const
-        { return stack->ps[i]; }
-        E* operator->() const
-        { return &stack->ps[i]; }
-        iterator& operator++()
-        {
-            i++;
-            return *this;
-        }
-        iterator operator++(int)
-        {
-            iterator tmp(*this);
-            ++*this;
-            return tmp;
-        }
-        bool operator==(const iterator& that) const
-        { return stack == that.stack && i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return stack != that.stack || i != that.i; }
-    };
-    iterator begin() const { return iterator(this, 0); }
-    iterator end() const { return iterator(this, n); }
 };
-
-/**
- * 数组栈构造函数，初始化栈.
- * 栈初始容量为10.
- *
- * @param cap: 指定栈容量
- */
-template<typename E>
-ArrayStack<E>::ArrayStack(int cap)
-{
-    n = 0;
-    N = cap; // 默认容量为10
-    ps = new E[N];
-}
-
-/**
- * 数组栈复制构造函数.
- * 复制另一个栈作为初始化的值.
- *
- * @param that: 被复制的栈
- */
-template<typename E>
-ArrayStack<E>::ArrayStack(const ArrayStack& that)
-{
-    n = that.n;
-    N = that.N;
-    ps = new E[N];
-    std::copy(that.begin(), that.end(), begin());
-}
-
-/**
- * 数组栈移动构造函数.
- * 移动另一个栈，其资源所有权转移到新创建的对象.
- *
- * @param that: 被移动的栈
- */
-template<typename E>
-ArrayStack<E>::ArrayStack(ArrayStack&& that) noexcept
-{
-    n = that.n;
-    N = that.N;
-    ps = that.ps;
-    that.ps = nullptr; // 指向空指针，退出被析构
-}
-
-/**
- * 创建指定容量的新栈，并移动所有元素到新栈当中.
- *
- * @param size: 新栈容量
- */
-template<typename E>
-void ArrayStack<E>::resize(int size)
-{
-    // 保证新的容量不小于栈当前大小
-    assert(size >= n); 
-    
-    ArrayStack tmp(size);
-    // 将所有元素移动到临时栈
-    std::move(begin(), end(), tmp.begin());
-    tmp.n = n; // 设置临时栈的大小
-    swap(tmp); // *this与tmp互相交换，退出时tmp被析构
-}
-
-/**
- * 添加元素到栈顶.
- * 当栈达到最大容量，扩容栈到两倍容量后，再将元素入栈.
- *
- * @param elem: 要入栈的元素
- */
-template<typename E>
-void ArrayStack<E>::push(E elem)
-{
-    if (n == N) 
-        resize(N * 2);
-    // 移动元素入栈
-    ps[n++] = std::move(elem); 
-}
 
 /**
  * 移除栈顶元素.
@@ -182,12 +65,7 @@ E ArrayStack<E>::pop()
 {
     if (empty()) 
         throw std::out_of_range("ArrayStack::pop() underflow.");
-
-    E tmp = ps[--n];
-    // 保证栈始终约为半满状态，保证n>0
-    if (n > 0 && n == N / 4) 
-        resize(N / 2);
-    return tmp; // 发生NRVO
+    return container.removeBack();
 }
 
 /**
@@ -201,22 +79,7 @@ const E& ArrayStack<E>::top() const
 {
     if (empty()) 
         throw std::out_of_range("ArrayStack::top() underflow.");
-    return ps[n - 1];
-}
-
-/**
- * 交换当前ArrayStack对象和另一个ArrayStack对象.
- *
- * @param that: ArrayStack对象that
- */
-template<typename E>
-void ArrayStack<E>::swap(ArrayStack<E>& that)
-{
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
-    swap(n, that.n);
-    swap(N, that.N);
-    swap(ps, that.ps);
+    return container.back();
 }
 
 /**
@@ -246,9 +109,7 @@ ArrayStack<E>& ArrayStack<E>::operator=(ArrayStack that)
 template<typename E>
 bool operator==(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
 {
-    if (&lhs == &rhs)             return true;
-    if (lhs.size() != rhs.size()) return false;
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return lhs.container == rhs.container;
 }
 
 /**
@@ -275,9 +136,7 @@ bool operator!=(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const ArrayStack<E>& stack)
 {
-    for (auto i : stack)
-        os << i << " ";
-    return os;
+    return os << stack.container;
 }
 
 /**

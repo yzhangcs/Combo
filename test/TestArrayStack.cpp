@@ -62,19 +62,6 @@ TEST_F(TestArrayStack, ElementAccess)
     EXPECT_THROW(stack.top(), std::out_of_range);
 }
 
-TEST_F(TestArrayStack, Iterators)
-{
-    EXPECT_EQ(stack.begin(), stack.end());
-    push_n(stack, scale);
-    EXPECT_NE(stack.begin(), stack.end());  
-
-    auto it = stack.begin();
-
-    for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), *(it++));
-    EXPECT_EQ(it, stack.end());
-}
-
 TEST_F(TestArrayStack, Capacity)
 {
     EXPECT_TRUE(stack.empty());

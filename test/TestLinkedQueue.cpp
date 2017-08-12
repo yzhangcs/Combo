@@ -63,19 +63,6 @@ TEST_F(TestLinkedQueue, ElementAccess)
     EXPECT_THROW(queue.back(), std::out_of_range);
 }
 
-TEST_F(TestLinkedQueue, Iterators)
-{
-    EXPECT_EQ(queue.begin(), queue.end());
-    enqueue_n(queue, scale);
-    EXPECT_NE(queue.begin(), queue.end());  
-    
-    auto it = queue.begin();
-
-    for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), *(it++));
-    EXPECT_EQ(it, queue.end());
-}
-
 TEST_F(TestLinkedQueue, Capacity)
 {
     EXPECT_TRUE(queue.empty());

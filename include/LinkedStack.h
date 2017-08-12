@@ -7,49 +7,38 @@
 
 #pragma once
 #include <iostream>
-#include <iterator>
+#include "List.h"
 
 /**
  * 使用模板实现的后进先出栈. 
  * 由链表存储栈.
- * 实现了链式栈的前向迭代器.
  */
 template<typename E>
 class LinkedStack
 {
-    struct Node
-    {
-        E elem;
-        Node* prev;
-        Node* next;
-        Node(E elem) : elem(std::move(elem)), prev(nullptr), next(nullptr) {}
-    };
-private:
-    int n; // 栈大小
-    Node* head; // 头指针指向栈顶
-    Node* tail; // 尾指针指向栈底
+    List<E> container;
 public:
-    LinkedStack() : n(0), head(nullptr), tail(nullptr) {}
-    LinkedStack(const LinkedStack& that);
-    LinkedStack(LinkedStack&& that) noexcept;
-    ~LinkedStack() { clear(); }
+    LinkedStack() : container() {}
+    LinkedStack(const LinkedStack& that) : container(that.container) {}
+    LinkedStack(LinkedStack&& that) noexcept : container(std::move(that.container)) {}
+    ~LinkedStack() {} 
 
     // 返回栈当前大小
-    int size() const { return n; } 
+    int size() const { return container.size(); } 
     // 判断是否为空栈
-    bool empty() const { return n == 0; } 
+    bool empty() const { return container.empty(); } 
     // 入栈函数
-    void push(E elem); 
+    void push(E elem) { container.insertBack(elem); } 
     // 出栈函数
     E pop(); 
     // 返回栈顶引用
     E& top() { return const_cast<E&>(static_cast<const LinkedStack&>(*this).top()); } 
     // 返回const栈顶引用
-    const E& top() const ; 
+    const E& top() const; 
     // 内容与另一个LinkedStack对象交换
-    void swap(LinkedStack& that); 
+    void swap(LinkedStack& that) { container.swap(that.container); } 
     // 清空栈
-    void clear(); 
+    void clear() { container.clear(); } 
     
     LinkedStack& operator=(LinkedStack that);
     template <typename T>
@@ -58,93 +47,8 @@ public:
     friend bool operator!=(const LinkedStack<T>& lhs, const LinkedStack<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const LinkedStack<T>& stack);
-
-    class iterator : public std::iterator<std::forward_iterator_tag, E>
-    {
-    private:
-        Node* pn;
-    public:
-        iterator() : pn(nullptr) {}
-        iterator(Node* x) : pn(x) {}
-        iterator(const iterator& that) : pn(that.pn) {}
-        ~iterator() {}
-
-        E& operator*() const
-        { return pn->elem; }
-        E* operator->() const
-        { return &pn->elem; }
-        iterator& operator++()
-        {
-            pn = pn->next;
-            return *this;
-        }
-        iterator operator++(int)
-        {
-            iterator tmp(*this);
-            ++*this;
-            return tmp;
-        }
-        bool operator==(const iterator& that) const
-        { return pn == that.pn; }
-        bool operator!=(const iterator& that) const
-        { return pn != that.pn; }
-    };
-    iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(nullptr); }
 };
 
-/**
- * 链式栈复制构造函数.
- * 复制另一个栈作为初始化的值.
- *
- * @param that: 被复制的栈
- */
-template<typename E>
-LinkedStack<E>::LinkedStack(const LinkedStack& that)
-{
-    n = 0;
-    head = nullptr;
-    tail = nullptr;
-    for (auto i : that)
-        push(i);
-}
-
-/**
- * 链式栈移动构造函数.
- * 移动另一个栈，其资源所有权转移到新创建的对象.
- *
- * @param that: 被移动的栈
- */
-template<typename E>
-LinkedStack<E>::LinkedStack(LinkedStack&& that) noexcept
-{
-    n = that.n;
-    head = that.head;
-    tail = that.tail;
-    that.head = nullptr;
-    that.tail = nullptr; // 指向空指针，退出被析构
-}
-
-/**
- * 添加元素到栈顶.
- *
- * @param elem: 要入栈的元素
- */
-template<typename E>
-void LinkedStack<E>::push(E elem)
-{
-    Node* pold = tail;
-
-    tail = new Node(std::move(elem));
-    if (empty())
-        head = tail;
-    else
-    {
-        pold->next = tail;
-        tail->prev = pold;
-    }
-    n++;
-}
 
 /**
  * 移除栈顶元素.
@@ -157,16 +61,7 @@ E LinkedStack<E>::pop()
 {
     if (empty()) 
         throw std::out_of_range("LinkedStack::pop() underflow.");
-
-    Node* pold = tail;
-    E tmp = tail->elem;
-
-    tail = tail->prev;
-    if (tail != nullptr) tail->next = nullptr;
-    else                 head = tail;
-    delete pold;
-    n--;
-    return tmp; // 发生NRVO
+    return container.removeBack();
 }
 
 /**
@@ -180,40 +75,7 @@ const E& LinkedStack<E>::top() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedStack::top() underflow.");
-    return tail->elem;
-}
-
-/**
- * 交换当前LinkedStack对象和另一个LinkedStack对象.
- *
- * @param that: LinkedStack对象that
- */
-template<typename E>
-void LinkedStack<E>::swap(LinkedStack& that)
-{
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
-    swap(n, that.n);
-    swap(head, that.head);
-    swap(tail, that.tail);
-}
-
-/**
- * 清空该栈元素.
- */
-template<typename E>
-void LinkedStack<E>::clear()
-{
-    Node* aux = nullptr;
-    // 释放每个结点内存
-    while (head != nullptr) 
-    {
-        aux = head;
-        head = head->next;
-        delete aux;
-    }
-    tail = nullptr;
-    n = 0;
+    return container.back();
 }
 
 /**
@@ -243,9 +105,7 @@ LinkedStack<E>& LinkedStack<E>::operator=(LinkedStack<E> that)
 template<typename E>
 bool operator==(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
 {
-    if (&lhs == &rhs)             return true;
-    if (lhs.size() != rhs.size()) return false;
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return lhs.container == rhs.container;
 }
 
 /**
@@ -272,9 +132,7 @@ bool operator!=(const LinkedStack<E>& lhs, const LinkedStack<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const LinkedStack<E>& stack)
 {
-    for (auto i : stack)
-        os << i << " ";
-    return os;
+    return os << stack.container;
 }
 
 /**

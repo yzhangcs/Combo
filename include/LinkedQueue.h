@@ -7,38 +7,28 @@
 
 #pragma once
 #include <iostream>
-#include <iterator>
+#include "List.h"
 
 /**
  * 使用模板实现的先进先出队列. 
  * 由链表存储队列.
- * 实现了链式队列的前向迭代器.
  */
 template<typename E>
 class LinkedQueue
 {
-    struct Node
-    {
-        E elem;
-        Node* next;
-        Node(E elem) : elem(std::move(elem)), next(nullptr) {}
-    };
-private:
-    int n;      // 队列大小
-    Node* head; // 队首指针
-    Node* tail; // 队尾指针
+    List<E> container;
 public:
-    LinkedQueue() : n(0), head(nullptr), tail(nullptr) {}
-    LinkedQueue(const LinkedQueue& that);
-    LinkedQueue(LinkedQueue&& that) noexcept;
-    ~LinkedQueue() { clear(); }
+    LinkedQueue() : container() {}
+    LinkedQueue(const LinkedQueue& that) : container(that.container) {}
+    LinkedQueue(LinkedQueue&& that) noexcept : container(std::move(that.container)) {}
+    ~LinkedQueue() {} 
 
     // 返回队列当前大小
-    int size() const { return n; } 
+    int size() const { return container.size(); } 
     // 判断是否为空队列
-    bool empty() const { return n == 0; } 
+    bool empty() const { return container.empty(); } 
     // 入队函数
-    void enqueue(E elem); 
+    void enqueue(E elem) { container.insertBack(elem); } 
     // 出队函数
     E dequeue(); 
     // 返回队首引用
@@ -50,9 +40,9 @@ public:
     // 返回const队尾引用
     const E& back() const; 
     // 内容与另一个LinkedQueue对象交换
-    void swap(LinkedQueue& that); 
+    void swap(LinkedQueue& that) { container.swap(that.container); }
     // 清空队列
-    void clear(); 
+    void clear() { container.clear(); }
     
     LinkedQueue& operator=(LinkedQueue that);
     template <typename T>
@@ -61,88 +51,7 @@ public:
     friend bool operator!=(const LinkedQueue<T>& lhs, const LinkedQueue<T>& rhs);
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const LinkedQueue<T>& queue);
-
-    class iterator : public std::iterator<std::forward_iterator_tag, E>
-    {
-    private:
-        Node* pn;
-    public:
-        iterator() : pn(nullptr) {}
-        iterator(Node* x) : pn(x) {}
-        iterator(const iterator& that) : pn(that.pn) {}
-        ~iterator() {}
-
-        E& operator*() const
-        { return pn->elem; }
-        E* operator->() const
-        { return &pn->elem; }
-        iterator& operator++()
-        {
-            pn = pn->next;
-            return *this;
-        }
-        iterator operator++(int)
-        {
-            iterator tmp(*this);
-            ++*this;
-            return tmp;
-        }
-        bool operator==(const iterator& that) const
-        { return pn == that.pn; }
-        bool operator!=(const iterator& that) const
-        { return pn != that.pn; }
-    };
-    iterator begin() const { return iterator(head); }
-    iterator end() const { return iterator(nullptr); }
 };
-
-/**
- * 链式队列复制构造函数.
- * 复制另一个队列作为初始化的值.
- *
- * @param that: 被复制的队列
- */
-template<typename E>
-LinkedQueue<E>::LinkedQueue(const LinkedQueue& that)
-{
-    n = 0;
-    head = nullptr;
-    tail = nullptr;
-    for (auto i : that)
-        enqueue(i);
-}
-
-/**
- * 链式队列移动构造函数.
- * 移动另一个队列，其资源所有权转移到新创建的对象.
- *
- * @param that: 被移动的队列
- */
-template<typename E>
-LinkedQueue<E>::LinkedQueue(LinkedQueue&& that) noexcept
-{
-    n = that.n;
-    head = that.head;
-    tail = that.tail;
-    that.head = nullptr;
-    that.tail = nullptr; // 指向空指针，退出被析构
-}
-
-/**
- * 添加元素到队尾.
- *
- * @param elem: 要入队的元素
- */
-template<typename E>
-void LinkedQueue<E>::enqueue(E elem)
-{
-    Node* pold = tail;
-
-    tail = new Node(std::move(elem));
-    if (empty()) head = tail;
-    else         pold->next = tail;
-    n++;
-}
 
 /**
  * 移除队首元素.
@@ -155,14 +64,7 @@ E LinkedQueue<E>::dequeue()
 {
     if (empty()) 
         throw std::out_of_range("LinkedQueue::dequeue() underflow.");
-
-    Node* pold = head;
-    E tmp = head->elem;
-
-    head = head->next;
-    delete pold;
-    n--;
-    return tmp; // 发生NRVO
+    return container.removeFront();
 }
 
 /**
@@ -176,7 +78,7 @@ const E& LinkedQueue<E>::front() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedQueue::front() underflow.");
-    return head->elem;
+    return container.front();
 }
 
 /**
@@ -190,40 +92,7 @@ const E& LinkedQueue<E>::back() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedQueue::back() underflow.");
-    return tail->elem;
-}
-
-/**
- * 交换当前LinkedQueue对象和另一个LinkedQueue对象.
- *
- * @param that: LinkedQueue对象that
- */
-template<typename E>
-void LinkedQueue<E>::swap(LinkedQueue<E>& that)
-{
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
-    swap(n, that.n);
-    swap(head, that.head);
-    swap(tail, that.tail);
-}
-
-/**
- * 清空该队列元素.
- */
-template<typename E>
-void LinkedQueue<E>::clear()
-{
-    Node* aux = nullptr;
-    // 释放每个结点内存
-    while (head != nullptr) 
-    {
-        aux = head;
-        head = head->next;
-        delete aux;
-    }
-    tail = nullptr;
-    n = 0;
+    return container.back();
 }
 
 /**
@@ -252,9 +121,7 @@ LinkedQueue<E>& LinkedQueue<E>::operator=(LinkedQueue<E> that)
 template<typename E>
 bool operator==(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
 {
-    if (&lhs == &rhs)             return true;
-    if (lhs.size() != rhs.size()) return false;
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return lhs.container == rhs.container;
 }
 
 /**
@@ -281,9 +148,7 @@ bool operator!=(const LinkedQueue<E>& lhs, const LinkedQueue<E>& rhs)
 template<typename E>
 std::ostream& operator<<(std::ostream& os, const LinkedQueue<E>& queue)
 {
-    for (auto i : queue)
-        os << i << " ";
-    return os;
+    return os << queue.container;
 }
 
 /**
