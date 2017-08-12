@@ -26,26 +26,40 @@ private:
     int tail; // 队尾索引
     E* pd;    // 双端队列指针
     
-    void resize(int size); // 调整双端队列容量
+    // 调整双端队列容量
+    void resize(int size); 
 public:
     explicit ArrayDeque(int cap = DEFAULT_CAPACITY); 
     ArrayDeque(const ArrayDeque& that);
     ArrayDeque(ArrayDeque&& that) noexcept;
     ~ArrayDeque() { delete[] pd; }
 
-    int size() const { return n; } // 返回双端队列当前大小
-    int capacity() const { return N; } // 返回双端队列容量
-    bool empty() const { return n == 0; } // 判断是否为空双端队列
-    void insertFront(E elem); // 添加元素到队首
-    void insertBack(E elem); // 添加元素到队尾
-    void endeque(E elem) { insertBack(std::move(elem)); } // 入队函数
-    E removeFront(); // 队首元素出队
-    E removeBack(); // 队尾元素出队
-    E dequeue() { return removeFront(); } // 出队函数
-    E& front(); // 返回队首引用
-    E& back(); // 返回队尾引用
-    void swap(ArrayDeque& that); // 内容与另一个ArrayDeque对象交换
-    void clear(); // 清空双端队列，不释放空间，双端队列容量不变
+    // 返回双端队列当前大小
+    int size() const { return n; } 
+    // 返回双端队列容量
+    int capacity() const { return N; } 
+    // 判断是否为空双端队列
+    bool empty() const { return n == 0; } 
+    // 添加元素到队首
+    void insertFront(E elem); 
+    // 添加元素到队尾
+    void insertBack(E elem); 
+    // 队首元素出队
+    E removeFront(); 
+    // 队尾元素出队
+    E removeBack(); 
+    // 返回队首引用
+    E& front() { return const_cast<E&>(static_cast<const ArrayDeque&>(*this).front()); } 
+    // 返回const队首引用
+    const E& front() const; 
+    // 返回队尾引用
+    E& back() { return const_cast<E&>(static_cast<const ArrayDeque&>(*this).back()); } 
+    // 返回const队尾引用
+    const E& back() const; 
+    // 内容与另一个ArrayDeque对象交换
+    void swap(ArrayDeque& that); 
+    // 清空双端队列，不释放空间，双端队列容量不变
+    void clear(); 
     
     ArrayDeque& operator=(ArrayDeque that);
     template <typename T>
@@ -175,7 +189,7 @@ void ArrayDeque<E>::resize(int size)
  * 添加元素到队首.
  * 当双端队列达到最大容量，扩容双端队列到两倍容量后，再将元素入队.
  *
- * @param elem: 要添加到队首的元素
+ * @param elem: 要添加的元素
  */
 template<typename E>
 void ArrayDeque<E>::insertFront(E elem)
@@ -192,7 +206,7 @@ void ArrayDeque<E>::insertFront(E elem)
  * 添加元素到队尾.
  * 当双端队列达到最大容量，扩容双端队列到两倍容量后，再将元素入队.
  *
- * @param elem: 要添加到队尾的元素
+ * @param elem: 要添加的元素
  */
 template<typename E>
 void ArrayDeque<E>::insertBack(E elem)
@@ -205,10 +219,10 @@ void ArrayDeque<E>::insertBack(E elem)
 }
 
 /**
- * 让队首元素出队.
+ * 移除队首元素.
  * 当双端队列达到1/4容量，缩小双端队列容量.
  *
- * @return 出队队首
+ * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
@@ -228,10 +242,10 @@ E ArrayDeque<E>::removeFront()
 }
 
 /**
- * 让队尾元素出队.
+ * 移除队尾元素.
  * 当双端队列达到1/4容量，缩小双端队列容量.
  *
- * @return 出队队尾
+ * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
@@ -252,13 +266,13 @@ E ArrayDeque<E>::removeBack()
 }
 
 /**
- * 返回队首引用.
+ * 返回const队首引用.
  *
- * @return 队首引用
+ * @return const队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& ArrayDeque<E>::front()
+const E& ArrayDeque<E>::front() const
 {
     if (empty()) 
         throw std::out_of_range("ArrayDeque::front() underflow.");
@@ -266,13 +280,13 @@ E& ArrayDeque<E>::front()
 }
 
 /**
- * 返回队尾引用.
+ * 返回const队尾引用.
  *
- * @return 队尾引用
+ * @return const队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& ArrayDeque<E>::back()
+const E& ArrayDeque<E>::back() const
 {
     if (empty()) 
         throw std::out_of_range("ArrayDeque::back() underflow.");

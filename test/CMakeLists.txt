@@ -39,10 +39,10 @@ set(TEST_CPPLIB_LIST
     TestLinkedDeque.cpp
     TestLinkedQueue.cpp
     TestLinkedStack.cpp
+    TestList.cpp
+    TestVector.cpp
     # TestBinaryHeap.cpp
     # TestIndexHeap.cpp
-    # TestVector.cpp
-    # TestList.cpp
     # TestPriorityQueue.cpp
     # TestRandom.cpp
     # TestBinarySearchMap.cpp

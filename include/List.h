@@ -24,35 +24,48 @@ class List
         Node() : elem(), prev(this), next(this) {}
         Node(E elem) : elem(std::move(elem)), prev(this), next(this) {}
     };
-    
-    static const int NPOS = -1; // 索引错误指示符
 private:
     int n; // 链表大小
     Node* sentinel; // 哨兵指针
 
-    Node* locate(int i) const; // 定位指定元素
-    bool valid(int i) const { return i >= 0 && i < n; } // 检查索引是否合法
+    // 定位指定元素
+    Node* locate(int i) const; 
+    // 检查索引是否合法
+    bool valid(int i) const { return i >= 0 && i < n; } 
 public:
     List() : n(0), sentinel(new Node) {}
     List(const List& that);
     List(List&& that) noexcept;
     ~List();
 
-    int size() const { return n; } // 返回链表当前大小
-    int find(const E& elem) const; // 返回第一次出现指定元素的位置
-    bool empty() const { return n == 0; } // 判断是否为空链表
-    bool contains(const E& elem) const { return find(elem) != NPOS; } // 判断表中是否存在该元素
-    void insert(int i, E elem); // 添加指定元素到指定位置
-    void insert(E elem) { insert(n, std::move(elem)); } // 添加元素到链表尾部
-    void insertFront(E elem) { insert(0, std::move(elem)); } // 添加元素到链表头部
-    void insertBack(E elem) { insert(n, std::move(elem)); } // 添加元素到链表尾部
-    E remove(int i); // 移除指定位置的元素
-    E removeFront() { return remove(0); } // 移除链表头部元素
-    E removeBack() { return remove(n - 1); } // 移除链表尾部元素
-    E& front() const; // 返回链表头部元素的引用
-    E& back() const; // 返回链表尾部元素的引用
-    void swap(List& that); // 内容与另一个LinkedList对象交换
-    void clear(); // 清空链表
+    // 返回链表当前大小
+    int size() const { return n; } 
+    // 判断是否为空链表
+    bool empty() const { return n == 0; } 
+    // 添加指定元素到指定位置
+    void insert(int i, E elem); 
+    // 添加元素到链表头部
+    void insertFront(E elem); 
+    // 添加元素到链表尾部
+    void insertBack(E elem); 
+    // 移除指定位置的元素
+    E remove(int i); 
+    // 移除链表头部元素
+    E removeFront(); 
+    // 移除链表尾部元素
+    E removeBack(); 
+    // 返回链表头部元素的引用
+    E& front() { return const_cast<E&>(static_cast<const List&>(*this).front()); }  
+    // 返回链表头部元素的const引用
+    const E& front() const; 
+    // 返回链表尾部元素的引用
+    E& back() { return const_cast<E&>(static_cast<const List&>(*this).back()); }  
+    // 返回链表尾部元素的const引用
+    const E& back() const; 
+    // 内容与另一个LinkedList对象交换
+    void swap(List& that); 
+    // 清空链表
+    void clear(); 
     
     List& operator=(List that);
     List& operator+=(const List& that);
@@ -94,7 +107,7 @@ public:
         }
         iterator& operator--()
         {
-            pn = (pn == nullptr) ? tail : pn->prev;
+            pn = pn->prev;
             return *this;
         }
         iterator operator--(int)
@@ -142,6 +155,17 @@ List<E>::List(List&& that) noexcept
 }
 
 /**
+ * 链表析构函数.
+ */
+template<typename E>
+List<E>::~List()
+{
+    clear();
+    delete sentinel;
+    sentinel = nullptr;
+}
+
+/**
  * 定位指定位置的元素.
  * 返回指向该位置元素的指针.
  *
@@ -154,28 +178,8 @@ typename List<E>::Node* List<E>::locate(int i) const
 {
     if (!valid(i)) 
         throw std::out_of_range("List::locate() index out of range.");
-    return std::next(begin(), i).pn;;
-}
-
-/**
- * 返回第一次出现指定元素的位置索引.
- * 当不存在该元素时，返回NPOS.
- *
- * @param elem: 要查找的元素
- * @return i: 要查找的元素的索引
- *         NPOS: 找不到该元素
- */
-template<typename E>
-int List<E>::find(const E& elem) const
-{
-    int index = 0;
-
-    for (auto i : *this)
-    {
-        if (i == elem) return index;
-        else           index++;
-    }
-    return NPOS;
+    if (i < (n >> 1)) return std::next(begin(), i).pn;
+    else              return std::prev(end(), n - i).pn;
 }
 
 /**
@@ -204,6 +208,42 @@ void List<E>::insert(int i, E elem)
 }
 
 /**
+ * 添加元素到链表头部.
+ *
+ * @param elem: 要添加的元素
+ */
+template<typename E>
+void List<E>::insertFront(E elem)
+{
+    Node* succ = sentinel->next;
+    Node* pnew = new Node(std::move(elem));
+
+    sentinel->next = pnew;
+    pnew->prev = sentinel;
+    pnew->next = succ;
+    succ->prev = pnew;
+    n++;
+}
+
+/**
+ * 添加元素到链表尾部.
+ *
+ * @param elem: 要添加的元素
+ */
+template<typename E>
+void List<E>::insertBack(E elem)
+{
+    Node* prec = sentinel->prev;
+    Node* pnew = new Node(std::move(elem));
+
+    prec->next = pnew;
+    pnew->prev = prec;
+    pnew->next = sentinel;
+    sentinel->prev = pnew;
+    n++;
+}
+
+/**
  * 移除链表中指定位置的元素.
  *
  * @param i: 要移除元素的索引
@@ -226,13 +266,59 @@ E List<E>::remove(int i)
 }
 
 /**
- * 返回链表头部元素的引用.
+ * 移除链表头部元素.
  *
- * @return 链表头部元素的引用
+ * @return 移除的元素
+ * @throws std::out_of_range: 队空
+ */
+template<typename E>
+E List<E>::removeFront()
+{
+    if (empty()) 
+        throw std::out_of_range("List::removeFront() underflow.");
+
+    Node* pold = sentinel->next;
+    Node* succ = pold->next;
+    E tmp = pold->elem;
+
+    sentinel->next = succ;
+    succ->prev = sentinel;
+    delete pold;
+    n--;
+    return tmp; // 发生NRVO
+}
+
+/**
+ * 移除链表尾部元素.
+ *
+ * @return 移除的元素
+ * @throws std::out_of_range: 队空
+ */
+template<typename E>
+E List<E>::removeBack()
+{
+    if (empty()) 
+        throw std::out_of_range("List::removeBack() underflow.");
+
+    Node* pold = sentinel->prev;
+    Node* prec = pold->prev;
+    E tmp = pold->elem;
+
+    prec->next = sentinel;
+    sentinel->prev = prec;
+    delete pold;
+    n--;
+    return tmp; // 发生NRVO
+}
+
+/**
+ * 返回链表头部元素的const引用.
+ *
+ * @return 链表头部元素的const引用
  * @throws std::out_of_range: 链表为空
  */
 template<typename E>
-E& List<E>::front()
+const E& List<E>::front() const
 {
     if (empty()) 
         throw std::out_of_range("List::front() underflow.");
@@ -240,13 +326,13 @@ E& List<E>::front()
 }
 
 /**
- * 返回链表尾部元素的引用.
+ * 返回链表尾部元素的const引用.
  *
- * @return 链表尾部元素的引用
+ * @return 链表尾部元素的const引用
  * @throws std::out_of_range: 链表为空
  */
 template<typename E>
-E& List<E>::back()
+const E& List<E>::back() const
 {
     if (empty()) 
         throw std::out_of_range("List::back() underflow.");
@@ -314,7 +400,7 @@ template<typename E>
 List<E>& List<E>::operator+=(const List<E>& that)
 {
     for (auto i : that)
-        insert(i);
+        insertBack(i);
     return *this;
 }
 

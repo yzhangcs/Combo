@@ -18,9 +18,9 @@ public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void insert_n(LinkedDeque<string>& s, int n, bool isForward)
+    void insert_n(LinkedDeque<string>& s, int n, bool from_back = true)
     {
-        if (isForward)
+        if (from_back)
         {
             for (int i = 0; i < n; ++i) 
                 s.insertBack(std::to_string(i));
@@ -31,9 +31,9 @@ public:
                 s.insertFront(std::to_string(i));
         }
     }
-    void remove_n(LinkedDeque<string>& s, int n, bool isForward)
+    void remove_n(LinkedDeque<string>& s, int n, bool from_back)
     {
-        if (isForward)
+        if (from_back)
         {
             for (int i = 0; i < n; ++i) 
                 s.removeBack();
@@ -53,8 +53,8 @@ TEST_F(TestLinkedDeque, Basic)
         LinkedDeque<string> s2(s1);
         LinkedDeque<string> s3(LinkedDeque<string>());
 
-        // s1 = s2;
-        // s2 = LinkedDeque<string>();
+        s1 = s2;
+        s2 = LinkedDeque<string>();
     });
 }
 
@@ -93,17 +93,17 @@ TEST_F(TestLinkedDeque, ElementAccess)
 TEST_F(TestLinkedDeque, Iterators)
 {
     EXPECT_EQ(deque.begin(), deque.end());
-    insert_n(deque, scale, true);
+    insert_n(deque, scale);
     EXPECT_NE(deque.begin(), deque.end());
     
     auto bg = deque.begin();
     auto ed = deque.end();
 
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), *(bg++));
+        EXPECT_EQ(std::to_string(i), *bg++);
     EXPECT_EQ(bg, deque.end());
-    for (int i = scale; i > 0; --i)
-        EXPECT_EQ(std::to_string(i - 1), *(--ed));
+    for (int i = scale - 1; i >= 0; --i)
+        EXPECT_EQ(std::to_string(i), *--ed);
     EXPECT_EQ(ed, deque.begin());
 }
 
@@ -111,10 +111,12 @@ TEST_F(TestLinkedDeque, Capacity)
 {
     EXPECT_TRUE(deque.empty());
     EXPECT_EQ(0, deque.size());
+
     insert_n(deque, scale, true);
     EXPECT_EQ(scale, deque.size());
     remove_n(deque, scale, true);
     EXPECT_TRUE(deque.empty());
+    
     insert_n(deque, scale, false);
     EXPECT_EQ(scale, deque.size());
     remove_n(deque, scale, false);
@@ -123,32 +125,36 @@ TEST_F(TestLinkedDeque, Capacity)
 
 TEST_F(TestLinkedDeque, Modifiers)
 {
-    EXPECT_THROW(deque.dequeue(), std::out_of_range);
+    EXPECT_THROW(deque.removeBack(), std::out_of_range);
+    EXPECT_THROW(deque.removeFront(), std::out_of_range);
     EXPECT_NO_THROW({
         insert_n(deque, scale, true);
-        remove_n(deque, scale, true);
+        for (int i = scale - 1; i >= 0; --i)
+            EXPECT_EQ(std::to_string(i), deque.removeBack());
         insert_n(deque, scale, false);
-        remove_n(deque, scale, false);
+        for (int i = scale - 1; i >= 0; --i)
+            EXPECT_EQ(std::to_string(i), deque.removeFront());
     });
-    EXPECT_THROW(deque.dequeue(), std::out_of_range);
+    EXPECT_THROW(deque.removeBack(), std::out_of_range);
+    EXPECT_THROW(deque.removeFront(), std::out_of_range);
 
-    insert_n(deque, scale, true);
+    insert_n(deque, scale);
     deque.clear();
     EXPECT_TRUE(deque.empty());
     EXPECT_EQ(0, deque.size());
-    EXPECT_THROW(deque.dequeue(), std::out_of_range);
+    EXPECT_THROW(deque.removeBack(), std::out_of_range);
 
-    insert_n(a, scale, true);
+    insert_n(a, scale);
     b.swap(a);
     EXPECT_EQ(scale, b.size());
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), b.dequeue());
+        EXPECT_EQ(std::to_string(i), b.removeFront());
 }
 
 TEST_F(TestLinkedDeque, Other)
 {
     using std::swap;
-    insert_n(a, scale, true);
+    insert_n(a, scale);
     c = a;
     EXPECT_TRUE(c == a && c != b);
     b.swap(a);

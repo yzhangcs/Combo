@@ -13,9 +13,9 @@
 class QuickUnion
 {
 private: 
-    int n; // 并查集大小
+    int n;          // 并查集大小
     int components; // 连通分量的数量
-    int* id; // id[i]为i的父触点.
+    int* id;        // id[i]为i的父触点.
 
     // 检查触点p是否合法
     bool valid(int p) const { return p >= 0 && p < n; }
@@ -27,10 +27,14 @@ public:
 
     // 判断p与q是否属于同一个连通分量
     bool connected(int p, int q) { return find(p) == find(q); } 
-    int count() { return components; } // 返回连通分量数
-    int find(int p); // 找到p所属连通分量的标识符
-    void join(int p, int q); // 合并p与q所属的连通分量
-    void swap(QuickUnion& that); // 内容与另一个QuickUnion对象交换
+    // 返回连通分量数
+    int count() { return components; } 
+    // 找到p所属连通分量的标识符
+    int find(int p);  
+    // 合并p与q所属的连通分量
+    void join(int p, int q);
+    // 内容与另一个QuickUnion对象交换
+    void swap(QuickUnion& that); 
 
     QuickUnion& operator=(QuickUnion that);
 };

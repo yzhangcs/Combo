@@ -34,13 +34,22 @@ public:
     LinkedStack(LinkedStack&& that) noexcept;
     ~LinkedStack() { clear(); }
 
-    int size() const { return n; } // 返回栈当前大小
-    bool empty() const { return n == 0; } // 判断是否为空栈
-    void push(E elem); // 入栈函数
-    E pop(); // 出栈函数
-    E& top(); // 返回栈顶引用
-    void swap(LinkedStack& that); // 内容与另一个LinkedStack对象交换
-    void clear(); // 清空栈
+    // 返回栈当前大小
+    int size() const { return n; } 
+    // 判断是否为空栈
+    bool empty() const { return n == 0; } 
+    // 入栈函数
+    void push(E elem); 
+    // 出栈函数
+    E pop(); 
+    // 返回栈顶引用
+    E& top() { return const_cast<E&>(static_cast<const LinkedStack&>(*this).top()); } 
+    // 返回const栈顶引用
+    const E& top() const ; 
+    // 内容与另一个LinkedStack对象交换
+    void swap(LinkedStack& that); 
+    // 清空栈
+    void clear(); 
     
     LinkedStack& operator=(LinkedStack that);
     template <typename T>
@@ -117,7 +126,7 @@ LinkedStack<E>::LinkedStack(LinkedStack&& that) noexcept
 }
 
 /**
- * 入栈函数，使元素入栈.
+ * 添加元素到栈顶.
  *
  * @param elem: 要入栈的元素
  */
@@ -138,9 +147,9 @@ void LinkedStack<E>::push(E elem)
 }
 
 /**
- * 出栈函数，让最近加入的元素出栈.
+ * 移除栈顶元素.
  *
- * @return 出栈元素
+ * @return 移除的元素
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
@@ -161,13 +170,13 @@ E LinkedStack<E>::pop()
 }
 
 /**
- * 返回栈顶引用.
+ * 返回const栈顶引用.
  *
- * @return 栈顶引用
+ * @return const栈顶引用
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
-E& LinkedStack<E>::top()
+const E& LinkedStack<E>::top() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedStack::top() underflow.");

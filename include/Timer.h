@@ -19,9 +19,12 @@ private:
 public:
     Timer() { time = timestampMs(); }
     
+    // 产生毫秒精度的时间戳
     static size_t timestampMs();
-    void start() { time = timestampMs(); } // 开始计时
-    void reset() { time = timestampMs(); } // 重新计时
+    // 开始计时
+    void start() { time = timestampMs(); } 
+    // 重新计时
+    void reset() { time = timestampMs(); } 
     // 查看从开始计时到当前的总秒数
     double elapsed() { return (timestampMs() - time) / 1000.0; }
 };

@@ -78,6 +78,7 @@ TEST_F(TestLinkedStack, Capacity)
 {
     EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
+    
     push_n(stack, scale);
     EXPECT_EQ(scale, stack.size());
     pop_n(stack, scale);
@@ -89,7 +90,8 @@ TEST_F(TestLinkedStack, Modifiers)
     EXPECT_THROW(stack.pop(), std::out_of_range);
     EXPECT_NO_THROW({
         push_n(stack, scale);
-        pop_n(stack, scale);
+        for (int i = scale - 1; i >= 0; --i)
+            EXPECT_EQ(std::to_string(i), stack.pop());
     });
     EXPECT_THROW(stack.pop(), std::out_of_range);
 
@@ -102,8 +104,8 @@ TEST_F(TestLinkedStack, Modifiers)
     push_n(a, scale);
     b.swap(a);
     EXPECT_EQ(scale, b.size());
-    for (int i = scale; i > 0; --i)
-        EXPECT_EQ(std::to_string(i - 1), b.pop());
+    for (int i = scale - 1; i >= 0; --i)
+        EXPECT_EQ(std::to_string(i), b.pop());
 }
 
 TEST_F(TestLinkedStack, Other)

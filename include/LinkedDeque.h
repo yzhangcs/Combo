@@ -34,18 +34,30 @@ public:
     LinkedDeque(LinkedDeque&& that) noexcept;
     ~LinkedDeque();
 
-    int size() const { return n; } // 返回双端队列当前大小
-    bool empty() const { return n == 0; } // 判断是否为空双端队列
-    void insertFront(E elem); // 添加元素到队首
-    void insertBack(E elem); // 添加元素到队尾
-    void enqueue(E elem) { insertBack(std::move(elem)); } // 入队函数
-    E removeFront(); // 队首元素出队
-    E removeBack(); // 队尾元素出队
-    E dequeue() { return removeFront(); } // 出队函数
-    E& front(); // 返回队首引用
-    E& back(); // 返回队尾引用
-    void swap(LinkedDeque& that); // 内容与另一个LinkedDeque对象交换
-    void clear(); // 清空双端队列
+    // 返回双端队列当前大小
+    int size() const { return n; } 
+    // 判断是否为空双端队列
+    bool empty() const { return n == 0; } 
+    // 添加元素到队首
+    void insertFront(E elem); 
+    // 添加元素到队尾
+    void insertBack(E elem); 
+    // 队首元素出队
+    E removeFront(); 
+    // 队尾元素出队
+    E removeBack(); 
+    // 返回队首引用
+    E& front() { return const_cast<E&>(static_cast<const LinkedDeque&>(*this).front()); } 
+    // 返回const队首引用
+    const E& front() const; 
+    // 返回队尾引用
+    E& back() { return const_cast<E&>(static_cast<const LinkedDeque&>(*this).back()); } 
+    // 返回const队尾引用
+    const E& back() const; 
+    // 内容与另一个LinkedDeque对象交换
+    void swap(LinkedDeque& that); 
+    // 清空双端队列
+    void clear(); 
     
     LinkedDeque& operator=(LinkedDeque that);
     template <typename T>
@@ -143,7 +155,7 @@ LinkedDeque<E>::~LinkedDeque()
 /**
  * 添加元素到队首.
  *
- * @param elem: 要添加到队首的元素
+ * @param elem: 要添加的元素
  */
 template<typename E>
 void LinkedDeque<E>::insertFront(E elem)
@@ -161,7 +173,7 @@ void LinkedDeque<E>::insertFront(E elem)
 /**
  * 添加元素到队尾.
  *
- * @param elem: 要添加到队尾的元素
+ * @param elem: 要添加的元素
  */
 template<typename E>
 void LinkedDeque<E>::insertBack(E elem)
@@ -177,9 +189,9 @@ void LinkedDeque<E>::insertBack(E elem)
 }
 
 /**
- * 让队首元素出队.
+ * 移除队首元素.
  *
- * @return 出队队首
+ * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
@@ -200,9 +212,9 @@ E LinkedDeque<E>::removeFront()
 }
 
 /**
- * 让队尾元素出队.
+ * 移除队尾元素.
  *
- * @return 出队队尾
+ * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
@@ -223,13 +235,13 @@ E LinkedDeque<E>::removeBack()
 }
 
 /**
- * 返回队首引用.
+ * 返回const队首引用.
  *
- * @return 队首引用
+ * @return const队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& LinkedDeque<E>::front()
+const E& LinkedDeque<E>::front() const 
 {
     if (empty()) 
         throw std::out_of_range("LinkedDeque::front() underflow.");
@@ -237,13 +249,13 @@ E& LinkedDeque<E>::front()
 }
 
 /**
- * 返回队尾引用.
+ * 返回const队尾引用.
  *
- * @return 队尾引用
+ * @return const队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& LinkedDeque<E>::back()
+const E& LinkedDeque<E>::back() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedDeque::back() underflow.");

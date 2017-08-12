@@ -18,40 +18,57 @@
 template<typename E>
 class Vector
 {
-    static const int NPOS = -1; // 索引错误指示符
     static const int DEFAULT_CAPACITY = 10; // 默认的Vector容量
 private:
     int n; // Vector大小
     int N; // Vector容量
     E* pl; // Vector指针
     
-    void resize(int size); // 调整Vector容量
-    bool valid(int i) const { return i >= 0 && i < n; } // 检查索引是否合法
+    // 调整Vector容量
+    void resize(int size); 
+    // 检查索引是否合法
+    bool valid(int i) const { return i >= 0 && i < n; } 
 public:
     explicit Vector(int cap = DEFAULT_CAPACITY); 
     Vector(const Vector& that);
     Vector(Vector&& that) noexcept;
     ~Vector() { delete[] pl; }
 
-    int size() const { return n; } // 返回Vector当前大小
-    int capacity() const { return N; } // 返回Vector容量
-    int find(const E& elem) const; // 返回第一次出现指定元素的位置
-    bool empty() const { return n == 0; } // 判断是否为空Vector
-    bool contains(const E& elem) const { return find(elem) != NPOS; } // 判断表中是否存在该元素
-    void insert(int i, E elem); // 添加指定元素到指定位置
-    void insert(E elem) { insert(n, std::move(elem)); } // 添加元素到Vector尾部
-    void insertFront(E elem) { insert(0, std::move(elem)); } // 添加元素到Vector头部
-    void insertBack(E elem) { insert(n, std::move(elem)); } // 添加元素到Vector尾部
-    E remove(int i); // 移除指定位置的元素
-    E removeFront() { return remove(0); } // 移除Vector头部元素
-    E removeBack() { return remove(n - 1); } // 移除Vector尾部元素
-    E& at(int i) const; // 返回指定位置元素的引用
-    E& front() const; // 返回Vector头部元素的引用
-    E& back() const; // 返回Vector尾部元素的引用
-    void swap(Vector& that); // 内容与另一个Vector对象交换
-    void clear() { n = 0; } // 清空Vector，不释放空间，Vector容量不变
+    // 返回Vector当前大小
+    int size() const { return n; } 
+    // 返回Vector容量
+    int capacity() const { return N; } 
+    // 判断是否为空Vector
+    bool empty() const { return n == 0; } 
+    // 添加指定元素到指定位置
+    void insert(int i, E elem); 
+    // 添加元素到Vector尾部
+    void insertBack(E elem); 
+    // 移除指定位置的元素
+    E remove(int i); 
+    // 移除Vector尾部元素
+    E removeBack();  
+    // 返回指定位置元素的引用，带边界检查
+    E& at(int i) { return const_cast<E&>(static_cast<const Vector&>(*this).at(i)); }
+    // 返回指定位置元素的const引用，带边界检查
+    const E& at(int i) const; 
+    // 返回Vector头部元素的引用
+    E& front() { return const_cast<E&>(static_cast<const Vector&>(*this).front()); }  
+    // 返回Vector头部元素的const引用
+    const E& front() const; 
+    // 返回Vector尾部元素的引用
+    E& back() { return const_cast<E&>(static_cast<const Vector&>(*this).back()); }  
+    // 返回Vector尾部元素的const引用
+    const E& back() const; 
+    // 内容与另一个Vector对象交换
+    void swap(Vector& that); 
+    // 清空Vector，不释放空间，Vector容量不变
+    void clear() { n = 0; } 
     
-    E& operator[](int i) const;
+    // 返回指定位置元素的引用，无边界检查
+    E& operator[](int i) { return const_cast<E&>(static_cast<const Vector&>(*this)[i]); }
+    // 返回指定位置元素的const引用，无边界检查
+    const E& operator[](int i) const; 
     Vector& operator=(Vector that);
     Vector& operator+=(const Vector& that);
     template<typename T>
@@ -218,24 +235,8 @@ void Vector<E>::resize(int size)
 }
 
 /**
- * 返回第一次出现指定元素的位置索引.
- * 当不存在该元素时，返回NPOS.
- *
- * @param elem: 要查找的元素
- * @return i: 要查找的元素的索引
- *         NPOS: 找不到该元素
- */
-template<typename E>
-int Vector<E>::find(const E& elem) const
-{
-    auto it = std::find(begin(), end(), elem);
-
-    if (it == end()) return NPOS;
-    else             return std::distance(begin(), it);
-}
-
-/**
  * 添加元素到Vector指定位置.
+ * 当Vector达到最大容量，扩容Vector到两倍容量后，再添加元素.
  *
  * @param i: 要添加元素的索引
  *        elem: 要添加的元素
@@ -244,19 +245,38 @@ int Vector<E>::find(const E& elem) const
 template<typename E>
 void Vector<E>::insert(int i, E elem)
 {
-    if (!valid(i)) 
+    if (i == n)
+        insertBack(elem);
+    else if (!valid(i)) 
         throw std::out_of_range("Vector::insert() i out of range.");
+    else
+    {
+        if (n == N) resize(N * 2);
+        // 将pl[i]后面的所有元素向数组后面迁移一个位置
+        std::move_backward(std::next(begin(), i), end(), 
+                           std::next(begin(), n + 1));
+        (*this)[i] = std::move(elem);
+        n++;
+    }
+}
+
+/**
+ * 添加元素到Vector尾部.
+ * 当Vector达到最大容量，扩容Vector到两倍容量后，再添加元素.
+ *
+ * @param elem: 要添加的元素
+ */
+template<typename E>
+void Vector<E>::insertBack(E elem)
+{
     if (n == N)
         resize(N * 2);
-    // 将pl[i]后面的所有元素向数组后面迁移一个位置
-    std::move_backward(std::next(begin(), i), end(), 
-                       std::next(begin(), n));
-    (*this)[i] = std::move(elem);
-    n++;
+    (*this)[n++] = std::move(elem);
 }
 
 /**
  * 移除Vector中指定位置的元素.
+ * 当Vector达到1/4容量，缩小Vector容量.
  *
  * @param i: 要移除元素的索引
  * @return 移除的元素
@@ -265,6 +285,8 @@ void Vector<E>::insert(int i, E elem)
 template<typename E>
 E Vector<E>::remove(int i)
 {
+    if (i == n - 1)
+        return removeBack();
     if (!valid(i)) 
         throw std::out_of_range("Vector::remove() i out of range.");
 
@@ -280,13 +302,33 @@ E Vector<E>::remove(int i)
 }
 
 /**
- * 返回Vector头部元素的引用.
+ * 移除Vector尾部元素.
+ * 当Vector达到1/4容量，缩小Vector容量.
  *
- * @return Vector头部元素的引用
+ * @return 移除的元素
  * @throws std::out_of_range: Vector为空
  */
 template<typename E>
-E& Vector<E>::front()
+E Vector<E>::removeBack()
+{
+    if (empty()) 
+        throw std::out_of_range("Vector::removeBack() underflow.");
+
+    E tmp = (*this)[--n];
+    // 保证Vector始终约为半满状态，保证n>0
+    if (n > 0 && n == N / 4)
+        resize(N / 2);
+    return tmp; // 发生NRVO
+}
+
+/**
+ * 返回Vector头部元素的const引用.
+ *
+ * @return Vector头部元素的const引用
+ * @throws std::out_of_range: Vector为空
+ */
+template<typename E>
+const E& Vector<E>::front() const 
 {
     if (empty()) 
         throw std::out_of_range("Vector::front() underflow.");
@@ -300,7 +342,7 @@ E& Vector<E>::front()
  * @throws std::out_of_range: Vector为空
  */
 template<typename E>
-E& Vector<E>::back()
+const E& Vector<E>::back() const
 {
     if (empty()) 
         throw std::out_of_range("Vector::back() underflow.");
@@ -308,13 +350,13 @@ E& Vector<E>::back()
 }
 
 /**
- * 返回Vector指定位置元素的引用，并进行越界检查.
+ * 返回Vector指定位置元素的const引用，并进行越界检查.
  *
- * @return 指定位置元素的引用
+ * @return 指定位置元素的const引用
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-E& Vector<E>::at(int i)
+const E& Vector<E>::at(int i) const
 {
     if (!valid(i)) 
         throw std::out_of_range("Vector::at() i out of range.");
@@ -340,10 +382,10 @@ void Vector<E>::swap(Vector<E>& that)
  * []操作符重载.
  *
  * @param i: []操作符内索引
- * @return 索引指向元素的引用
+ * @return 索引指向元素的const引用
  */
 template<typename E>
-E& Vector<E>::operator[](int i) const
+const E& Vector<E>::operator[](int i) const
 {
     return *std::next(begin(), i);
 }
@@ -374,7 +416,7 @@ template<typename E>
 Vector<E>& Vector<E>::operator+=(const Vector<E>& that)
 {
     resize(N + that.N);
-    std::copy(that.begin(), that.end(), end())
+    std::copy(that.begin(), that.end(), end());
     n += that.n;
     return *this;
 }

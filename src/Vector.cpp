@@ -7,8 +7,8 @@
  *
  * % ./demo
  *     x.insertBack(): 0 1 2 3 4 5 6 7 8 9 10 11
- * x.removeFront(): 0 1 2 3 4 5 6 7 8 9 10 11
- *    x.insertFront(): 11 10 9 8 7 6 5 4 3 2 1 0
+ * x.removeBack(): 0 1 2 3 4 5 6 7 8 9 10 11
+ *    x.insertBack(): 11 10 9 8 7 6 5 4 3 2 1 0
  *  x.removeBack(): 0 1 2 3 4 5 6 7 8 9 10 11
  *         x.insert(): 0 1 2 3 4 5
  *           y = x: 0 1 2 3 4 5
@@ -20,26 +20,27 @@
 
 #include <iomanip>
 #include <iostream>
-#include "List.h"
+#include <utility>
+#include "Vector.h"
 
 using namespace std;
 
 int main()
 {
-    List<int> x = List<int>();
-    List<int> y = List<int>(x);
+    Vector<int> x = Vector<int>();
+    Vector<int> y = Vector<int>(x);
     int tmp;
 
     cout << setw(17) << "x.insertBack(): ";
     for (int i = 0; i < 12; ++i) x.insertBack(i);
     cout << x << endl;
-    cout << setw(17) << "x.removeFront(): ";
+    cout << setw(17) << "x.removeBack(): ";
     for (int i = 0; i < 15; ++i)
-        if (x.removeFront(tmp))
+        if (x.removeBack(tmp))
             cout << tmp << " ";
     cout << endl;
-    cout << setw(17) << "x.insertFront(): ";
-    for (int i = 0; i < 12; ++i) x.insertFront(i);
+    cout << setw(17) << "x.insertBack(): ";
+    for (int i = 0; i < 12; ++i) x.insertBack(i);
     cout << x << endl;
     cout << setw(17) << "x.removeBack(): ";
     for (int i = 0; i < 15; ++i)

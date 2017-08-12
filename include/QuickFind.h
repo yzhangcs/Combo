@@ -13,9 +13,9 @@
 class QuickFind
 {
 private: 
-    int n; // 并查集大小
+    int n;          // 并查集大小
     int components; // 连通分量的数量
-    int* id; // 指向所有触点的指针
+    int* id;        // 指向所有触点的指针
 
     // 检查触点p是否合法
     bool valid(int p) const { return p >= 0 && p < n; }
@@ -25,11 +25,16 @@ public:
     QuickFind(QuickFind&& that) noexcept;
     ~QuickFind() { delete[] id; }  
 
-    bool connected(int p, int q); // 判断p与q是否属于同一个连通分量
-    int count() { return components; } // 返回连通分量数
-    int find(int p); // 得到p所属连通分量的标识符
-    void join(int p, int q); // 合并p与q所属的连通分量
-    void swap(QuickFind& that); // 内容与另一个QuickFind对象交换
+    // 判断p与q是否属于同一个连通分量
+    bool connected(int p, int q); 
+    // 返回连通分量数
+    int count() { return components; } 
+    // 得到p所属连通分量的标识符
+    int find(int p); 
+    // 合并p与q所属的连通分量
+    void join(int p, int q); 
+    // 内容与另一个QuickFind对象交换
+    void swap(QuickFind& that); 
 
     QuickFind& operator=(QuickFind that);
 };

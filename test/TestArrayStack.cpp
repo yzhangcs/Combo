@@ -79,8 +79,12 @@ TEST_F(TestArrayStack, Capacity)
 {
     EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
+    EXPECT_EQ(10, stack.capacity());
+    
     push_n(stack, scale);
     EXPECT_EQ(scale, stack.size());
+    EXPECT_LE(scale, stack.capacity());
+    EXPECT_GE(scale, stack.capacity() / 4);
     pop_n(stack, scale);
     EXPECT_TRUE(stack.empty());
 }
@@ -90,7 +94,8 @@ TEST_F(TestArrayStack, Modifiers)
     EXPECT_THROW(stack.pop(), std::out_of_range);
     EXPECT_NO_THROW({
         push_n(stack, scale);
-        pop_n(stack, scale);
+        for (int i = scale - 1; i >= 0; --i)
+            EXPECT_EQ(std::to_string(i), stack.pop());
     });
     EXPECT_THROW(stack.pop(), std::out_of_range);
 
@@ -103,8 +108,8 @@ TEST_F(TestArrayStack, Modifiers)
     push_n(a, scale);
     b.swap(a);
     EXPECT_EQ(scale, b.size());
-    for (int i = scale; i > 0; --i)
-        EXPECT_EQ(std::to_string(i - 1), b.pop());
+    for (int i = scale - 1; i >= 0; --i)
+        EXPECT_EQ(std::to_string(i), b.pop());
 }
 
 TEST_F(TestArrayStack, Other)

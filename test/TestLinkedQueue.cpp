@@ -80,6 +80,7 @@ TEST_F(TestLinkedQueue, Capacity)
 {
     EXPECT_TRUE(queue.empty());
     EXPECT_EQ(0, queue.size());
+    
     enqueue_n(queue, scale);
     EXPECT_EQ(scale, queue.size());
     dequeue_n(queue, scale);
@@ -91,7 +92,8 @@ TEST_F(TestLinkedQueue, Modifiers)
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
     EXPECT_NO_THROW({
         enqueue_n(queue, scale);
-        dequeue_n(queue, scale);
+        for (int i = 0; i < scale; ++i)
+            EXPECT_EQ(std::to_string(i), queue.dequeue());
     });
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
 

@@ -33,14 +33,26 @@ public:
     LinkedQueue(LinkedQueue&& that) noexcept;
     ~LinkedQueue() { clear(); }
 
-    int size() const { return n; } // 返回队列当前大小
-    bool empty() const { return n == 0; } // 判断是否为空队列
-    void enqueue(E elem); // 入队函数
-    E dequeue(); // 出队函数
-    E& front(); // 返回队首引用
-    E& back(); // 返回队尾引用
-    void swap(LinkedQueue& that); // 内容与另一个LinkedQueue对象交换
-    void clear(); // 清空队列
+    // 返回队列当前大小
+    int size() const { return n; } 
+    // 判断是否为空队列
+    bool empty() const { return n == 0; } 
+    // 入队函数
+    void enqueue(E elem); 
+    // 出队函数
+    E dequeue(); 
+    // 返回队首引用
+    E& front() { return const_cast<E&>(static_cast<const LinkedQueue&>(*this).front()); }  
+    // 返回const队首引用
+    const E& front() const; 
+    // 返回队尾引用
+    E& back() { return const_cast<E&>(static_cast<const LinkedQueue&>(*this).back()); }  
+    // 返回const队尾引用
+    const E& back() const; 
+    // 内容与另一个LinkedQueue对象交换
+    void swap(LinkedQueue& that); 
+    // 清空队列
+    void clear(); 
     
     LinkedQueue& operator=(LinkedQueue that);
     template <typename T>
@@ -117,7 +129,7 @@ LinkedQueue<E>::LinkedQueue(LinkedQueue&& that) noexcept
 }
 
 /**
- * 入队函数，添加元素到队尾.
+ * 添加元素到队尾.
  *
  * @param elem: 要入队的元素
  */
@@ -133,7 +145,7 @@ void LinkedQueue<E>::enqueue(E elem)
 }
 
 /**
- * 出队函数，让队首元素出队.
+ * 移除队首元素.
  *
  * @return 出队队首
  * @throws std::out_of_range: 队空
@@ -154,13 +166,13 @@ E LinkedQueue<E>::dequeue()
 }
 
 /**
- * 返回队首引用.
+ * 返回const队首引用.
  *
- * @return 队首引用
+ * @return const队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& LinkedQueue<E>::front()
+const E& LinkedQueue<E>::front() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedQueue::front() underflow.");
@@ -168,13 +180,13 @@ E& LinkedQueue<E>::front()
 }
 
 /**
- * 返回队尾引用.
+ * 返回const队尾引用.
  *
- * @return 队尾引用
+ * @return const队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& LinkedQueue<E>::back()
+const E& LinkedQueue<E>::back() const
 {
     if (empty()) 
         throw std::out_of_range("LinkedQueue::back() underflow.");

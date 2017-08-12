@@ -26,22 +26,36 @@ private:
     int tail; // 队尾索引
     E* pq; // 队列指针
 
-    void resize(int size); // 调整队列容量
+    // 调整队列容量
+    void resize(int size); 
 public:
     explicit ArrayQueue(int cap = DEFAULT_CAPACITY); 
     ArrayQueue(const ArrayQueue& that);
     ArrayQueue(ArrayQueue&& that) noexcept;
     ~ArrayQueue() { delete[] pq; }
 
-    int size() const { return n; } // 返回队列当前大小
-    int capacity() const { return N; } // 返回队列容量
-    bool empty() const { return n == 0; } // 判断是否为空队列
-    void enqueue(E elem); // 入队函数
-    E dequeue(); // 出队函数
-    E& front(); // 返回队首引用
-    E& back(); // 返回队尾引用
-    void swap(ArrayQueue& that); // 内容与另一个ArrayQueue对象交换
-    void clear(); // 清空队列，不释放空间，队列容量不变
+    // 返回队列当前大小
+    int size() const { return n; } 
+    // 返回队列容量
+    int capacity() const { return N; } 
+    // 判断是否为空队列
+    bool empty() const { return n == 0; } 
+    // 入队函数
+    void enqueue(E elem); 
+    // 出队函数
+    E dequeue(); 
+    // 返回队首引用
+    E& front() { return const_cast<E&>(static_cast<const ArrayQueue&>(*this).front()); } 
+    // 返回const队首引用
+    const E& front() const; 
+    // 返回队尾引用
+    E& back() { return const_cast<E&>(static_cast<const ArrayQueue&>(*this).back()); } 
+    // 返回const队尾引用
+    const E& back() const; 
+    // 内容与另一个ArrayQueue对象交换
+    void swap(ArrayQueue& that); 
+    // 清空队列，不释放空间，队列容量不变
+    void clear(); 
     
     ArrayQueue& operator=(ArrayQueue that);
     template <typename T>
@@ -157,7 +171,7 @@ void ArrayQueue<E>::resize(int size)
 }
 
 /**
- * 入队函数，添加元素到队尾.
+ * 添加元素到队尾.
  * 当队列达到最大容量，扩容队列到两倍容量后，再将元素入队.
  *
  * @param elem: 要入队的元素
@@ -174,17 +188,17 @@ void ArrayQueue<E>::enqueue(E elem)
 }
 
 /**
- * 出队函数，让队首元素出队.
+ * 移除队首元素.
  * 当队列达到1/4容量，缩小队列容量.
  *
- * @return 出队队首
+ * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
 E ArrayQueue<E>::dequeue()
 {
     if (empty()) 
-        throw std::rout_of_range("ArrayQueue::dequeue() underflow.");
+        throw std::out_of_range("ArrayQueue::dequeue() underflow.");
     
     E tmp = pq[head++];
 
@@ -197,30 +211,30 @@ E ArrayQueue<E>::dequeue()
 }
 
 /**
- * 返回队首引用.
+ * 返回const队首引用.
  *
- * @return 队首引用
+ * @return const队首引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& ArrayQueue<E>::front()
+const E& ArrayQueue<E>::front() const
 {
     if (empty()) 
-        throw std::rout_of_range("ArrayQueue::front() underflow.");
+        throw std::out_of_range("ArrayQueue::front() underflow.");
     return pq[head];
 }
 
 /**
- * 返回队尾引用.
+ * 返回const队尾引用.
  *
- * @return 队尾引用
+ * @return const队尾引用
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E& ArrayQueue<E>::back()
+const E& ArrayQueue<E>::back() const
 {
     if (empty()) 
-        throw std::rout_of_range("ArrayQueue::back() underflow.");
+        throw std::out_of_range("ArrayQueue::back() underflow.");
     if (tail != 0) return pq[tail - 1];
     else           return pq[N - 1];
 }

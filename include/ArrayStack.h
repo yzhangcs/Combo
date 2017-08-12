@@ -31,14 +31,24 @@ public:
     ArrayStack(ArrayStack&& that) noexcept;
     ~ArrayStack() { delete[] ps; }  
 
-    int size() const { return n; } // 返回栈当前大小
-    int capacity() const { return N; } // 返回栈容量
-    bool empty() const { return n == 0; } // 判断是否为空栈
-    void push(E elem); // 入栈函数
-    E pop(); // 出栈函数
-    E& top(); // 返回栈顶引用
-    void swap(ArrayStack& that); // 内容与另一个ArrayStack对象交换
-    void clear() { n = 0; } // 清空栈，不释放空间，栈容量不变
+    // 返回栈当前大小
+    int size() const { return n; } 
+    // 返回栈容量
+    int capacity() const { return N; } 
+    // 判断是否为空栈
+    bool empty() const { return n == 0; } 
+    // 入栈函数
+    void push(E elem); 
+    // 出栈函数
+    E pop(); 
+    // 返回栈顶引用
+    E& top() { return const_cast<E&>(static_cast<const ArrayStack&>(*this).top()); } 
+    // 返回const栈顶引用
+    const E& top() const ; 
+    // 内容与另一个ArrayStack对象交换
+    void swap(ArrayStack& that); 
+    // 清空栈，不释放空间，栈容量不变
+    void clear() { n = 0; } 
 
     ArrayStack& operator=(ArrayStack that);
     template <typename T>
@@ -146,7 +156,7 @@ void ArrayStack<E>::resize(int size)
 }
 
 /**
- * 入栈函数，使元素入栈.
+ * 添加元素到栈顶.
  * 当栈达到最大容量，扩容栈到两倍容量后，再将元素入栈.
  *
  * @param elem: 要入栈的元素
@@ -161,10 +171,10 @@ void ArrayStack<E>::push(E elem)
 }
 
 /**
- * 出栈函数，让最近加入的元素出栈.
+ * 移除栈顶元素.
  * 当栈达到1/4容量，缩小栈容量.
  *
- * @return 出栈元素
+ * @return 移除的元素
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
@@ -181,13 +191,13 @@ E ArrayStack<E>::pop()
 }
 
 /**
- * 返回栈顶引用.
+ * 返回const栈顶引用.
  *
- * @return 栈顶引用
+ * @return const栈顶引用
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
-E& ArrayStack<E>::top()
+const E& ArrayStack<E>::top() const
 {
     if (empty()) 
         throw std::out_of_range("ArrayStack::top() underflow.");

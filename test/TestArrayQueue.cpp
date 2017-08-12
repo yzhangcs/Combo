@@ -81,8 +81,12 @@ TEST_F(TestArrayQueue, Capacity)
 {
     EXPECT_TRUE(queue.empty());
     EXPECT_EQ(0, queue.size());
+    EXPECT_EQ(10, queue.capacity());
+    
     enqueue_n(queue, scale);
     EXPECT_EQ(scale, queue.size());
+    EXPECT_LE(scale, queue.capacity());
+    EXPECT_GE(scale, queue.capacity() / 4);
     dequeue_n(queue, scale);
     EXPECT_TRUE(queue.empty());
 }
@@ -92,7 +96,8 @@ TEST_F(TestArrayQueue, Modifiers)
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
     EXPECT_NO_THROW({
         enqueue_n(queue, scale);
-        dequeue_n(queue, scale);
+        for (int i = 0; i < scale; ++i)
+            EXPECT_EQ(std::to_string(i), queue.dequeue());
     });
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
 
