@@ -20,11 +20,11 @@ int main()
     Timer timer;
     double sum = 0;
 
-    cout << "Timestamp: " << Timer::timestampMs() << endl;
+    cout << "Timestamp: " << Timer::time_millis() << endl;
     timer.start();
     for (int i = 0; i < 100000000; ++i)
         sum += sqrt(i);
-    cout << "Timestamp: " << Timer::timestampMs() << endl;
+    cout << "Timestamp: " << Timer::time_millis() << endl;
     cout << "It takes "
          << timer.elapsed()
          << "s to sum the sqrt 100000000 times"

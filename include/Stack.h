@@ -1,5 +1,5 @@
 /*******************************************************************************
- * ArrayStack.h
+ * Stack.h
  *
  * Author: zhangyu
  * Date: 2017.4.21
@@ -7,50 +7,48 @@
 
 #pragma once
 #include <iostream>
-#include "Vector.h"
+#include "Deque.h"
 
 /**
  * 使用模板实现的后进先出栈.
- * 由动态连续数组存储栈.
  */
-template<typename E>
-class ArrayStack
+template<typename E, typename Container = Deque<E>>
+class Stack
 {
-    static const int DEFAULT_CAPACITY = 10; // 默认栈容量
 private:
-    Vector<E> container;
+    Container cont;
 public:
-    explicit ArrayStack(int cap = DEFAULT_CAPACITY) : container(cap) {}
-    ArrayStack(const ArrayStack& that) : container(that.container) {}
-    ArrayStack(ArrayStack&& that) noexcept : container(std::move(that.container)) {}
-    ~ArrayStack() {} 
+    explicit Stack() : cont() {}
+    Stack(const Stack& that) : cont(that.cont) {}
+    Stack(Stack&& that) noexcept : cont(std::move(that.cont)) {}
+    ~Stack() {} 
 
     // 返回栈当前大小
-    int size() const { return container.size(); } 
+    int size() const { return cont.size(); } 
     // 返回栈容量
-    int capacity() const { return container.capacity(); } 
+    int capacity() const { return cont.capacity(); } 
     // 判断是否为空栈
-    bool empty() const { return container.empty(); } 
+    bool empty() const { return cont.empty(); } 
     // 入栈函数
-    void push(E elem) { container.insertBack(elem); } 
+    void push(E elem) { cont.insert_back(std::move(elem)); } 
     // 出栈函数
     E pop(); 
     // 返回栈顶引用
-    E& top() { return const_cast<E&>(static_cast<const ArrayStack&>(*this).top()); } 
+    E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); } 
     // 返回const栈顶引用
     const E& top() const ; 
     // 内容与另一个ArrayStack对象交换
-    void swap(ArrayStack& that) { container.swap(that.container); }
+    void swap(Stack& that) { cont.swap(that.cont); }
     // 清空栈，不释放空间，栈容量不变
-    void clear() { container.clear(); }
+    void clear() { cont.clear(); }
 
-    ArrayStack& operator=(ArrayStack that);
+    Stack& operator=(Stack that);
     template <typename T>
-    friend bool operator==(const ArrayStack<T>& lhs, const ArrayStack<T>& rhs);
+    friend bool operator==(const Stack<T>& lhs, const Stack<T>& rhs);
     template <typename T>
-    friend bool operator!=(const ArrayStack<T>& lhs, const ArrayStack<T>& rhs);
+    friend bool operator!=(const Stack<T>& lhs, const Stack<T>& rhs);
     template <typename T>
-    friend std::ostream& operator<<(std::ostream& os, const ArrayStack<T>& stack);
+    friend std::ostream& operator<<(std::ostream& os, const Stack<T>& stack);
 };
 
 /**
@@ -61,11 +59,11 @@ public:
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
-E ArrayStack<E>::pop()
+E Stack<E>::pop()
 {
     if (empty()) 
-        throw std::out_of_range("ArrayStack::pop() underflow.");
-    return container.removeBack();
+        throw std::out_of_range("Stack::pop() underflow.");
+    return cont.remove_Back();
 }
 
 /**
@@ -75,11 +73,11 @@ E ArrayStack<E>::pop()
  * @throws std::out_of_range: 栈空
  */
 template<typename E>
-const E& ArrayStack<E>::top() const
+const E& Stack<E>::top() const
 {
     if (empty()) 
-        throw std::out_of_range("ArrayStack::top() underflow.");
-    return container.back();
+        throw std::out_of_range("Stack::top() underflow.");
+    return cont.back();
 }
 
 /**
@@ -90,7 +88,7 @@ const E& ArrayStack<E>::top() const
  * @return 当前ArrayStack对象
  */
 template<typename E>
-ArrayStack<E>& ArrayStack<E>::operator=(ArrayStack that)
+Stack<E>& Stack<E>::operator=(Stack that)
 {
     // 按值传参，传入右值时会有「复制消除」
     // *this与that互相交换，退出时that被析构
@@ -107,9 +105,9 @@ ArrayStack<E>& ArrayStack<E>::operator=(ArrayStack that)
  *         false: 不等
  */
 template<typename E>
-bool operator==(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
+bool operator==(const Stack<E>& lhs, const Stack<E>& rhs)
 {
-    return lhs.container == rhs.container;
+    return lhs.cont == rhs.cont;
 }
 
 /**
@@ -121,7 +119,7 @@ bool operator==(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
  *         false: 相等
  */
 template<typename E>
-bool operator!=(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
+bool operator!=(const Stack<E>& lhs, const Stack<E>& rhs)
 {
     return !(lhs == rhs);
 }
@@ -134,9 +132,9 @@ bool operator!=(const ArrayStack<E>& lhs, const ArrayStack<E>& rhs)
  * @return 输出流对象
  */
 template<typename E>
-std::ostream& operator<<(std::ostream& os, const ArrayStack<E>& stack)
+std::ostream& operator<<(std::ostream& os, const Stack<E>& stack)
 {
-    return os << stack.container;
+    return os << stack.cont;
 }
 
 /**
@@ -146,7 +144,7 @@ std::ostream& operator<<(std::ostream& os, const ArrayStack<E>& stack)
  *        rhs: ArrayStack对象rhs
  */
 template<typename E>
-void swap(ArrayStack<E>& lhs, ArrayStack<E>& rhs)
+void swap(Stack<E>& lhs, Stack<E>& rhs)
 {
     lhs.swap(rhs);
 }

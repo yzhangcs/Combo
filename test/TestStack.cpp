@@ -1,48 +1,48 @@
 #include <iostream>
 #include <string>
-#include "LinkedStack.h"
+#include "Stack.h"
 #include "gtest/gtest.h"
 
 using std::string;
 
-class TestLinkedStack : public testing::Test 
+class TestStack : public testing::Test 
 {
 protected:
-    LinkedStack<string> stack;
-    LinkedStack<string> a;
-    LinkedStack<string> b;
-    LinkedStack<string> c;
+    Stack<string> stack;
+    Stack<string> a;
+    Stack<string> b;
+    Stack<string> c;
     string str;    
     int scale;
 public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void push_n(LinkedStack<string>& s, int n)
+    void push_n(Stack<string>& s, int n)
     {
         for (int i = 0; i < n; ++i)
             s.push(std::to_string(i));
     }
-    void pop_n(LinkedStack<string>& s, int n)
+    void pop_n(Stack<string>& s, int n)
     {
         for (int i = 0; i < n; ++i)
             s.pop();
     }
 };
 
-TEST_F(TestLinkedStack, Basic)
+TEST_F(TestStack, Basic)
 {
     EXPECT_NO_THROW({
-        LinkedStack<string> s1;
-        LinkedStack<string> s2(s1);
-        LinkedStack<string> s3(LinkedStack<string>());
+        Stack<string> s1;
+        Stack<string> s2(s1);
+        Stack<string> s3(Stack<string>());
 
         s1 = s2;
-        s2 = LinkedStack<string>();
+        s2 = Stack<string>();
     });
 }
 
-TEST_F(TestLinkedStack, ElementAccess)
+TEST_F(TestStack, ElementAccess)
 {
     EXPECT_THROW(stack.top(), std::out_of_range);
     EXPECT_NO_THROW({
@@ -61,7 +61,7 @@ TEST_F(TestLinkedStack, ElementAccess)
     EXPECT_THROW(stack.top(), std::out_of_range);
 }
 
-TEST_F(TestLinkedStack, Capacity)
+TEST_F(TestStack, Capacity)
 {
     EXPECT_TRUE(stack.empty());
     EXPECT_EQ(0, stack.size());
@@ -72,7 +72,7 @@ TEST_F(TestLinkedStack, Capacity)
     EXPECT_TRUE(stack.empty());
 }
 
-TEST_F(TestLinkedStack, Modifiers)
+TEST_F(TestStack, Modifiers)
 {
     EXPECT_THROW(stack.pop(), std::out_of_range);
     EXPECT_NO_THROW({
@@ -95,7 +95,7 @@ TEST_F(TestLinkedStack, Modifiers)
         EXPECT_EQ(std::to_string(i), b.pop());
 }
 
-TEST_F(TestLinkedStack, Other)
+TEST_F(TestStack, Other)
 {
     using std::swap;
     push_n(a, scale);

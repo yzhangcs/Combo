@@ -45,15 +45,15 @@ public:
     // 添加指定元素到指定位置
     void insert(int i, E elem); 
     // 添加元素到链表头部
-    void insertFront(E elem); 
+    void insert_front(E elem); 
     // 添加元素到链表尾部
-    void insertBack(E elem); 
+    void insert_back(E elem); 
     // 移除指定位置的元素
     E remove(int i); 
     // 移除链表头部元素
-    E removeFront(); 
+    E remove_front(); 
     // 移除链表尾部元素
-    E removeBack(); 
+    E remove_Back(); 
     // 返回链表头部元素的引用
     E& front() { return const_cast<E&>(static_cast<const List&>(*this).front()); }  
     // 返回链表头部元素的const引用
@@ -137,7 +137,7 @@ List<E>::List(const List& that)
     n = 0;
     sentinel = new Node();
     for (auto i : that)
-        insertBack(i);
+        insert_back(i);
 }
 
 /**
@@ -213,7 +213,7 @@ void List<E>::insert(int i, E elem)
  * @param elem: 要添加的元素
  */
 template<typename E>
-void List<E>::insertFront(E elem)
+void List<E>::insert_front(E elem)
 {
     Node* succ = sentinel->next;
     Node* pnew = new Node(std::move(elem));
@@ -231,7 +231,7 @@ void List<E>::insertFront(E elem)
  * @param elem: 要添加的元素
  */
 template<typename E>
-void List<E>::insertBack(E elem)
+void List<E>::insert_back(E elem)
 {
     Node* prec = sentinel->prev;
     Node* pnew = new Node(std::move(elem));
@@ -272,10 +272,10 @@ E List<E>::remove(int i)
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E List<E>::removeFront()
+E List<E>::remove_front()
 {
     if (empty()) 
-        throw std::out_of_range("List::removeFront() underflow.");
+        throw std::out_of_range("List::remove_front() underflow.");
 
     Node* pold = sentinel->next;
     Node* succ = pold->next;
@@ -295,10 +295,10 @@ E List<E>::removeFront()
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E List<E>::removeBack()
+E List<E>::remove_Back()
 {
     if (empty()) 
-        throw std::out_of_range("List::removeBack() underflow.");
+        throw std::out_of_range("List::remove_Back() underflow.");
 
     Node* pold = sentinel->prev;
     Node* prec = pold->prev;
@@ -400,7 +400,7 @@ template<typename E>
 List<E>& List<E>::operator+=(const List<E>& that)
 {
     for (auto i : that)
-        insertBack(i);
+        insert_back(i);
     return *this;
 }
 

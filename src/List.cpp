@@ -6,10 +6,10 @@
  * A demo of the list.
  *
  * % ./demo
- *     x.insertBack(): 0 1 2 3 4 5 6 7 8 9 10 11
- * x.removeFront(): 0 1 2 3 4 5 6 7 8 9 10 11
- *    x.insertFront(): 11 10 9 8 7 6 5 4 3 2 1 0
- *  x.removeBack(): 0 1 2 3 4 5 6 7 8 9 10 11
+ *     x.insert_back(): 0 1 2 3 4 5 6 7 8 9 10 11
+ * x.remove_front(): 0 1 2 3 4 5 6 7 8 9 10 11
+ *    x.insert_front(): 11 10 9 8 7 6 5 4 3 2 1 0
+ *  x.remove_Back(): 0 1 2 3 4 5 6 7 8 9 10 11
  *         x.insert(): 0 1 2 3 4 5
  *           y = x: 0 1 2 3 4 5
  *           x + y: 0 1 2 3 4 5 0 1 2 3 4 5
@@ -30,20 +30,20 @@ int main()
     List<int> y = List<int>(x);
     int tmp;
 
-    cout << setw(17) << "x.insertBack(): ";
-    for (int i = 0; i < 12; ++i) x.insertBack(i);
+    cout << setw(17) << "x.insert_back(): ";
+    for (int i = 0; i < 12; ++i) x.insert_back(i);
     cout << x << endl;
-    cout << setw(17) << "x.removeFront(): ";
+    cout << setw(17) << "x.remove_front(): ";
     for (int i = 0; i < 15; ++i)
-        if (x.removeFront(tmp))
+        if (x.remove_front(tmp))
             cout << tmp << " ";
     cout << endl;
-    cout << setw(17) << "x.insertFront(): ";
-    for (int i = 0; i < 12; ++i) x.insertFront(i);
+    cout << setw(17) << "x.insert_front(): ";
+    for (int i = 0; i < 12; ++i) x.insert_front(i);
     cout << x << endl;
-    cout << setw(17) << "x.removeBack(): ";
+    cout << setw(17) << "x.remove_Back(): ";
     for (int i = 0; i < 15; ++i)
-        if (x.removeBack(tmp))
+        if (x.remove_Back(tmp))
             cout << tmp << " ";
     cout << endl;
     cout << setw(17) << "x.insert(): ";

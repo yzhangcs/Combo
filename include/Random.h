@@ -30,8 +30,8 @@ class Random
     static size_t seed;
     static mt19937 generator;
 public:
-    static size_t getSeed() { return seed; }
-    static void setSeed(size_t s) { seed = s; }
+    static size_t get_seed() { return seed; }
+    static void set_seed(size_t s) { seed = s; }
     // 生成一个在[0, n)范围内呈均匀分布的随机整数
     static int random(int n) { return random(0, n); };
     // 生成一个在[a, b)范围内呈均匀分布的随机整数

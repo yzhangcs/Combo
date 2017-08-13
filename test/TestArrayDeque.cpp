@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "ArrayDeque.h"
+#include "Deque.h"
 #include "gtest/gtest.h"
 
 using std::string;
@@ -8,40 +8,40 @@ using std::string;
 class TestArrayDeque : public testing::Test 
 {
 protected:
-    ArrayDeque<string> deque;
-    ArrayDeque<string> a;
-    ArrayDeque<string> b;
-    ArrayDeque<string> c;
+    Deque<string> deque;
+    Deque<string> a;
+    Deque<string> b;
+    Deque<string> c;
     string str;    
     int scale;
 public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void insert_n(ArrayDeque<string>& s, int n, bool from_back = true)
+    void insert_n(Deque<string>& s, int n, bool from_back = true)
     {
         if (from_back)
         {
             for (int i = 0; i < n; ++i) 
-                s.insertBack(std::to_string(i));
+                s.insert_back(std::to_string(i));
         }
         else
         {
             for (int i = 0; i < n; ++i) 
-                s.insertFront(std::to_string(i));
+                s.insert_front(std::to_string(i));
         }
     }
-    void remove_n(ArrayDeque<string>& s, int n, bool from_back = true)
+    void remove_n(Deque<string>& s, int n, bool from_back = true)
     {
         if (from_back)
         {
             for (int i = 0; i < n; ++i) 
-                s.removeBack();
+                s.remove_Back();
         }
         else
         {
             for (int i = 0; i < n; ++i) 
-                s.removeFront();
+                s.remove_front();
         }
     }
 };
@@ -49,13 +49,13 @@ public:
 TEST_F(TestArrayDeque, Basic)
 {
     EXPECT_NO_THROW({
-        ArrayDeque<string> s1;
-        ArrayDeque<string> s2(s1);
-        ArrayDeque<string> s3(30);
-        ArrayDeque<string> s4(ArrayDeque<string>());
+        Deque<string> s1;
+        Deque<string> s2(s1);
+        Deque<string> s3(30);
+        Deque<string> s4(Deque<string>());
 
         s1 = s2;
-        s2 = ArrayDeque<string>(15);
+        s2 = Deque<string>(15);
     });
 }
 
@@ -67,24 +67,24 @@ TEST_F(TestArrayDeque, ElementAccess)
         for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
-            deque.insertBack(str);
+            deque.insert_back(str);
             EXPECT_EQ(str, deque.back());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
-            deque.insertFront(str);
+            deque.insert_front(str);
             EXPECT_EQ(str, deque.front());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = deque.front();
-            EXPECT_EQ(str, deque.removeFront());
+            EXPECT_EQ(str, deque.remove_front());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = deque.back();
-            EXPECT_EQ(str, deque.removeBack());
+            EXPECT_EQ(str, deque.remove_Back());
         }
     });
     EXPECT_THROW(deque.front(), std::out_of_range);
@@ -131,30 +131,30 @@ TEST_F(TestArrayDeque, Capacity)
 
 TEST_F(TestArrayDeque, Modifiers)
 {
-    EXPECT_THROW(deque.removeBack(), std::out_of_range);
-    EXPECT_THROW(deque.removeFront(), std::out_of_range);
+    EXPECT_THROW(deque.remove_Back(), std::out_of_range);
+    EXPECT_THROW(deque.remove_front(), std::out_of_range);
     EXPECT_NO_THROW({
         insert_n(deque, scale, true);
         for (int i = scale - 1; i >= 0; --i)
-            EXPECT_EQ(std::to_string(i), deque.removeBack());
+            EXPECT_EQ(std::to_string(i), deque.remove_Back());
         insert_n(deque, scale, false);
         for (int i = scale - 1; i >= 0; --i)
-            EXPECT_EQ(std::to_string(i), deque.removeFront());
+            EXPECT_EQ(std::to_string(i), deque.remove_front());
     });
-    EXPECT_THROW(deque.removeBack(), std::out_of_range);
-    EXPECT_THROW(deque.removeFront(), std::out_of_range);
+    EXPECT_THROW(deque.remove_Back(), std::out_of_range);
+    EXPECT_THROW(deque.remove_front(), std::out_of_range);
 
     insert_n(deque, scale);
     deque.clear();
     EXPECT_TRUE(deque.empty());
     EXPECT_EQ(0, deque.size());
-    EXPECT_THROW(deque.removeBack(), std::out_of_range);
+    EXPECT_THROW(deque.remove_Back(), std::out_of_range);
 
     insert_n(a, scale);
     b.swap(a);
     EXPECT_EQ(scale, b.size());
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), b.removeFront());
+        EXPECT_EQ(std::to_string(i), b.remove_front());
 }
 
 TEST_F(TestArrayDeque, Other)

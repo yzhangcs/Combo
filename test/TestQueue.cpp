@@ -1,49 +1,48 @@
 #include <iostream>
 #include <string>
-#include "ArrayQueue.h"
+#include "Queue.h"
 #include "gtest/gtest.h"
 
 using std::string;
 
-class TestArrayQueue : public testing::Test 
+class TestQueue : public testing::Test 
 {
 protected:
-    ArrayQueue<string> queue;
-    ArrayQueue<string> a;
-    ArrayQueue<string> b;
-    ArrayQueue<string> c;
+    Queue<string> queue;
+    Queue<string> a;
+    Queue<string> b;
+    Queue<string> c;
     string str;    
     int scale;
 public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void enqueue_n(ArrayQueue<string>& s, int n)
+    void enqueue_n(Queue<string>& s, int n)
     {
         for (int i = 0; i < n; ++i)
             s.enqueue(std::to_string(i));
     }
-    void dequeue_n(ArrayQueue<string>& s, int n)
+    void dequeue_n(Queue<string>& s, int n)
     {
         for (int i = 0; i < n; ++i)
             s.dequeue();
     }
 };
 
-TEST_F(TestArrayQueue, Basic)
+TEST_F(TestQueue, Basic)
 {
     EXPECT_NO_THROW({
-        ArrayQueue<string> s1;
-        ArrayQueue<string> s2(s1);
-        ArrayQueue<string> s3(30);
-        ArrayQueue<string> s4(ArrayQueue<string>());
+        Queue<string> s1;
+        Queue<string> s2(s1);
+        Queue<string> s3(Queue<string>());
 
         s1 = s2;
-        s2 = ArrayQueue<string>(15);
+        s2 = Queue<string>();
     });
 }
 
-TEST_F(TestArrayQueue, ElementAccess)
+TEST_F(TestQueue, ElementAccess)
 {
     EXPECT_THROW(queue.front(), std::out_of_range);
     EXPECT_THROW(queue.back(), std::out_of_range);
@@ -64,21 +63,18 @@ TEST_F(TestArrayQueue, ElementAccess)
     EXPECT_THROW(queue.back(), std::out_of_range);
 }
 
-TEST_F(TestArrayQueue, Capacity)
+TEST_F(TestQueue, Capacity)
 {
     EXPECT_TRUE(queue.empty());
     EXPECT_EQ(0, queue.size());
-    EXPECT_EQ(10, queue.capacity());
     
     enqueue_n(queue, scale);
     EXPECT_EQ(scale, queue.size());
-    EXPECT_LE(scale, queue.capacity());
-    EXPECT_GE(scale, queue.capacity() / 4);
     dequeue_n(queue, scale);
     EXPECT_TRUE(queue.empty());
 }
 
-TEST_F(TestArrayQueue, Modifiers)
+TEST_F(TestQueue, Modifiers)
 {
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
     EXPECT_NO_THROW({
@@ -101,7 +97,7 @@ TEST_F(TestArrayQueue, Modifiers)
         EXPECT_EQ(std::to_string(i), b.dequeue());
 }
 
-TEST_F(TestArrayQueue, Other)
+TEST_F(TestQueue, Other)
 {
     using std::swap;
     enqueue_n(a, scale);

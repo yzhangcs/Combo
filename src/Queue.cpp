@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Compilation:  g++ -IQueue demo.cpp -o demo
  * Execution:    ./demo data/tobe.txt
- * Dependencies: ArrayQueue.h LinkedQueue.h
+ * Dependencies: Queue.h
  *
  * % more data/tobe.txt 
  * to be or not to - be - - that - - - is
@@ -14,15 +14,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "ArrayQueue.h"
-#include "LinkedQueue.h"
+#include "Queue.h"
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
-    ArrayQueue<string> demo = ArrayQueue<string>();
-    // LinkedQueue<string> demo = LinkedQueue<string>();    
+    Queue<string> demo = Queue<string>();  
     ifstream fin;
     string elem;
 

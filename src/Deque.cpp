@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Compilation:  g++ -IDeque demo.cpp -o demo
  * Execution:    ./demo data/tobe.txt
- * Dependencies: ArrayDeque.h LinkedDeque.h
+ * Dependencies: Deque.h
  *
  * % more data/tobe.txt 
  * to be or not to - be - - that - - - is
@@ -16,15 +16,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "ArrayDeque.h"
-// #include "LinkedDeque.h"
+#include "Deque.h"
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
-    ArrayDeque<string> demo = ArrayDeque<string>();
-    // LinkedDeque<string> demo = LinkedDeque<string>();
+    Deque<string> demo = Deque<string>();
     vector<string> buf;
     ifstream fin;
     string elem;
@@ -46,9 +44,9 @@ int main(int argc, char* argv[])
     for (auto i : buf)
     {
         if (i != "-")
-            demo.insertBack(i);
+            demo.insert_back(i);
         else
-            cout << demo.removeFront() << " ";
+            cout << demo.remove_front() << " ";
     }
     cout << "(" << demo.size() << " left on deque)" << endl;
     demo.clear();
@@ -57,9 +55,9 @@ int main(int argc, char* argv[])
     for (auto i : buf)
     {
         if (elem != "-")
-            demo.insertBack(i);
+            demo.insert_back(i);
         else
-            cout << demo.removeBack() << " ";
+            cout << demo.remove_Back() << " ";
     }
     cout << "(" << demo.size() << " left on deque)" << endl;
     fin.close();

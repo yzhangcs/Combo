@@ -73,8 +73,7 @@ $ git clone https://github.com/zy2625/CppLib.git
 
 ### Deque
 
-* [ArrayDeque](https://github.com/zy2625/CppLib/blob/master/include/ArrayDeque.h)
-* [LinkedDeque](https://github.com/zy2625/CppLib/blob/master/include/LinkedDeque.h)
+* [Deque](https://github.com/zy2625/CppLib/blob/master/include/Deque.h)
 
 #### Usage
 
@@ -111,10 +110,10 @@ P X P (8 left on heap)
 
 ```
 ./bin/List
-    x.insertBack(): 0 1 2 3 4 5 6 7 8 9 10 11
-x.removeFront(): 0 1 2 3 4 5 6 7 8 9 10 11
-   x.insertFront(): 11 10 9 8 7 6 5 4 3 2 1 0
- x.removeBack(): 0 1 2 3 4 5 6 7 8 9 10 11
+    x.insert_back(): 0 1 2 3 4 5 6 7 8 9 10 11
+x.remove_front(): 0 1 2 3 4 5 6 7 8 9 10 11
+   x.insert_front(): 11 10 9 8 7 6 5 4 3 2 1 0
+ x.remove_Back(): 0 1 2 3 4 5 6 7 8 9 10 11
         x.insert(): 0 1 2 3 4 5
           y = x: 0 1 2 3 4 5
           x + y: 0 1 2 3 4 5 0 1 2 3 4 5
@@ -139,8 +138,7 @@ Q X P (6 left on priority queue)
 
 ### Queue
 
-* [ArrayQueue](https://github.com/zy2625/CppLib/blob/master/include/ArrayQueue.h)
-* [LinkedQueue](https://github.com/zy2625/CppLib/blob/master/include/LinkedQueue.h)
+* [Queue](https://github.com/zy2625/CppLib/blob/master/include/Queue.h)
 
 #### Usage
 
@@ -236,8 +234,7 @@ BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
 
 ### Stack
 
-* [ArrayStack](https://github.com/zy2625/CppLib/blob/master/include/ArrayStack.h)
-* [LinkedStack](https://github.com/zy2625/CppLib/blob/master/include/LinkedStack.h)
+* [Stack](https://github.com/zy2625/CppLib/blob/master/include/Stack.h)
 
 #### Usage
 

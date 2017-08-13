@@ -18,11 +18,15 @@
 template<typename E>
 class Vector
 {
+    // 原生指针具备随机访问迭代器的一切特征
+    using iterator = E*;
+    using const_iterator = const E* ;
+
     static const int DEFAULT_CAPACITY = 10; // 默认的Vector容量
 private:
     int n; // Vector大小
     int N; // Vector容量
-    E* pl; // Vector指针
+    E* pv; // Vector指针
     
     // 调整Vector容量
     void resize(int size); 
@@ -32,7 +36,7 @@ public:
     explicit Vector(int cap = DEFAULT_CAPACITY); 
     Vector(const Vector& that);
     Vector(Vector&& that) noexcept;
-    ~Vector() { delete[] pl; }
+    ~Vector() { delete[] pv; }
 
     // 返回Vector当前大小
     int size() const { return n; } 
@@ -43,11 +47,11 @@ public:
     // 添加指定元素到指定位置
     void insert(int i, E elem); 
     // 添加元素到Vector尾部
-    void insertBack(E elem); 
+    void insert_back(E elem); 
     // 移除指定位置的元素
     E remove(int i); 
     // 移除Vector尾部元素
-    E removeBack();  
+    E remove_Back();  
     // 返回指定位置元素的引用，带边界检查
     E& at(int i) { return const_cast<E&>(static_cast<const Vector&>(*this).at(i)); }
     // 返回指定位置元素的const引用，带边界检查
@@ -80,96 +84,10 @@ public:
     template<typename T>
     friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vector);
 
-    class iterator : public std::iterator<std::random_access_iterator_tag, E>
-    {
-    private:
-        const Vector* vector;
-        int i;
-    public:
-        iterator() : vector(nullptr), i(0) {}
-        iterator(const Vector* vector, int i) : vector(vector), i(i) {}
-        iterator(const iterator& that) : vector(that.vector), i(that.i) {}
-        ~iterator() {}
-
-        E& operator*() const
-        { return vector->pl[i]; }
-        E* operator->() const
-        { return &vector->pl[i]; }
-        E& operator[](int pos) const
-        { return vector->pl[i + pos]; }
-        iterator& operator++()
-        {
-            i++;
-            return *this;
-        }
-        iterator operator++(int)
-        {
-            iterator tmp(*this);
-            ++*this;
-            return tmp;
-        }        
-        iterator operator+(int pos)
-        { return iterator(vector, i + pos); }
-        iterator operator+=(int pos)
-        {
-            i += pos;
-            return *this;
-        }
-        iterator& operator--()
-        {
-            i--;
-            return *this;
-        }
-        iterator operator--(int)
-        {
-            iterator tmp(*this);
-            --*this;
-            return tmp;
-        }
-        iterator operator-(int pos) 
-        { return iterator(vector, i - pos); }
-        iterator operator-=(int pos) 
-        {
-            i -= pos;
-            return *this;
-        }        
-        int operator-(const iterator& that) 
-        {
-            if (vector != that.vector)
-                throw std::invalid_argument("Vector::iterator::operator-() invalid iterator.");
-            return i - that.i;
-        }
-        bool operator==(const iterator& that) const
-        { return vector == that.vector && i == that.i; }
-        bool operator!=(const iterator& that) const
-        { return vector != that.vector || i != that.i; }
-        bool operator<(const iterator& that) const
-        {
-            if (vector != that.vector)
-                throw std::invalid_argument("Vector::iterator::operator<() invalid iterator.");
-            return i < that.i;
-        }
-        bool operator<=(const iterator& that) const
-        {
-            if (vector != that.vector)
-                throw std::invalid_argument("Vector::iterator::operator<=() invalid iterator.");
-            return i <= that.i;
-        }
-        bool operator>(const iterator& that) const
-        {
-            if (vector != that.vector)
-                throw std::invalid_argument("Vector::iterator::operator>() invalid iterator.");
-            return i > that.i;
-        }
-        bool operator>=(const iterator& that) const
-        {
-            if (vector != that.vector)
-                throw std::invalid_argument("Vector::iterator::operator>=() invalid iterator.");
-            return i >= that.i;
-        }
-    };
-    iterator begin() const { return iterator(this, 0); }
-    iterator end() const { return iterator(this, n); }
+    iterator begin() { return pv; }
+    iterator end() { return pv + n; }
+    const_iterator begin() const { return pv; }
+    const_iterator end() const { return pv + n; }
 };
 
 /**
@@ -183,7 +101,7 @@ Vector<E>::Vector(int cap)
 {
     n = 0;
     N = cap;
-    pl = new E[N];
+    pv = new E[N];
 }
 
 /**
@@ -197,7 +115,7 @@ Vector<E>::Vector(const Vector& that)
 {
     n = that.n;
     N = that.N;
-    pl = new E[N];
+    pv = new E[N];
     std::copy(that.begin(), that.end(), begin());
 }
 
@@ -212,8 +130,8 @@ Vector<E>::Vector(Vector&& that) noexcept
 {
     n = that.n;
     N = that.N;
-    pl = that.pl;
-    that.pl = nullptr; // 指向空指针，退出被析构
+    pv = that.pv;
+    that.pv = nullptr; // 指向空指针，退出被析构
 }
 
 /**
@@ -246,7 +164,7 @@ template<typename E>
 void Vector<E>::insert(int i, E elem)
 {
     if (i == n)
-        insertBack(elem);
+        insert_back(elem);
     else if (!valid(i)) 
         throw std::out_of_range("Vector::insert() i out of range.");
     else
@@ -267,7 +185,7 @@ void Vector<E>::insert(int i, E elem)
  * @param elem: 要添加的元素
  */
 template<typename E>
-void Vector<E>::insertBack(E elem)
+void Vector<E>::insert_back(E elem)
 {
     if (n == N)
         resize(N * 2);
@@ -286,7 +204,7 @@ template<typename E>
 E Vector<E>::remove(int i)
 {
     if (i == n - 1)
-        return removeBack();
+        return remove_Back();
     if (!valid(i)) 
         throw std::out_of_range("Vector::remove() i out of range.");
 
@@ -309,10 +227,10 @@ E Vector<E>::remove(int i)
  * @throws std::out_of_range: Vector为空
  */
 template<typename E>
-E Vector<E>::removeBack()
+E Vector<E>::remove_Back()
 {
     if (empty()) 
-        throw std::out_of_range("Vector::removeBack() underflow.");
+        throw std::out_of_range("Vector::remove_Back() underflow.");
 
     E tmp = (*this)[--n];
     // 保证Vector始终约为半满状态，保证n>0
@@ -375,7 +293,7 @@ void Vector<E>::swap(Vector<E>& that)
     using std::swap; 
     swap(n, that.n);
     swap(N, that.N);
-    swap(pl, that.pl);
+    swap(pv, that.pv);
 }
 
 /**

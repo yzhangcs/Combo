@@ -23,12 +23,12 @@ public:
         if (from_back)
         {
             for (int i = 0; i < n; ++i) 
-                s.insertBack(std::to_string(i));
+                s.insert_back(std::to_string(i));
         }
         else
         {
             for (int i = 0; i < n; ++i) 
-                s.insertFront(std::to_string(i));
+                s.insert_front(std::to_string(i));
         }
     }
     void remove_n(List<string>& s, int n, bool from_back = true)
@@ -36,12 +36,12 @@ public:
         if (from_back)
         {
             for (int i = 0; i < n; ++i) 
-                s.removeBack();
+                s.remove_Back();
         }
         else
         {
             for (int i = 0; i < n; ++i) 
-                s.removeFront();
+                s.remove_front();
         }
     }
 };
@@ -66,24 +66,24 @@ TEST_F(TestList, ElementAccess)
         for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
-            list.insertBack(str);
+            list.insert_back(str);
             EXPECT_EQ(str, list.back());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = std::to_string(i);
-            list.insertFront(str);
+            list.insert_front(str);
             EXPECT_EQ(str, list.front());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = list.front();
-            EXPECT_EQ(str, list.removeFront());
+            EXPECT_EQ(str, list.remove_front());
         }
         for (int i = 0; i < scale; ++i)
         {
             str = list.back();
-            EXPECT_EQ(str, list.removeBack());
+            EXPECT_EQ(str, list.remove_Back());
         }
     });
     EXPECT_THROW(list.front(), std::out_of_range);
@@ -125,15 +125,15 @@ TEST_F(TestList, Capacity)
 
 TEST_F(TestList, Modifiers)
 {
-    EXPECT_THROW(list.removeBack(), std::out_of_range);
-    EXPECT_THROW(list.removeFront(), std::out_of_range);
+    EXPECT_THROW(list.remove_Back(), std::out_of_range);
+    EXPECT_THROW(list.remove_front(), std::out_of_range);
     EXPECT_NO_THROW({
         insert_n(list, scale, true);
         for (int i = scale - 1; i >= 0; --i)
-            EXPECT_EQ(std::to_string(i), list.removeBack());
+            EXPECT_EQ(std::to_string(i), list.remove_Back());
         insert_n(list, scale, false);
         for (int i = scale - 1; i >= 0; --i)
-            EXPECT_EQ(std::to_string(i), list.removeFront());
+            EXPECT_EQ(std::to_string(i), list.remove_front());
 
         for (int i = 0; i < scale; ++i)
             list.insert(0, std::to_string(i));
@@ -144,25 +144,25 @@ TEST_F(TestList, Modifiers)
         for (int i = scale - 1; i >= 0; --i)
             EXPECT_EQ(std::to_string(i), list.remove(i));
     });
-    EXPECT_THROW(list.removeBack(), std::out_of_range);
-    EXPECT_THROW(list.removeFront(), std::out_of_range);
+    EXPECT_THROW(list.remove_Back(), std::out_of_range);
+    EXPECT_THROW(list.remove_front(), std::out_of_range);
 
     insert_n(list, scale);
     list.clear();
     EXPECT_TRUE(list.empty());
     EXPECT_EQ(0, list.size());
-    EXPECT_THROW(list.removeBack(), std::out_of_range);
+    EXPECT_THROW(list.remove_Back(), std::out_of_range);
 
     insert_n(list, scale);
     a = a + list;
     b += list;
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(a.removeBack(), b.removeBack());
+        EXPECT_EQ(a.remove_Back(), b.remove_Back());
     
     c.swap(list);
     EXPECT_EQ(scale, c.size());
     for (int i = scale - 1; i >= 0; --i)
-        EXPECT_EQ(std::to_string(i), c.removeBack());
+        EXPECT_EQ(std::to_string(i), c.remove_Back());
 }
 
 TEST_F(TestList, Other)

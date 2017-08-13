@@ -33,13 +33,10 @@ endif()
 
 # Add test executables
 set(TEST_CPPLIB_LIST
-    TestArrayDeque.cpp
-    TestArrayQueue.cpp
-    TestArrayStack.cpp
-    TestLinkedDeque.cpp
-    TestLinkedQueue.cpp
-    TestLinkedStack.cpp
+    TestDeque.cpp
     TestList.cpp
+    TestQueue.cpp
+    TestStack.cpp
     TestVector.cpp
     # TestBinaryHeap.cpp
     # TestIndexHeap.cpp

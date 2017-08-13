@@ -1,5 +1,5 @@
 /*******************************************************************************
- * ArrayDeque.h
+ * Deque.h
  *
  * Author: zhangyu
  * Date: 2017.4.23
@@ -13,10 +13,10 @@
 /**
  * 使用模板实现的双端队列. 
  * 由动态连续数组存储双端队列. 
- * 实现了数组双端队列的双向迭代器.
+ * 实现了双端队列的随机访问迭代器.
  */
 template<typename E>
-class ArrayDeque
+class Deque
 {
     static const int DEFAULT_CAPACITY = 10; // 默认双端队列容量
 private:
@@ -29,10 +29,10 @@ private:
     // 调整双端队列容量
     void resize(int size); 
 public:
-    explicit ArrayDeque(int cap = DEFAULT_CAPACITY); 
-    ArrayDeque(const ArrayDeque& that);
-    ArrayDeque(ArrayDeque&& that) noexcept;
-    ~ArrayDeque() { delete[] pd; }
+    explicit Deque(int cap = DEFAULT_CAPACITY); 
+    Deque(const Deque& that);
+    Deque(Deque&& that) noexcept;
+    ~Deque() { delete[] pd; }
 
     // 返回双端队列当前大小
     int size() const { return n; } 
@@ -41,52 +41,55 @@ public:
     // 判断是否为空双端队列
     bool empty() const { return n == 0; } 
     // 添加元素到队首
-    void insertFront(E elem); 
+    void insert_front(E elem); 
     // 添加元素到队尾
-    void insertBack(E elem); 
+    void insert_back(E elem); 
     // 队首元素出队
-    E removeFront(); 
+    E remove_front(); 
     // 队尾元素出队
-    E removeBack(); 
+    E remove_Back(); 
     // 返回队首引用
-    E& front() { return const_cast<E&>(static_cast<const ArrayDeque&>(*this).front()); } 
+    E& front() { return const_cast<E&>(static_cast<const Deque&>(*this).front()); } 
     // 返回const队首引用
     const E& front() const; 
     // 返回队尾引用
-    E& back() { return const_cast<E&>(static_cast<const ArrayDeque&>(*this).back()); } 
+    E& back() { return const_cast<E&>(static_cast<const Deque&>(*this).back()); } 
     // 返回const队尾引用
     const E& back() const; 
-    // 内容与另一个ArrayDeque对象交换
-    void swap(ArrayDeque& that); 
+    // 内容与另一个Deque对象交换
+    void swap(Deque& that); 
     // 清空双端队列，不释放空间，双端队列容量不变
     void clear(); 
     
-    ArrayDeque& operator=(ArrayDeque that);
+    Deque& operator=(Deque that);
     template <typename T>
-    friend bool operator==(const ArrayDeque<T>& lhs, const ArrayDeque<T>& rhs);
+    friend bool operator==(const Deque<T>& lhs, const Deque<T>& rhs);
     template <typename T>
-    friend bool operator!=(const ArrayDeque<T>& lhs, const ArrayDeque<T>& rhs);
+    friend bool operator!=(const Deque<T>& lhs, const Deque<T>& rhs);
     template <typename T>
-    friend std::ostream& operator<<(std::ostream& os, const ArrayDeque<T>& deque);
+    friend std::ostream& operator<<(std::ostream& os, const Deque<T>& deque);
 
-    class iterator : public std::iterator<std::bidirectional_iterator_tag, E>
+    class iterator : public std::iterator<std::random_access_iterator_tag, E>
     {
     private:
-        const ArrayDeque* deque;
+        const Deque* deque;
         int i;
     public:
         iterator() : deque(nullptr), i(0) {}
-        iterator(const ArrayDeque* deque, int i) : deque(deque), i(i) {}
+        iterator(const Deque* deque, int i) : deque(deque), i(i) {}
         iterator(const iterator& that) : deque(that.deque), i(that.i) {}
         ~iterator() {}
 
         E& operator*() const
-        { return deque->pd[(deque->head + i) % deque->N]; }
+        { return deque->pd[i]; }
         E* operator->() const
-        { return &deque->pd[(deque->head + i) % deque->N]; }
+        { return &deque->pd[i]; }
+        E& operator[](int pos) const
+        { return deque->pd[i + pos]; }
         iterator& operator++()
         {
-            i++;
+            if (i == deque->N - 1) i = 0;
+            else                  i++;
             return *this;
         }
         iterator operator++(int)
@@ -95,9 +98,18 @@ public:
             ++*this;
             return tmp;
         }        
+        iterator operator+(int pos)
+        { return iterator(deque, i + pos); }
+        iterator operator+=(int pos)
+        {
+            i += pos;
+            if (i > deque->N - 1) i -= deque->N;
+            return *this;
+        }
         iterator& operator--()
         {
-            i--;
+            if (i == 0) i = deque->N - 1;
+            else        i--;
             return *this;
         }
         iterator operator--(int)
@@ -106,23 +118,61 @@ public:
             --*this;
             return tmp;
         }
+        iterator operator-(int pos) 
+        { return iterator(deque, i - pos); }
+        iterator operator-=(int pos) 
+        {
+            i -= pos;
+            if (i < 0) i += deque->N;
+            return *this;
+        }        
+        int operator-(const iterator& that) 
+        {
+            if (deque != that.deque)
+                throw std::invalid_argument("Deque::iterator::operator-() invalid iterator.");
+            return i - that.i;
+        }
         bool operator==(const iterator& that) const
         { return deque == that.deque && i == that.i; }
         bool operator!=(const iterator& that) const
         { return deque != that.deque || i != that.i; }
+        bool operator<(const iterator& that) const
+        {
+            if (deque != that.deque)
+                throw std::invalid_argument("Deque::iterator::operator<() invalid iterator.");
+            return i < that.i;
+        }
+        bool operator<=(const iterator& that) const
+        {
+            if (deque != that.deque)
+                throw std::invalid_argument("Deque::iterator::operator<=() invalid iterator.");
+            return i <= that.i;
+        }
+        bool operator>(const iterator& that) const
+        {
+            if (deque != that.deque)
+                throw std::invalid_argument("Deque::iterator::operator>() invalid iterator.");
+            return i > that.i;
+        }
+        bool operator>=(const iterator& that) const
+        {
+            if (deque != that.deque)
+                throw std::invalid_argument("Deque::iterator::operator>=() invalid iterator.");
+            return i >= that.i;
+        }
     };
-    iterator begin() const { return iterator(this, 0); }
-    iterator end() const { return iterator(this, n); }
+    iterator begin() const { return iterator(this, head); }
+    iterator end() const { return iterator(this, tail); }
 };
 
 /**
- * 数组双端队列构造函数，初始化双端队列.
+ * 双端队列构造函数，初始化双端队列.
  * 双端队列初始容量为10.
  *
  * @param cap: 指定双端队列容量
  */
 template<typename E>
-ArrayDeque<E>::ArrayDeque(int cap)
+Deque<E>::Deque(int cap)
 {
     n = 0;
     N = cap; // 默认容量为10
@@ -132,13 +182,13 @@ ArrayDeque<E>::ArrayDeque(int cap)
 }
 
 /**
- * 数组双端队列复制构造函数.
+ * 双端队列复制构造函数.
  * 复制另一个双端队列作为初始化的值.
  *
  * @param that: 被复制的双端队列
  */
 template<typename E>
-ArrayDeque<E>::ArrayDeque(const ArrayDeque& that)
+Deque<E>::Deque(const Deque& that)
 {
     n = that.n;
     N = that.N;
@@ -149,13 +199,13 @@ ArrayDeque<E>::ArrayDeque(const ArrayDeque& that)
 }
 
 /**
- * 数组双端队列移动构造函数.
+ * 双端队列移动构造函数.
  * 移动另一个双端队列，其资源所有权转移到新创建的对象.
  *
  * @param that: 被移动的双端队列
  */
 template<typename E>
-ArrayDeque<E>::ArrayDeque(ArrayDeque&& that) noexcept
+Deque<E>::Deque(Deque&& that) noexcept
 {
     n = that.n;
     N = that.N;
@@ -171,12 +221,12 @@ ArrayDeque<E>::ArrayDeque(ArrayDeque&& that) noexcept
  * @param size: 新双端队列容量
  */
 template<typename E>
-void ArrayDeque<E>::resize(int size)
+void Deque<E>::resize(int size)
 {
     // 保证新的容量不小于双端队列当前大小
     assert(size >= n); 
     
-    ArrayDeque tmp(size);
+    Deque tmp(size);
     // 将所有元素移动到临时双端队列
     std::move(begin(), end(), tmp.begin());
     tmp.n = n; 
@@ -192,7 +242,7 @@ void ArrayDeque<E>::resize(int size)
  * @param elem: 要添加的元素
  */
 template<typename E>
-void ArrayDeque<E>::insertFront(E elem)
+void Deque<E>::insert_front(E elem)
 {
     if (n == N)
         resize(N * 2);
@@ -209,7 +259,7 @@ void ArrayDeque<E>::insertFront(E elem)
  * @param elem: 要添加的元素
  */
 template<typename E>
-void ArrayDeque<E>::insertBack(E elem)
+void Deque<E>::insert_back(E elem)
 {
     if (n == N)
         resize(N * 2);
@@ -226,10 +276,10 @@ void ArrayDeque<E>::insertBack(E elem)
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E ArrayDeque<E>::removeFront()
+E Deque<E>::remove_front()
 {
     if (empty()) 
-        throw std::out_of_range("ArrayDeque::removeFront() underflow.");
+        throw std::out_of_range("Deque::remove_front() underflow.");
 
     E tmp = pd[head++];
 
@@ -249,10 +299,10 @@ E ArrayDeque<E>::removeFront()
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E ArrayDeque<E>::removeBack()
+E Deque<E>::remove_Back()
 {
     if (empty()) 
-        throw std::out_of_range("ArrayDeque::removeBack() underflow.");
+        throw std::out_of_range("Deque::remove_Back() underflow.");
     if (--tail < 0) 
         tail = N - 1;
 
@@ -272,10 +322,10 @@ E ArrayDeque<E>::removeBack()
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-const E& ArrayDeque<E>::front() const
+const E& Deque<E>::front() const
 {
     if (empty()) 
-        throw std::out_of_range("ArrayDeque::front() underflow.");
+        throw std::out_of_range("Deque::front() underflow.");
     return *begin();
 }
 
@@ -286,20 +336,20 @@ const E& ArrayDeque<E>::front() const
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-const E& ArrayDeque<E>::back() const
+const E& Deque<E>::back() const
 {
     if (empty()) 
-        throw std::out_of_range("ArrayDeque::back() underflow.");
+        throw std::out_of_range("Deque::back() underflow.");
     return *std::prev(end());
 }
 
 /**
- * 交换当前ArrayDeque对象和另一个ArrayDeque对象.
+ * 交换当前Deque对象和另一个Deque对象.
  *
- * @param that: ArrayDeque对象that
+ * @param that: Deque对象that
  */
 template<typename E>
-void ArrayDeque<E>::swap(ArrayDeque<E>& that)
+void Deque<E>::swap(Deque<E>& that)
 {
     // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap; 
@@ -315,7 +365,7 @@ void ArrayDeque<E>::swap(ArrayDeque<E>& that)
  * 不释放空间，双端队列容量保持不变.
  */
 template<typename E>
-void ArrayDeque<E>::clear()
+void Deque<E>::clear()
 {    
     n = 0;
     head = 0;
@@ -324,13 +374,13 @@ void ArrayDeque<E>::clear()
 
 /**
  * =操作符重载.
- * 让当前ArrayDeque对象等于给定ArrayDeque对象that.
+ * 让当前Deque对象等于给定Deque对象that.
  *
- * @param that: ArrayDeque对象that
- * @return 当前ArrayDeque对象
+ * @param that: Deque对象that
+ * @return 当前Deque对象
  */
 template<typename E>
-ArrayDeque<E>& ArrayDeque<E>::operator=(ArrayDeque<E> that)
+Deque<E>& Deque<E>::operator=(Deque<E> that)
 {
     // *this与that互相交换，退出时that被析构
     swap(that);
@@ -338,15 +388,15 @@ ArrayDeque<E>& ArrayDeque<E>::operator=(ArrayDeque<E> that)
 }
 
 /**
- * ==操作符重载函数，比较两个ArrayDeque对象是否相等.
+ * ==操作符重载函数，比较两个Deque对象是否相等.
  *
- * @param lhs: ArrayDeque对象lhs
- *        rhs: ArrayDeque对象rhs
+ * @param lhs: Deque对象lhs
+ *        rhs: Deque对象rhs
  * @return true: 相等
  *         false: 不等
  */
 template<typename E>
-bool operator==(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
+bool operator==(const Deque<E>& lhs, const Deque<E>& rhs)
 {
     if (&lhs == &rhs)             return true;
     if (lhs.size() != rhs.size()) return false;
@@ -354,15 +404,15 @@ bool operator==(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
 }
 
 /**
- * !=操作符重载函数，比较两个ArrayDeque对象是否不等.
+ * !=操作符重载函数，比较两个Deque对象是否不等.
  *
- * @param lhs: ArrayDeque对象lhs
- *        rhs: ArrayDeque对象rhs
+ * @param lhs: Deque对象lhs
+ *        rhs: Deque对象rhs
  * @return true: 不等
  *         false: 相等
  */
 template<typename E>
-bool operator!=(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
+bool operator!=(const Deque<E>& lhs, const Deque<E>& rhs)
 {
     return !(lhs == rhs);
 }
@@ -375,7 +425,7 @@ bool operator!=(const ArrayDeque<E>& lhs, const ArrayDeque<E>& rhs)
  * @return 输出流对象
  */
 template<typename E>
-std::ostream& operator<<(std::ostream& os, const ArrayDeque<E>& deque)
+std::ostream& operator<<(std::ostream& os, const Deque<E>& deque)
 {
     for (auto i : deque)
         os << i << " ";
@@ -383,13 +433,13 @@ std::ostream& operator<<(std::ostream& os, const ArrayDeque<E>& deque)
 }
 
 /**
- * 交换两个ArrayDeque对象.
+ * 交换两个Deque对象.
  *
- * @param lhs: ArrayDeque对象lhs
- *        rhs: ArrayDeque对象rhs
+ * @param lhs: Deque对象lhs
+ *        rhs: Deque对象rhs
  */
 template<typename E>
-void swap(ArrayDeque<E>& lhs, ArrayDeque<E>& rhs)
+void swap(Deque<E>& lhs, Deque<E>& rhs)
 {
     lhs.swap(rhs);
 }

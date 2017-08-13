@@ -3,15 +3,12 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#include "ArrayStack.h"
-#include "LinkedStack.h"
-
+#include "Stack.h"
 using namespace std;
 
 int main(int argc, char* argv[])
 {
-    ArrayStack<string> demo = ArrayStack<string>();    
-    // LinkedStack<string> demo = LinkedStack<string>();
+    Stack<string> demo = Stack<string>();    
     ifstream fin;
     string elem;
 

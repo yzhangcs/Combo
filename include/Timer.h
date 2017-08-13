@@ -17,16 +17,16 @@ class Timer
 private:
     size_t time;
 public:
-    Timer() { time = timestampMs(); }
+    Timer() { time = time_millis(); }
     
     // 产生毫秒精度的时间戳
-    static size_t timestampMs();
+    static size_t time_millis();
     // 开始计时
-    void start() { time = timestampMs(); } 
+    void start() { time = time_millis(); } 
     // 重新计时
-    void reset() { time = timestampMs(); } 
+    void reset() { time = time_millis(); } 
     // 查看从开始计时到当前的总秒数
-    double elapsed() { return (timestampMs() - time) / 1000.0; }
+    double elapsed() { return (time_millis() - time) / 1000.0; }
 };
 
 /**
@@ -34,11 +34,11 @@ public:
  *
  * @return 毫秒精度的时间戳
  */
-size_t Timer::timestampMs()
+size_t Timer::time_millis()
 {
-    using ms = std::chrono::milliseconds;
+    using millis = std::chrono::milliseconds;
     using system_clock = std::chrono::system_clock;
-    return std::chrono::duration_cast<ms>(system_clock::now().time_since_epoch()).count();
+    return std::chrono::duration_cast<millis>(system_clock::now().time_since_epoch()).count();
 }
 
 
