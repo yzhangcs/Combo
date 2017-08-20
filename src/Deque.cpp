@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
         if (elem != "-")
             demo.insert_back(i);
         else
-            cout << demo.remove_Back() << " ";
+            cout << demo.remove_back() << " ";
     }
     cout << "(" << demo.size() << " left on deque)" << endl;
     fin.close();

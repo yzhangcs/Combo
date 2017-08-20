@@ -36,7 +36,7 @@ public:
         if (from_back)
         {
             for (int i = 0; i < n; ++i) 
-                s.remove_Back();
+                s.remove_back();
         }
         else
         {
@@ -83,7 +83,7 @@ TEST_F(TestList, ElementAccess)
         for (int i = 0; i < scale; ++i)
         {
             str = list.back();
-            EXPECT_EQ(str, list.remove_Back());
+            EXPECT_EQ(str, list.remove_back());
         }
     });
     EXPECT_THROW(list.front(), std::out_of_range);
@@ -125,12 +125,12 @@ TEST_F(TestList, Capacity)
 
 TEST_F(TestList, Modifiers)
 {
-    EXPECT_THROW(list.remove_Back(), std::out_of_range);
+    EXPECT_THROW(list.remove_back(), std::out_of_range);
     EXPECT_THROW(list.remove_front(), std::out_of_range);
     EXPECT_NO_THROW({
         insert_n(list, scale, true);
         for (int i = scale - 1; i >= 0; --i)
-            EXPECT_EQ(std::to_string(i), list.remove_Back());
+            EXPECT_EQ(std::to_string(i), list.remove_back());
         insert_n(list, scale, false);
         for (int i = scale - 1; i >= 0; --i)
             EXPECT_EQ(std::to_string(i), list.remove_front());
@@ -144,25 +144,25 @@ TEST_F(TestList, Modifiers)
         for (int i = scale - 1; i >= 0; --i)
             EXPECT_EQ(std::to_string(i), list.remove(i));
     });
-    EXPECT_THROW(list.remove_Back(), std::out_of_range);
+    EXPECT_THROW(list.remove_back(), std::out_of_range);
     EXPECT_THROW(list.remove_front(), std::out_of_range);
 
     insert_n(list, scale);
     list.clear();
     EXPECT_TRUE(list.empty());
     EXPECT_EQ(0, list.size());
-    EXPECT_THROW(list.remove_Back(), std::out_of_range);
+    EXPECT_THROW(list.remove_back(), std::out_of_range);
 
     insert_n(list, scale);
     a = a + list;
     b += list;
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(a.remove_Back(), b.remove_Back());
+        EXPECT_EQ(a.remove_back(), b.remove_back());
     
     c.swap(list);
     EXPECT_EQ(scale, c.size());
     for (int i = scale - 1; i >= 0; --i)
-        EXPECT_EQ(std::to_string(i), c.remove_Back());
+        EXPECT_EQ(std::to_string(i), c.remove_back());
 }
 
 TEST_F(TestList, Other)

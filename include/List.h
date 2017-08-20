@@ -53,7 +53,7 @@ public:
     // 移除链表头部元素
     E remove_front(); 
     // 移除链表尾部元素
-    E remove_Back(); 
+    E remove_back(); 
     // 返回链表头部元素的引用
     E& front() { return const_cast<E&>(static_cast<const List&>(*this).front()); }  
     // 返回链表头部元素的const引用
@@ -295,10 +295,10 @@ E List<E>::remove_front()
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E List<E>::remove_Back()
+E List<E>::remove_back()
 {
     if (empty()) 
-        throw std::out_of_range("List::remove_Back() underflow.");
+        throw std::out_of_range("List::remove_back() underflow.");
 
     Node* pold = sentinel->prev;
     Node* prec = pold->prev;

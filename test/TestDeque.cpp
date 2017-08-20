@@ -36,7 +36,7 @@ public:
         if (from_back)
         {
             for (int i = 0; i < n; ++i) 
-                s.remove_Back();
+                s.remove_back();
         }
         else
         {
@@ -84,7 +84,7 @@ TEST_F(TestDeque, ElementAccess)
         for (int i = 0; i < scale; ++i)
         {
             str = deque.back();
-            EXPECT_EQ(str, deque.remove_Back());
+            EXPECT_EQ(str, deque.remove_back());
         }
     });
     EXPECT_THROW(deque.front(), std::out_of_range);
@@ -131,24 +131,24 @@ TEST_F(TestDeque, Capacity)
 
 TEST_F(TestDeque, Modifiers)
 {
-    EXPECT_THROW(deque.remove_Back(), std::out_of_range);
+    EXPECT_THROW(deque.remove_back(), std::out_of_range);
     EXPECT_THROW(deque.remove_front(), std::out_of_range);
     EXPECT_NO_THROW({
         insert_n(deque, scale, true);
         for (int i = scale - 1; i >= 0; --i)
-            EXPECT_EQ(std::to_string(i), deque.remove_Back());
+            EXPECT_EQ(std::to_string(i), deque.remove_back());
         insert_n(deque, scale, false);
         for (int i = scale - 1; i >= 0; --i)
             EXPECT_EQ(std::to_string(i), deque.remove_front());
     });
-    EXPECT_THROW(deque.remove_Back(), std::out_of_range);
+    EXPECT_THROW(deque.remove_back(), std::out_of_range);
     EXPECT_THROW(deque.remove_front(), std::out_of_range);
 
     insert_n(deque, scale);
     deque.clear();
     EXPECT_TRUE(deque.empty());
     EXPECT_EQ(0, deque.size());
-    EXPECT_THROW(deque.remove_Back(), std::out_of_range);
+    EXPECT_THROW(deque.remove_back(), std::out_of_range);
 
     insert_n(a, scale);
     b.swap(a);
