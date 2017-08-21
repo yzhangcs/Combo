@@ -30,21 +30,22 @@ public:
     // 入队函数
     void enqueue(E elem) { cont.insert_back(std::move(elem)); }
     // 出队函数
-    E dequeue();
+    E dequeue() { return cont.remove_front(); }
     // 返回队首引用
     E& front() { return const_cast<E&>(static_cast<const Queue&>(*this).front()); }
     // 返回const队首引用
-    const E& front() const;
+    const E& front() const { return cont.front(); }
     // 返回队尾引用
     E& back() { return const_cast<E&>(static_cast<const Queue&>(*this).back()); }
     // 返回const队尾引用
-    const E& back() const;
+    const E& back() const { return cont.back(); }
     // 内容与另一个Queue对象交换
     void swap(Queue& that) { cont.swap(that.cont); }
     // 清空队列，不释放空间，队列容量不变
     void clear() { cont.clear(); }
-
+    // 让当前队列等于另一个队列
     Queue& operator=(Queue that);
+
     template <typename T, typename C>
     friend bool operator==(const Queue<T, C>& lhs, const Queue<T, C>& rhs);
     template <typename T, typename C>
@@ -52,49 +53,6 @@ public:
     template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Queue<T, C>& queue);
 };
-
-/**
- * 移除队首元素.
- * 当队列达到1/4容量，缩小队列容量.
- *
- * @return 移除的元素
- * @throws std::out_of_range: 队空
- */
-template<typename E, typename Container>
-E Queue<E, Container>::dequeue()
-{
-    if (empty())
-        throw std::out_of_range("Queue::dequeue() underflow.");
-    return cont.remove_front();
-}
-
-/**
- * 返回const队首引用.
- *
- * @return const队首引用
- * @throws std::out_of_range: 队空
- */
-template<typename E, typename Container>
-const E& Queue<E, Container>::front() const
-{
-    if (empty())
-        throw std::out_of_range("Queue::front() underflow.");
-    return cont.front();
-}
-
-/**
- * 返回const队尾引用.
- *
- * @return const队尾引用
- * @throws std::out_of_range: 队空
- */
-template<typename E, typename Container>
-const E& Queue<E, Container>::back() const
-{
-    if (empty())
-        throw std::out_of_range("Queue::back() underflow.");
-    return cont.back();
-}
 
 /**
  * =操作符重载.

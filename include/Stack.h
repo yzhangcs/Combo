@@ -29,17 +29,17 @@ public:
     bool empty() const { return cont.empty(); }
 
     // 入栈函数
-    void push(E elem);
+    void push(E elem) { cont.insert_back(std::move(elem)); }
     // 出栈函数
-    E pop();
+    E pop() { return cont.remove_back(); }
     // 返回栈顶引用
-    E& top();
+    E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); }
     // 返回const栈顶引用
-    const E& top() const ;
+    const E& top() const { return cont.back(); }
     // 内容与另一个Stack对象交换
-    void swap(Stack& that);
+    void swap(Stack& that) { cont.swap(that.cont); }
     // 清空栈元素
-    void clear();
+    void clear() { cont.clear(); }
     // 让当前栈等于另一个栈
     Stack& operator=(Stack that);
 
@@ -50,79 +50,6 @@ public:
     template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Stack<T, C>& stack);
 };
-
-/**
- * 添加元素到栈顶.
- * 当栈达到最大容量，扩容栈到两倍容量后，再将元素入栈.
- *
- * @param elem: 要入栈的元素
- */
-template<typename E, typename Container>
-void Stack<E, Container>::push(E elem)
-{
-    cont.insert_back(std::move(elem));
-}
-
-/**
- * 移除栈顶元素.
- * 当栈达到1/4容量，缩小栈容量.
- *
- * @return 移除的元素
- * @throws std::out_of_range: 栈空
- */
-template<typename E, typename Container>
-E Stack<E, Container>::pop()
-{
-    if (empty())
-        throw std::out_of_range("Stack::pop() underflow.");
-    return cont.remove_back();
-}
-
-/**
- * 返回栈顶引用.
- *
- * @return 栈顶引用
- * @throws std::out_of_range: 栈空
- */
-template<typename E, typename Container>
-E& Stack<E, Container>::E& top()
-{
-    return const_cast<E&>(static_cast<const Stack&>(*this).top());
-}
-
-/**
- * 返回const栈顶引用.
- *
- * @return const栈顶引用
- * @throws std::out_of_range: 栈空
- */
-template<typename E, typename Container>
-const E& Stack<E, Container>::top() const
-{
-    if (empty())
-        throw std::out_of_range("Stack::top() underflow.");
-    return cont.back();
-}
-
-/**
- * 交换当前栈与另一个栈的内容
- *
- * @param that: 待交换的栈
- */
-template<typename E, typename Container>
-void Stack<E, Container>::swap(Stack& that)
-{
-    cont.swap(that.cont);
-}
-
-/**
- * 清空栈元素.
- */
-template<typename E, typename Container>
-void Stack<E, Container>::clear()
-{
-    cont.clear();
-}
 
 /**
  * =操作符重载.

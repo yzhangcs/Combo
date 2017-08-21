@@ -29,9 +29,9 @@ private:
     Node* sentinel; // 哨兵指针
 
     // 定位指定元素
-    Node* locate(int i) const; 
+    Node* locate(int i) const;
     // 检查索引是否合法
-    bool valid(int i) const { return i >= 0 && i < n; } 
+    bool valid(int i) const { return i >= 0 && i < n; }
 public:
     List() : n(0), sentinel(new Node) {}
     List(const List& that);
@@ -39,34 +39,34 @@ public:
     ~List();
 
     // 返回链表当前大小
-    int size() const { return n; } 
+    int size() const { return n; }
     // 判断是否为空链表
-    bool empty() const { return n == 0; } 
+    bool empty() const { return n == 0; }
     // 添加指定元素到指定位置
-    void insert(int i, E elem); 
+    void insert(int i, E elem);
     // 添加元素到链表头部
-    void insert_front(E elem); 
+    void insert_front(E elem);
     // 添加元素到链表尾部
-    void insert_back(E elem); 
+    void insert_back(E elem);
     // 移除指定位置的元素
-    E remove(int i); 
+    E remove(int i);
     // 移除链表头部元素
-    E remove_front(); 
+    E remove_front();
     // 移除链表尾部元素
-    E remove_back(); 
+    E remove_back();
     // 返回链表头部元素的引用
-    E& front() { return const_cast<E&>(static_cast<const List&>(*this).front()); }  
+    E& front() { return const_cast<E&>(static_cast<const List&>(*this).front()); }
     // 返回链表头部元素的const引用
-    const E& front() const; 
+    const E& front() const;
     // 返回链表尾部元素的引用
-    E& back() { return const_cast<E&>(static_cast<const List&>(*this).back()); }  
+    E& back() { return const_cast<E&>(static_cast<const List&>(*this).back()); }
     // 返回链表尾部元素的const引用
-    const E& back() const; 
+    const E& back() const;
     // 内容与另一个LinkedList对象交换
-    void swap(List& that); 
+    void swap(List& that);
     // 清空链表
-    void clear(); 
-    
+    void clear();
+
     List& operator=(List that);
     List& operator+=(const List& that);
     template<typename T>
@@ -176,7 +176,7 @@ List<E>::~List()
 template<typename E>
 typename List<E>::Node* List<E>::locate(int i) const
 {
-    if (!valid(i)) 
+    if (!valid(i))
         throw std::out_of_range("List::locate() index out of range.");
     if (i < (n >> 1)) return std::next(begin(), i).pn;
     else              return std::prev(end(), n - i).pn;
@@ -195,9 +195,9 @@ void List<E>::insert(int i, E elem)
     Node* prec = nullptr;
     Node* succ = nullptr; // 指定位置的前驱和后继
     Node* pnew = nullptr;
-    
+
     if (i == n) succ = sentinel;
-    else        succ = locate(i); 
+    else        succ = locate(i);
     pnew = new Node(std::move(elem));
     prec = succ->prev;
     prec->next = pnew;
@@ -274,8 +274,8 @@ E List<E>::remove(int i)
 template<typename E>
 E List<E>::remove_front()
 {
-    if (empty()) 
-        throw std::out_of_range("List::remove_front() underflow.");
+    if (empty())
+        throw std::out_of_range("List::remove_front");
 
     Node* pold = sentinel->next;
     Node* succ = pold->next;
@@ -297,8 +297,8 @@ E List<E>::remove_front()
 template<typename E>
 E List<E>::remove_back()
 {
-    if (empty()) 
-        throw std::out_of_range("List::remove_back() underflow.");
+    if (empty())
+        throw std::out_of_range("List::remove_back");
 
     Node* pold = sentinel->prev;
     Node* prec = pold->prev;
@@ -320,8 +320,8 @@ E List<E>::remove_back()
 template<typename E>
 const E& List<E>::front() const
 {
-    if (empty()) 
-        throw std::out_of_range("List::front() underflow.");
+    if (empty())
+        throw std::out_of_range("List::front");
     return *begin();
 }
 
@@ -334,8 +334,8 @@ const E& List<E>::front() const
 template<typename E>
 const E& List<E>::back() const
 {
-    if (empty()) 
-        throw std::out_of_range("List::back() underflow.");
+    if (empty())
+        throw std::out_of_range("List::back");
     return *std::prev(end());
 }
 
@@ -348,7 +348,7 @@ template<typename E>
 void List<E>::swap(List<E>& that)
 {
     // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
+    using std::swap;
     swap(n, that.n);
     swap(sentinel, that.sentinel);
 }
@@ -364,7 +364,7 @@ void List<E>::clear()
 
     Node* current = sentinel->next;
     // 释放每个结点内存
-    while (current != sentinel) 
+    while (current != sentinel)
     {
         sentinel->next = current->next;
         delete current;

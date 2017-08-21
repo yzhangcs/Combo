@@ -29,7 +29,7 @@ private:
     E* pv; // Vector指针
 
     // 调整Vector容量
-    void resize(int count);
+    void reserve(int count);
     // 检查索引是否合法
     bool valid(int i) const { return i >= 0 && i < n; }
 public:
@@ -140,7 +140,7 @@ Vector<E>::Vector(Vector&& that) noexcept
  * @param size: 新Vector容量
  */
 template<typename E>
-void Vector<E>::resize(int count)
+void Vector<E>::reserve(int count)
 {
     // 保证新的容量不小于Vector当前大小
     assert(count >= size());
@@ -169,7 +169,7 @@ void Vector<E>::insert(int i, E elem)
         throw std::out_of_range("Vector::insert() i out of range.");
     else
     {
-        if (n == N) resize(N * 2);
+        if (n == N) reserve(N * 2);
         // 将pl[i]后面的所有元素向数组后面迁移一个位置
         std::move_backward(std::next(begin(), i), end(),
                            std::next(begin(), n + 1));
@@ -188,7 +188,7 @@ template<typename E>
 void Vector<E>::insert_back(E elem)
 {
     if (n == N)
-        resize(N * 2);
+        reserve(N * 2);
     (*this)[n++] = std::move(elem);
 }
 
@@ -215,7 +215,7 @@ E Vector<E>::remove(int i)
     n--;
     // 保证约为半满状态，保证n>0
     if (n > 0 && n == N / 4)
-        resize(N / 2);
+        reserve(N / 2);
     return tmp; // 发生NRVO
 }
 
@@ -230,12 +230,12 @@ template<typename E>
 E Vector<E>::remove_back()
 {
     if (empty())
-        throw std::out_of_range("Vector::remove_back() underflow.");
+        throw std::out_of_range("Vector::remove_back");
 
     E tmp = (*this)[--n];
     // 保证Vector始终约为半满状态，保证n>0
     if (n > 0 && n == N / 4)
-        resize(N / 2);
+        reserve(N / 2);
     return tmp; // 发生NRVO
 }
 
@@ -249,7 +249,7 @@ template<typename E>
 const E& Vector<E>::front() const
 {
     if (empty())
-        throw std::out_of_range("Vector::front() underflow.");
+        throw std::out_of_range("Vector::front");
     return *begin();
 }
 
@@ -263,7 +263,7 @@ template<typename E>
 const E& Vector<E>::back() const
 {
     if (empty())
-        throw std::out_of_range("Vector::back() underflow.");
+        throw std::out_of_range("Vector::back");
     return *std::prev(end());
 }
 
@@ -333,7 +333,7 @@ Vector<E>& Vector<E>::operator=(Vector<E> that)
 template<typename E>
 Vector<E>& Vector<E>::operator+=(const Vector<E>& that)
 {
-    resize(N + that.N);
+    reserve(N + that.N);
     std::copy(that.begin(), that.end(), end());
     n += that.n;
     return *this;
