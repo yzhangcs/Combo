@@ -42,18 +42,18 @@ public:
     int size() const { return n; }
     // 判断是否为空链表
     bool empty() const { return n == 0; }
-    // 添加指定元素到指定位置
+    // 添加元素到指定位置
     void insert(int i, E elem);
     // 添加元素到链表头部
     void insert_front(E elem);
     // 添加元素到链表尾部
     void insert_back(E elem);
     // 移除指定位置的元素
-    E remove(int i);
+    void remove(int i);
     // 移除链表头部元素
-    E remove_front();
+    void remove_front();
     // 移除链表尾部元素
-    E remove_back();
+    void remove_back();
     // 返回链表头部元素的引用
     E& front() { return const_cast<E&>(static_cast<const List&>(*this).front()); }
     // 返回链表头部元素的const引用
@@ -247,68 +247,59 @@ void List<E>::insert_back(E elem)
  * 移除链表中指定位置的元素.
  *
  * @param i: 要移除元素的索引
- * @return 移除的元素
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-E List<E>::remove(int i)
+void List<E>::remove(int i)
 {
     Node* pold = locate(i);
     Node* prec = pold->prev;
     Node* succ = pold->next; // 指定位置的前驱和后继
-    E tmp = pold->elem;
 
     prec->next = succ;
     succ->prev = prec;
     delete pold;
     n--;
-    return tmp; // 发生NRVO
 }
 
 /**
  * 移除链表头部元素.
  *
- * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E List<E>::remove_front()
+void List<E>::remove_front()
 {
     if (empty())
         throw std::out_of_range("List::remove_front");
 
     Node* pold = sentinel->next;
     Node* succ = pold->next;
-    E tmp = pold->elem;
 
     sentinel->next = succ;
     succ->prev = sentinel;
     delete pold;
     n--;
-    return tmp; // 发生NRVO
 }
 
 /**
  * 移除链表尾部元素.
  *
- * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E List<E>::remove_back()
+void List<E>::remove_back()
 {
     if (empty())
         throw std::out_of_range("List::remove_back");
 
     Node* pold = sentinel->prev;
     Node* prec = pold->prev;
-    E tmp = pold->elem;
 
     prec->next = sentinel;
     sentinel->prev = prec;
     delete pold;
     n--;
-    return tmp; // 发生NRVO
 }
 
 /**

@@ -44,14 +44,14 @@ public:
     int capacity() const { return N; }
     // 判断是否为空Vector
     bool empty() const { return n == 0; }
-    // 添加指定元素到指定位置
+    // 添加元素到指定位置
     void insert(int i, E elem);
     // 添加元素到Vector尾部
     void insert_back(E elem);
     // 移除指定位置的元素
-    E remove(int i);
+    void remove(int i);
     // 移除Vector尾部元素
-    E remove_back();
+    void remove_back();
     // 返回指定位置元素的引用，带边界检查
     E& at(int i) { return const_cast<E&>(static_cast<const Vector&>(*this).at(i)); }
     // 返回指定位置元素的const引用，带边界检查
@@ -197,18 +197,15 @@ void Vector<E>::insert_back(E elem)
  * 当Vector达到1/4容量，缩小Vector容量.
  *
  * @param i: 要移除元素的索引
- * @return 移除的元素
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-E Vector<E>::remove(int i)
+void Vector<E>::remove(int i)
 {
     if (i == n - 1)
         return remove_back();
     if (!valid(i))
         throw std::out_of_range("Vector::remove() i out of range.");
-
-    E tmp = (*this)[i];
     // 将pl[i]后面的所有元素向前迁移一个位置
     std::move(std::next(begin(), i + 1), end(),
               std::next(begin(), i));
@@ -216,27 +213,22 @@ E Vector<E>::remove(int i)
     // 保证约为半满状态，保证n>0
     if (n > 0 && n == N / 4)
         reserve(N / 2);
-    return tmp; // 发生NRVO
 }
 
 /**
  * 移除Vector尾部元素.
  * 当Vector达到1/4容量，缩小Vector容量.
  *
- * @return 移除的元素
  * @throws std::out_of_range: Vector为空
  */
 template<typename E>
-E Vector<E>::remove_back()
+void Vector<E>::remove_back()
 {
     if (empty())
         throw std::out_of_range("Vector::remove_back");
-
-    E tmp = (*this)[--n];
     // 保证Vector始终约为半满状态，保证n>0
     if (n > 0 && n == N / 4)
         reserve(N / 2);
-    return tmp; // 发生NRVO
 }
 
 /**

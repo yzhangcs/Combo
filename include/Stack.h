@@ -31,7 +31,7 @@ public:
     // 入栈函数
     void push(E elem) { cont.insert_back(std::move(elem)); }
     // 出栈函数
-    E pop() { return cont.remove_back(); }
+    void pop() { cont.remove_back(); }
     // 返回栈顶引用
     E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); }
     // 返回const栈顶引用

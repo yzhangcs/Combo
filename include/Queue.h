@@ -30,7 +30,7 @@ public:
     // 入队函数
     void enqueue(E elem) { cont.insert_back(std::move(elem)); }
     // 出队函数
-    E dequeue() { return cont.remove_front(); }
+    void dequeue() { cont.remove_front(); }
     // 返回队首引用
     E& front() { return const_cast<E&>(static_cast<const Queue&>(*this).front()); }
     // 返回const队首引用

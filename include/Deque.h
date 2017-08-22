@@ -10,52 +10,46 @@
 #include <iostream>
 #include <iterator>
 
-template <class E>
-struct Block
-{
-    int N;
-    E* pb;
-
-    Block() : N(0), pb(nullptr) {}
-    Block(int count) : N(count), pb(new E[N]) {}
-    Block(const Block& that) : N(that.N), pb(new E[N])
-    { std::copy(that.pb, that.pb + that.N, pb); }
-    Block(Block&& that) noexcept : N(that.N), pb(that.pb)
-    { that.pb = nullptr; }
-    ~Block() { delete[] pb; }
-    E& operator[](int i) { return pb[i]; }
-    Block& operator=(Block that)
-    {
-        swap(N, that.N);
-        swap(pb, that.pb);
-        return *this;
-    }
-};
+// 根据元素类型大小计算一个区块所能容纳的元素个数
+static constexpr int block_size(int size) { return size < 256 ? 4096 / size : 16;}
 
 template <class E>
 class DequeIterator : public std::iterator<std::random_access_iterator_tag, E>
 {
+    static const int BLOCK_SIZE = block_size(sizeof(E));
 private:
-    Block* block;
-    int current;
+    E** block; // 区块映射指针
+    E* head; // 区块头指针
+    E* tail; // 区块尾指针
+    E* current; // 区块当前位置指针
+
+    void set_block(E** new_block)
+    {
+        block = new_block;
+        head = *block;
+        tail = head + BLOCK_SIZE;
+    }
 public:
-    DequeIterator() : block(nullptr), current(0) {}
-    DequeIterator(Block* block, int current) : block(block), current(current) {}
-    DequeIterator(const DequeIterator& that) : block(that.block), current(that.current) {}
+    DequeIterator() : block(nullptr), head(nullptr), tail(nullptr), current(nullptr) {}
+    DequeIterator(E** block, E* current) :
+        block(block), head(*block), tail(head + BLOCK_SIZE), current(current) {}
+    DequeIterator(const DequeIterator& that) :
+        block(that.block), head(that.head), tail(that.tail), current(that.current) {}
     ~DequeIterator() {}
 
     E& operator*() const
-    { return block[current]; }
+    { return *current; }
     E* operator->() const
-    { return &block[current]; }
+    { return current; }
     E& operator[](int n) const
     { return *(*this + n); }
     DequeIterator& operator++()
     {
         ++current;
-        if (current == block->N)
+        // 当前区块满，则跳到下一个区块
+        if (current == tail)
         {
-            block++;
+            set_block(block + 1);
             current = 0;
         }
         return *this;
@@ -74,26 +68,23 @@ public:
     DequeIterator& operator+=(int n)
     {
         // 相对于当前区块头部的偏移
-        int offset = n + current;
+        int offset = n + current - head;
 
-        if (offset >= 0 && offset < block->N)
+        if (offset >= 0 && offset < BLOCK_SIZE)
             current += n;
         else
         {
-            int block_offset = offset < 0 ? -((-offset - 1) / block->N) - 1
-                                          : offset / block->N;
-            block += block_offset;
-            current = offset - block_offset * block->N;
+            int block_offset = offset < 0 ? (offset + 1) / BLOCK_SIZE - 1
+                                        : offset / BLOCK_SIZE;
+            set_block(block + block_offset);
+            current = head + offset - block_offset * BLOCK_SIZE)；
         }
         return *this;
     }
     DequeIterator& operator--()
     {
-        if (current == 0)
-        {
-            --block;
-            current = block->N;
-        }
+        if (current == head)
+            set_block(block - 1)
         --current;
         return *this;
     }
@@ -111,9 +102,9 @@ public:
     DequeIterator& operator-=(int n)
     { return *this += -n; }
     int operator-(const DequeIterator& that)
-    { return that.block->N - that.current + block->N * (block - that.block - 1) + current; }
+    { return BLOCK_SIZE * (block - that.block) - that.current - that.head + current - head; }
     bool operator==(const DequeIterator& that) const
-    { return block == that.block && current == that.current; }
+    { return current == that.current; }
     bool operator!=(const DequeIterator& that) const
     { return !(*this == that); }
     bool operator<(const DequeIterator& that) const
@@ -134,39 +125,52 @@ public:
 template<typename E>
 class Deque
 {
-    static const int BLOCK_SIZE = 10; // 区块大小
+private:
+    static const int BLOCK_SIZE = block_size(sizeof(E)); // 区块大小
     static const int DEFAULT_MAP_SIZE = 10; // 默认映射大小
     static const int DEFAULT_CAPACITY = 10; // 默认双端队列容量
 
+    using data_allocator = std::allocator<T>;
+    using map_allocator = std::allocator<T*>;
+public:
     using iterator = DequeIterator<E>;
 private:
-    int M;         // 区块个数
-    Block<E>* map; // 区块映射
-    iterator head; // 队首迭代器
-    iterator tail; // 队尾迭代器
+    int M;   // 区块个数
+    E** map; // 区块映射
+    iterator it_bg; // 队首迭代器
+    iterator it_ed; // 队尾迭代器
 
+    // 初始化映射
+    void initialize_map(int count);
+    // 创建指定映射范围的区块
+    void create_blocks(E** block_head, E** block_tail);
+    // 销毁指定映射范围的区块
+    void destroy_blocks(E** block_head, E** block_tail);
     // 调整映射大小
     void reserve_map();
-    // 调整映射大小
-    void reserve_block(int count);
 public:
-    explicit Deque(int count = DEFAULT_CAPACITY);
+    Deque() { initialize_map(0); }
+    explicit Deque(int count, const E& value = E());
     Deque(const Deque& that);
     Deque(Deque&& that) noexcept;
     ~Deque() { delete[] map; }
 
     // 返回双端队列当前大小
-    int size() const { return tail - head; }
+    int size() const { return it_ed - it_bg; }
     // 判断是否为空双端队列
-    bool empty() const { return head == tail; }
+    bool empty() const { return it_bg == it_ed; }
+    // 添加元素到指定位置
+    void insert(E elem);
     // 添加元素到队首
     void insert_front(E elem);
     // 添加元素到队尾
     void insert_back(E elem);
+    // 移除指定位置的元素
+    void remove(int i);
     // 队首元素出队
-    E remove_front();
+    void remove_front();
     // 队尾元素出队
-    E remove_back();
+    void remove_back();
     // 返回队首引用
     E& front() { return const_cast<E&>(static_cast<const Deque&>(*this).front()); }
     // 返回const队首引用
@@ -188,27 +192,21 @@ public:
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const Deque<T>& deque);
 
-    iterator begin() const { return head; }
-    iterator end() const { return tail; }
+    iterator begin() const { return it_bg; }
+    iterator end() const { return it_ed; }
 };
 
 /**
  * 双端队列构造函数，初始化双端队列.
- * 双端队列初始容量为10.
  *
  * @param count: 指定双端队列容量
  */
 template<typename E>
-Deque<E>::Deque(int count)
+Deque<E>::Deque(int count, const E& value)
 {
-    // 在满足指定容量所需的最少区块数和默认映射大小中取较大值
-    M = std::max(count / BLOCK_SIZE + 1, DEFAULT_MAP_SIZE);
-    map = new Block<E>[M];
-    // 分配中央区块
-    map[M / 2] = Block(BLOCK_SIZE);
-    // 头尾迭代器指向中央区块的中间，便于向两端扩展
-    head = iterator(map + M / 2, BLOCK_SIZE / 2);
-    tail = iterator(map + M / 2, BLOCK_SIZE / 2);
+    // 初始化满足指定容量的映射
+    initialize_map(count);
+    uninitialized_fill(it_bg, it_ed, value);
 }
 
 /**
@@ -220,12 +218,9 @@ Deque<E>::Deque(int count)
 template<typename E>
 Deque<E>::Deque(const Deque& that)
 {
-    M = that.M;
-    map = new Block[M];
-    // 迭代器的位置偏移相同
-    head = iterator(map + that.head.block - that.map, that.head.current);
-    tail = iterator(map + that.tail.block - that.map, that.tail.current);
-    std::copy(that.head, that.tail, head);
+    // 初始化满足that大小的映射
+    initialize_map(that.size());
+    uninitialized_copy(that.it_bg, that.it_ed, it_bg);
 }
 
 /**
@@ -239,36 +234,74 @@ Deque<E>::Deque(Deque&& that) noexcept
 {
     M = that.M
     map = that.map;
-    head = that.head;
-    tail = that.tail;
-    that.map = nullptr;
-    that.head = nullptr;
-    that.tail = nullptr; // 指向空指针，退出被析构
+    it_bg = that.it_bg;
+    it_ed = that.it_ed;
+    that.map = nullptr; // 指向空指针，退出被析构
 }
 
 /**
- * 创建指定容量的新双端队列，并移动所有元素到新双端队列当中.
+ * 初始化映射.
+ * 根据指定容量创建相应范围的区块并初始化迭代器.
  *
+ * @param count: 元素容量
+ */
+void initialize_map(int count)
+{
+    // 满足指定容量所需的最少区块数
+    int num_blocks = count / BLOCK_SIZE + 1;
+    // 映射容量为num_blocks + 2和DEFAULT_MAP_SIZE中的较大值
+    M = std::max(num_blocks + 2, DEFAULT_MAP_SIZE);
+    map = map_allocator::allocate(M);
+    // 映射两端剩余容量相同
+    E** block_head = map + (M - num_blocks) / 2;
+    E** block_tail = block_head + num_blocks;
+    // 创建区块，区块映射位于中央位置，便于向两端扩展
+    create_blocks(block_head, block_tail);
+    it_bg = iterator(block_head, *block_head);
+    it_ed = iterator(block_tail - 1, *(block_tail - 1) + count % BLOCK_SIZE);
+}
+
+/**
+ * 创建[block_head, block_tail)映射范围指向的区块.
+ *
+ * @param block_head: 起始映射指针
+ * @param block_tail: 结束映射指针
+ */
+template<typename E>
+Deque<E>::void create_blocks(E** block_head, E** block_tail)
+{
+    E** i;
+    // Note: commit or rollback
+    try
+    {
+        for (i = block_head; i < block_tail; ++i)
+            *i = data_allocator::allocate(BLOCK_SIZE);
+    }
+    catch(...)
+    {
+        destroy_blocks(block_head, i)
+    }
+}
+
+/**
+ * 销毁[block_head, block_tail)映射范围指向的区块.
+ *
+ * @param block_head: 起始映射指针
+ * @param block_tail: 结束映射指针
+ */
+template<typename E>
+Deque<E>::void destroy_blocks(E** block_head, E** block_tail)
+{
+    for (i = block_head; i < block_tail; ++i)
+        data_allocator::deallocate(*i, BLOCK_SIZE);
+}
+
+/**
  * @param size: 新双端队列容量
  */
 template<typename E>
-void Deque<E>::reserve_map(int count)
+void Deque<E>::reserve_map(int map_size)
 {
-    // 保证新的容量不小于双端队列当前大小
-    assert(count >= size());
-
-    M = count / BLOCK_SIZE + 1;
-    map = new Block[M];
-    // 头尾迭代器指向中央区域，便于向两端扩展
-    head = iterator(map + M / 2, BLOCK_SIZE / 2);
-    tail = iterator(map + M / 2, BLOCK_SIZE / 2);
-
-    Deque tmp(count);
-    // 将所有元素移动到临时双端队列
-    std::move(begin, end, tmp.begin);
-    tmp.head = 0;
-    tmp.tail = n; // 设置头尾迭代器
-    swap(tmp); // *this与tmp互相交换，退出时tmp被析构
 }
 
 /**
@@ -281,17 +314,17 @@ template<typename E>
 void Deque<E>::insert_front(E elem)
 {
     // 头迭代器指向的区块满，则分配并指向新区块
-    if (head.current == 0)
+    if (it_bg.current == it_bg.head)
     {
-        // 没有多余映射区块，则扩容映射到两倍
-        if (head.block == map)
+        // 映射满，则扩容映射到两倍
+        if (it_bg.block == map)
             reserve_map(2 * M);
-        --head.block;
-        head.block = Block(BLOCK_SIZE);
-        head.current = BLOCK_SIZE;
+        it_bg.block - 1 = data_allocator::allocate(BLOCK_SIZE);
+        it_bg.set_block(it_bg.block - 1);
+        it_bg.current = it_bg.tail;
     }
-    --head.current;
-    head.block[head.current] = std::move(elem);
+    --it_bg.current;
+    data_allocator::construct(it_bg.current, std::move(elem));
 }
 
 /**
@@ -304,73 +337,67 @@ template<typename E>
 void Deque<E>::insert_back(E elem)
 {
     // 尾迭代器指向的区块满，则分配并指向新区块
-    if (tail.current == BLOCK_SIZE)
+    if (it_ed.current == BLOCK_SIZE)
     {
         // 映射满，则扩容映射到两倍
-        if (tail.block == map + M - 1)
+        if (it_ed.block == map + M - 1)
             reserve_map(2 * M);
-        ++tail.block;
-        tail.block = Block(BLOCK_SIZE);
-        tail.current = 0;
+        it_ed.block + 1 = data_allocator::allocate(BLOCK_SIZE);
+        it_ed.set_block(it_ed.block + 1);
+        it_ed.current = it_ed.head;
     }
-    tail.block[tail.current] = std::move(elem);
-    ++tail.current;
+    data_allocator::construct(it_ed.current, std::move(elem));
+    ++it_ed.current;
 }
 
 /**
  * 移除队首元素.
  * 当双端队列达到1/4容量，缩小双端队列容量.
  *
- * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E Deque<E>::remove_front()
+void Deque<E>::remove_front()
 {
     if (empty())
         throw std::out_of_range("Deque::remove_front");
-
-    E tmp = *head;
-
-    head.current++;
-    if (head.current == BLOCK_SIZE)
+    data_allocator::destroy(it_bg.current);
+    it_bg.current++;
+    if (it_bg.current == it_bg.tail)
     {
         // 释放空区块
-        head.block = Block();
-        ++head.block;
-        head.current = 0;
+        data_allocator::deallocate(*it_bg.block);
+        it_bg.set_block(it_bg.block + 1);
+        it_bg.current = it_bg.head;
         // // 保证映射始终约为半满状态
         // if (n > 0 && n == N / 4)
         //     reserve_map(N / 2);
     }
-    return tmp; // 发生NRVO
 }
 
 /**
  * 移除队尾元素.
  * 当双端队列达到1/4容量，缩小双端队列容量.
  *
- * @return 移除的元素
  * @throws std::out_of_range: 队空
  */
 template<typename E>
-E Deque<E>::remove_back()
+void Deque<E>::remove_back()
 {
     if (empty())
         throw std::out_of_range("Deque::remove_back");
-
-    if (tail.current == 0)
+    if (it_ed.current == it_ed.head)
     {
         // 释放空区块
-        tail.block = Block();
-        --tail.block;
-        tail.current = BLOCK_SIZE;
+        data_allocator::deallocate(*it_ed.block);
+        it_ed.set_block(it_ed.block - 1);
+        it_ed.current = it_ed.tail;
         // // 保证映射始终约为半满状态
         // if (n > 0 && n == N / 4)
         //     reserve_map(N / 2);
     }
-    --tail.current;
-    return *tail;
+    --it_ed.current;
+    data_allocator::destroy(it_end.current);
 }
 
 /**
@@ -412,8 +439,8 @@ void Deque<E>::swap(Deque<E>& that)
     // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap;
     swap(n, that.n);
-    swap(head, that.head);
-    swap(tail, that.tail);
+    swap(it_bg, that.head);
+    swap(it_ed, that.tail);
     swap(N, that.N);
     swap(pd, that.pd);
 }
@@ -426,8 +453,8 @@ template<typename E>
 void Deque<E>::clear()
 {
     n = 0;
-    head = 0;
-    tail = 0;
+    it_bg = 0;
+    it_ed = 0;
 }
 
 /**
