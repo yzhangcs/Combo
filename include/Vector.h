@@ -45,11 +45,11 @@ public:
     // 判断是否为空Vector
     bool empty() const { return n == 0; }
     // 添加元素到指定位置
-    void insert(int i, E elem);
+    void insert(iterator pos, E elem);
     // 添加元素到Vector尾部
     void insert_back(E elem);
     // 移除指定位置的元素
-    void remove(int i);
+    void remove(iterator pos);
     // 移除Vector尾部元素
     void remove_back();
     // 返回指定位置元素的引用，带边界检查
@@ -161,7 +161,7 @@ void Vector<E>::reserve(int count)
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-void Vector<E>::insert(int i, E elem)
+void Vector<E>::insert(iterator pos, E elem)
 {
     if (i == n)
         insert_back(elem);
@@ -200,7 +200,7 @@ void Vector<E>::insert_back(E elem)
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-void Vector<E>::remove(int i)
+void Vector<E>::remove(iterator pos)
 {
     if (i == n - 1)
         return remove_back();
@@ -269,7 +269,7 @@ template<typename E>
 const E& Vector<E>::at(int i) const
 {
     if (!valid(i))
-        throw std::out_of_range("Vector::at() i out of range.");
+        throw std::out_of_range("Vector::at");
     return (*this)[i];
 }
 

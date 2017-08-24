@@ -43,13 +43,13 @@ public:
     // 判断是否为空链表
     bool empty() const { return n == 0; }
     // 添加元素到指定位置
-    void insert(int i, E elem);
+    void insert(iterator pos, E elem);
     // 添加元素到链表头部
     void insert_front(E elem);
     // 添加元素到链表尾部
     void insert_back(E elem);
     // 移除指定位置的元素
-    void remove(int i);
+    void remove(iterator pos);
     // 移除链表头部元素
     void remove_front();
     // 移除链表尾部元素
@@ -190,7 +190,7 @@ typename List<E>::Node* List<E>::locate(int i) const
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-void List<E>::insert(int i, E elem)
+void List<E>::insert(iterator pos, E elem)
 {
     Node* prec = nullptr;
     Node* succ = nullptr; // 指定位置的前驱和后继
@@ -250,7 +250,7 @@ void List<E>::insert_back(E elem)
  * @throws std::out_of_range: 索引不合法
  */
 template<typename E>
-void List<E>::remove(int i)
+void List<E>::remove(iterator pos)
 {
     Node* pold = locate(i);
     Node* prec = pold->prev;
