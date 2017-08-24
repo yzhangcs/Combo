@@ -50,12 +50,12 @@ set(CPPLIB_EXEC_LIST
     # Heap
     # List
     # PriorityQueue
-    Queue
-    Random
+    # Queue
+    # Random
     # Search
     # Sort
-    Stack
-    Timer
+    # Stack
+    # Timer
     # UnionFind
     )
 

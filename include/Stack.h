@@ -28,20 +28,19 @@ public:
     // 判断是否为空栈
     bool empty() const { return cont.empty(); }
 
+    // 返回const栈顶引用
+    const E& top() const { return cont.back(); }
+    // 返回栈顶引用
+    E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); }
+
     // 入栈函数
     void push(E elem) { cont.insert_back(std::move(elem)); }
     // 出栈函数
     void pop() { cont.remove_back(); }
-    // 返回栈顶引用
-    E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); }
-    // 返回const栈顶引用
-    const E& top() const { return cont.back(); }
     // 内容与另一个Stack对象交换
     void swap(Stack& that) { cont.swap(that.cont); }
     // 清空栈元素
     void clear() { cont.clear(); }
-    // 让当前栈等于另一个栈
-    Stack& operator=(Stack that);
 
     template <typename T, typename C>
     friend bool operator==(const Stack<T, C>& lhs, const Stack<T, C>& rhs);
@@ -50,22 +49,6 @@ public:
     template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Stack<T, C>& stack);
 };
-
-/**
- * =操作符重载.
- * 让当前Stack对象等于给定Stack对象that.
- *
- * @param that: Stack对象that
- * @return 当前Stack对象
- */
-template<typename E, typename Container>
-Stack<E, Container>& Stack<E, Container>::operator=(Stack that)
-{
-    // 按值传参，传入右值时会有「复制消除」
-    // *this与that互相交换，退出时that被析构
-    swap(that);
-    return *this;
-}
 
 /**
  * ==操作符重载函数，比较两个Stack对象是否相等.

@@ -5,14 +5,14 @@
 
 using std::string;
 
-class TestVector : public testing::Test 
+class TestVector : public testing::Test
 {
 protected:
     Vector<string> vector;
     Vector<string> a;
     Vector<string> b;
     Vector<string> c;
-    string str;    
+    string str;
     int scale;
 public:
     virtual void SetUp() { scale = 32; }
@@ -20,12 +20,12 @@ public:
 
     void insert_n(Vector<string>& s, int n)
     {
-        for (int i = 0; i < n; ++i) 
+        for (int i = 0; i < n; ++i)
             s.insert_back(std::to_string(i));
     }
     void remove_n(Vector<string>& s, int n)
     {
-        for (int i = 0; i < n; ++i) 
+        for (int i = 0; i < n; ++i)
             s.remove_back();
     }
 };
@@ -66,7 +66,7 @@ TEST_F(TestVector, ElementAccess)
 
     insert_n(vector, scale);
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), vector.at(i)); 
+        EXPECT_EQ(std::to_string(i), vector.at(i));
     for (int i = 0; i < scale; ++i)
         EXPECT_EQ(std::to_string(i), vector[i]);
     EXPECT_THROW(vector.at(scale), std::out_of_range);
@@ -77,7 +77,7 @@ TEST_F(TestVector, Iterators)
     EXPECT_EQ(vector.begin(), vector.end());
     insert_n(vector, scale);
     EXPECT_LT(vector.begin(), vector.end());
-    
+
     auto bg = vector.begin();
     auto ed = vector.end();
 
@@ -86,8 +86,8 @@ TEST_F(TestVector, Iterators)
     for (int i = 0; i < scale; ++i)
         EXPECT_EQ(std::to_string(i), *(bg + i));
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), *(ed - scale + i));  
-    
+        EXPECT_EQ(std::to_string(i), *(ed - scale + i));
+
     for (int i = 0; i < scale; ++i)
     {
         auto it = vector.begin();
@@ -104,7 +104,7 @@ TEST_F(TestVector, Iterators)
     {
         auto it = bg + i;
         EXPECT_EQ(i, it - bg);
-    }        
+    }
 
     for (int i = 0; i < scale; ++i)
         EXPECT_EQ(std::to_string(i), *bg++);
@@ -137,7 +137,7 @@ TEST_F(TestVector, Modifiers)
         insert_n(vector, scale);
         for (int i = scale - 1; i >= 0; --i)
             EXPECT_EQ(std::to_string(i), vector.remove_back());
-        
+
         for (int i = 0; i < scale; ++i)
             vector.insert(0, std::to_string(i));
         for (int i = scale - 1; i >= 0; --i)
@@ -158,15 +158,8 @@ TEST_F(TestVector, Modifiers)
     insert_n(vector, scale);
     vector.clear();
     EXPECT_TRUE(vector.empty());
-    EXPECT_EQ(0, vector.size());
     EXPECT_THROW(vector.remove_back(), std::out_of_range);
 
-    insert_n(vector, scale);
-    a = a + vector;
-    b += vector;
-    for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(a.remove_back(), b.remove_back());
-    
     c.swap(vector);
     EXPECT_EQ(scale, c.size());
     for (int i = scale - 1; i >= 0; --i)

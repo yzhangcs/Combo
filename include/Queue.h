@@ -27,24 +27,24 @@ public:
     int size() const { return cont.size(); }
     // 判断是否为空队列
     bool empty() const { return cont.empty(); }
+
+    // 返回const队首引用
+    const E& front() const { return cont.front(); }
+    // 返回const队尾引用
+    const E& back() const { return cont.back(); }
+    // 返回队首引用
+    E& front() { return const_cast<E&>(static_cast<const Queue&>(*this).front()); }
+    // 返回队尾引用
+    E& back() { return const_cast<E&>(static_cast<const Queue&>(*this).back()); }
+
     // 入队函数
     void enqueue(E elem) { cont.insert_back(std::move(elem)); }
     // 出队函数
     void dequeue() { cont.remove_front(); }
-    // 返回队首引用
-    E& front() { return const_cast<E&>(static_cast<const Queue&>(*this).front()); }
-    // 返回const队首引用
-    const E& front() const { return cont.front(); }
-    // 返回队尾引用
-    E& back() { return const_cast<E&>(static_cast<const Queue&>(*this).back()); }
-    // 返回const队尾引用
-    const E& back() const { return cont.back(); }
     // 内容与另一个Queue对象交换
     void swap(Queue& that) { cont.swap(that.cont); }
     // 清空队列，不释放空间，队列容量不变
     void clear() { cont.clear(); }
-    // 让当前队列等于另一个队列
-    Queue& operator=(Queue that);
 
     template <typename T, typename C>
     friend bool operator==(const Queue<T, C>& lhs, const Queue<T, C>& rhs);
@@ -53,21 +53,6 @@ public:
     template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Queue<T, C>& queue);
 };
-
-/**
- * =操作符重载.
- * 让当前Queue对象等于给定Queue对象that.
- *
- * @param that: Queue对象that
- * @return 当前Queue对象
- */
-template<typename E, typename Container>
-Queue<E, Container>& Queue<E, Container>::operator=(Queue<E, Container> that)
-{
-    // *this与that互相交换，退出时that被析构
-    swap(that);
-    return *this;
-}
 
 /**
  * ==操作符重载函数，比较两个Queue对象是否相等.
