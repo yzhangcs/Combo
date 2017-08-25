@@ -55,7 +55,7 @@ set(CPPLIB_EXEC_LIST
     # Search
     # Sort
     # Stack
-    # Timer
+    Timer
     # UnionFind
     )
 

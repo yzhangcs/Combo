@@ -134,10 +134,12 @@ private:
     static const int BLOCK_SIZE = block_size(sizeof(E)); // 区块大小
     static const int DEFAULT_MAP_SIZE = 10; // 默认映射大小
 
-    using data_allocator        = std::allocator<E>;
-    using map_allocator         = std::allocator<E*>;
-    // std::allocator::construct & destroy was deprecated in C++17
-    // using data_allocator_traits = std::allocator_traits<data_allocator>;
+    using allocator            = std::allocator<E>;
+    using map_allocator        = std::allocator<E*>;
+    using allocator_traits     = std::allocator_traits<allocator>;
+    using map_allocator_traits = std::allocator_traits<map_allocator>;
+    // std::allocator_traits::construct & destroy was deprecated in C++17
+    // using allocator_traits = std::allocator_traits<allocator>;
     // using map_allocator_traits  = std::allocator_traits<map_allocator>;
 public:
     using iterator               = DequeIterator<E>;
@@ -292,18 +294,18 @@ Deque<E>::~Deque()
 {
     // 析构掉所有区块内的元素
     if (iterator_begin.block == iterator_end.block)
-        data_allocator::destroy(iterator_begin.current, iterator_end.current);
+    	allocator_traits::destroy(iterator_begin.current, iterator_end.current);
     else
     {
-        data_allocator::destroy(iterator_begin.current, iterator_end.tail);
+    	allocator_traits::destroy(iterator_begin.current, iterator_end.tail);
         for (E** i = iterator_begin.block + 1; i < iterator_end.block; ++i)
-            data_allocator::destroy(*i, *i + BLOCK_SIZE);
-        data_allocator::destroy(iterator_end.head, iterator_end.current);
+        	allocator_traits::destroy(*i, *i + BLOCK_SIZE);
+        allocator_traits::destroy(iterator_end.head, iterator_end.current);
     }
     // 移除所有的区块
     remove_block(iterator_begin.block, iterator_end.block + 1);
     // 释放映射空间
-    map_allocator::deallocate(map, M);
+    map_allocator_traits::deallocate(map, M);
 }
 
 /**
@@ -335,7 +337,7 @@ void Deque<E>::initialize_map(int count)
     int num_blocks = count / BLOCK_SIZE + 1;
     // 映射容量为num_blocks + 2和DEFAULT_MAP_SIZE中的较大值
     M = std::max(num_blocks + 2, DEFAULT_MAP_SIZE);
-    map = map_allocator::allocate(M);
+    map = map_allocator_traits::allocate(M);
     // 映射两端剩余容量相同
     E** block_begin = map + (M - num_blocks) / 2;
     E** block_end = block_begin + num_blocks;
@@ -357,13 +359,13 @@ void Deque<E>::reserve_map(int new_count, bool at_front)
     // 如果新的容量小于当前映射容量，则映射不改变
     if (new_count > M)
     {
-        E** new_map = map_allocator::allocate(new_count);
+        E** new_map = map_allocator_traits::allocate(new_count);
         // 如果at_front，则将新增容量安排在映射头部，否则头部剩余容量不变
         E** new_block_begin = new_map + (iterator_begin.block - map)
                                      + (at_front ? new_count - M : 0);
         // 复制区块映射指针到新的映射，不改变区块
         std::copy(iterator_begin.block, iterator_end.block + 1, new_block_begin);
-        map_allocator::deallocate(map, M);
+        map_allocator_traits::deallocate(map, M);
         map = new_map;
         M = new_count;
         iterator_begin.set_block(new_block_begin);
@@ -386,7 +388,7 @@ void Deque<E>::insert_block(E** block_begin, E** block_end)
     try
     {
         for (i = block_begin; i < block_end; ++i)
-            *i = data_allocator::allocate(BLOCK_SIZE);
+            *i = allocator_traits::allocate(BLOCK_SIZE);
     }
     catch(...)
     {
@@ -404,7 +406,7 @@ void Deque<E>::insert_block_at_front()
     // 头部映射满，则扩容映射到两倍，新增容量安排在头部
     if (iterator_begin.block == map)
         reserve_map(2 * M, true);
-    iterator_begin.block - 1 = data_allocator::allocate(BLOCK_SIZE);
+    iterator_begin.block - 1 = allocator_traits::allocate(BLOCK_SIZE);
     // 重置头迭代器的指向
     iterator_begin.set_block(iterator_begin.block - 1);
     iterator_begin.current = iterator_begin.tail;
@@ -420,7 +422,7 @@ void Deque<E>::insert_block_at_back()
     // 尾部映射满，则扩容映射到两倍，新增容量安排在尾部
     if (iterator_end.block == map + M - 1)
         reserve_map(2 * M, false);
-    iterator_end.block + 1 = data_allocator::allocate(BLOCK_SIZE);
+    iterator_end.block + 1 = allocator_traits::allocate(BLOCK_SIZE);
     // 重置尾迭代器的指向
     iterator_end.set_block(iterator_end.block + 1);
     iterator_end.current = iterator_end.head;
@@ -437,7 +439,7 @@ template<typename E>
 void Deque<E>::remove_block(E** block_begin, E** block_end)
 {
     for (E** i = block_begin; i < block_end; ++i)
-        data_allocator::deallocate(*i, BLOCK_SIZE);
+        allocator_traits::deallocate(*i, BLOCK_SIZE);
 }
 
 /**
@@ -448,7 +450,7 @@ template<typename E>
 void Deque<E>::remove_block_at_front()
 {
     // 释放空区块
-    data_allocator::deallocate(*iterator_begin.block);
+    allocator_traits::deallocate(*iterator_begin.block);
     // 重置头迭代器的指向
     iterator_begin.set_block(iterator_begin.block + 1);
     iterator_begin.current = iterator_begin.head;
@@ -462,7 +464,7 @@ template<typename E>
 void Deque<E>::remove_block_at_back()
 {
     // 释放空区块
-    data_allocator::deallocate(*iterator_end.block);
+    allocator_traits::deallocate(*iterator_end.block);
     // 重置尾迭代器的指向
     iterator_end.set_block(iterator_end.block - 1);
     iterator_end.current = iterator_end.tail;
@@ -479,9 +481,9 @@ void Deque<E>::shrink_to_fit()
     //       因此这里选择仅释放多余的映射容量，不负责调整区块.
     int new_count = iterator_end.block + 1 - iterator_begin.block + 2;
 
-    E** new_map = map_allocator::allocate(new_count);
+    E** new_map = map_allocator_traits::allocate(new_count);
     std::copy(iterator_begin.block, iterator_end.block + 1, new_map + 1);
-    map_allocator::deallocate(map, M);
+    map_allocator_traits::deallocate(map, M);
     map = new_map;
     M = new_count;
     // 新的映射头尾保留一个空映射
@@ -544,7 +546,7 @@ void Deque<E>::insert_front(E elem)
     if (iterator_begin.current == iterator_begin.head)
         insert_block_at_front();
     --iterator_begin.current;
-    data_allocator::construct(iterator_begin.current, std::move(elem));
+    allocator_traits::construct(iterator_begin.current, std::move(elem));
 }
 
 /**
@@ -559,7 +561,7 @@ void Deque<E>::insert_back(E elem)
     // 尾迭代器区块满，则添加新区块到区块映射尾部
     if (iterator_end.current == iterator_end.tail)
         insert_block_at_back();
-    data_allocator::construct(iterator_end.current, std::move(elem));
+    allocator_traits::construct(iterator_end.current, std::move(elem));
     ++iterator_end.current;
 }
 
@@ -573,7 +575,7 @@ template<typename E>
 void Deque<E>::insert(iterator pos, E elem)
 {
     if      (pos == iterator_begin) insert_front(std::move(elem));
-    else if (pos == iterator_end) insert_back(std::move(elem));
+    else if (pos == iterator_end)   insert_back(std::move(elem));
     else
     {
         // 插入位置位于前半部分，则元素前移
@@ -607,7 +609,7 @@ void Deque<E>::remove_front()
 {
     if (empty())
         throw std::out_of_range("Deque::remove_front");
-    data_allocator::destroy(iterator_begin.current);
+    allocator_traits::destroy(iterator_begin.current);
     iterator_begin.current++;
     if (iterator_begin.current == iterator_begin.tail)
         remove_block_at_front();
@@ -625,7 +627,7 @@ void Deque<E>::remove_back()
     if (empty())
         throw std::out_of_range("Deque::remove_back");
     --iterator_end.current;
-    data_allocator::destroy(iterator_end.current);
+    allocator_traits::destroy(iterator_end.current);
     if (iterator_end.current == iterator_end.head)
         remove_block_at_back();
 }
@@ -634,13 +636,10 @@ void Deque<E>::remove_back()
  * 移除双端队列迭代器指定位置的元素.
  *
  * @param pos: 指向移除位置的迭代器
- * @throws std::out_of_range: 迭代器非法
  */
 template<typename E>
 void Deque<E>::remove(iterator pos)
 {
-    if(!valid(pos))
-        throw std::out_of_range("Deque::remove");
     // 移除位置位于前半部分，则元素前移
     if (pos - iterator_begin < (size() >> 1))
     {
@@ -680,13 +679,13 @@ void Deque<E>::clear()
     E** central_block = map + size() / 2;
     // 析构掉所有区块内的元素
     if (iterator_begin.block == iterator_end.block)
-        data_allocator::destroy(iterator_begin.current, iterator_end.current);
+    	allocator_traits::destroy(iterator_begin.current, iterator_end.current);
     else
     {
-        data_allocator::destroy(iterator_begin.current, iterator_end.tail);
+    	allocator_traits::destroy(iterator_begin.current, iterator_end.tail);
         for (E** i = iterator_begin.block + 1; i < iterator_end.block; ++i)
-            data_allocator::destroy(*i, *i + BLOCK_SIZE);
-        data_allocator::destroy(iterator_end.head, iterator_end.current);
+        	allocator_traits::destroy(*i, *i + BLOCK_SIZE);
+        allocator_traits::destroy(iterator_end.head, iterator_end.current);
     }
     // 移除[iterator_begin.block, iterator_end.block)范围的区块空间
     remove_block(iterator_begin.block, iterator_end.block);
