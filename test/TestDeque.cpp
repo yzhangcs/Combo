@@ -78,7 +78,7 @@ TEST_F(TestDeque, Capacity)
     insert_n(deque, scale, false);
     EXPECT_NO_THROW({
         deque.shrink_to_fit();
-    )}
+    });
     EXPECT_EQ(scale, deque.size());
 }
 
@@ -129,8 +129,8 @@ TEST_F(TestDeque, Iterators)
 
     auto bg = deque.begin();
     auto ed = deque.end();
-    auto rbg = deque.rbegin();
-    auto red = deque.rend();
+//    auto rbg = deque.rbegin();
+//    auto red = deque.rend();
 
     for (int i = 0; i < scale; ++i)
         EXPECT_EQ(std::to_string(i), *bg++);
@@ -139,12 +139,12 @@ TEST_F(TestDeque, Iterators)
         EXPECT_EQ(std::to_string(i), *--ed);
     EXPECT_EQ(ed, deque.begin());
 
-    for (int i = scale - 1; i >= 0; --i)
-        EXPECT_EQ(std::to_string(i), *rbg++);
-    EXPECT_EQ(rbg, deque.rend());
-    for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), *--red);
-    EXPECT_EQ(red, deque.rbegin());
+//    for (int i = scale - 1; i >= 0; --i)
+//        EXPECT_EQ(std::to_string(i), *rbg++);
+//    EXPECT_EQ(rbg, deque.rend());
+//    for (int i = 0; i < scale; ++i)
+//        EXPECT_EQ(std::to_string(i), *--red);
+//    EXPECT_EQ(red, deque.rbegin());
 
     // EXPECT_TRUE(std::is_const(std::iterator_traits<Deque::const_iterator>::value_type));
     // EXPECT_TRUE(std::is_const(std::iterator_traits<Deque::const_iterator>::value_type));

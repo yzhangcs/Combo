@@ -142,13 +142,13 @@ private:
 public:
     using iterator               = DequeIterator<E>;
     using const_iterator         = DequeIterator<const E>;
-    using reverse_iterator       = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    // using reverse_iterator       = std::reverse_iterator<iterator>;
+    // using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 private:
     int M;   // 区块个数
     E** map; // 区块映射
-    iterator it_bg; // 队首迭代器
-    iterator it_ed; // 队尾迭代器
+    iterator iterator_begin; // 队首迭代器
+    iterator iterator_end;   // 队尾迭代器
 
     // Note: 将map视为「Vector of blocks」，map的操作类似于Vector
     // 初始化映射
@@ -178,9 +178,9 @@ public:
     Deque& operator=(Deque that);
 
     // 判断是否为空双端队列
-    bool empty() const { return it_bg == it_ed; }
+    bool empty() const { return iterator_begin == iterator_end; }
     // 返回双端队列当前大小
-    int size() const { return it_ed - it_bg; }
+    int size() const { return iterator_end - iterator_begin; }
     // 收缩双端队列，移除过剩容量
     void shrink_to_fit();
 
@@ -191,7 +191,7 @@ public:
     // 返回指定位置元素的const引用，带边界检查
     const E& at(int i) const;
     // 返回指定位置元素的const引用，无边界检查
-    const E& operator[](int i) const { return it_bg[i]; }
+    const E& operator[](int i) const { return iterator_begin[i]; }
     // 返回队首引用
     E& front() { return const_cast<E&>(static_cast<const Deque&>(*this).front()); }
     // 返回队尾引用
@@ -218,18 +218,18 @@ public:
     // 清空双端队列
     void clear();
 
-    iterator                 begin()       noexcept { return it_bg; }
-    const_iterator           begin() const noexcept { return it_bg; }
-    const_iterator          cbegin() const noexcept { return it_bg; }
-    iterator                   end()       noexcept { return it_ed; }
-    const_iterator             end() const noexcept { return it_ed; }
-    const_iterator            cend() const noexcept { return it_ed; }
-    reverse_iterator        rbegin()       noexcept { return       reverse_iterator(it_ed); }
-    const_reverse_iterator  rbegin() const noexcept { return const_reverse_iterator(it_ed); }
-    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(it_ed); }
-    reverse_iterator          rend()       noexcept { return       reverse_iterator(it_bg); }
-    const_reverse_iterator    rend() const noexcept { return const_reverse_iterator(it_bg); }
-    const_reverse_iterator   crend() const noexcept { return const_reverse_iterator(it_bg); }
+    iterator                 begin()       noexcept { return iterator_begin; }
+    const_iterator           begin() const noexcept { return iterator_begin; }
+    const_iterator          cbegin() const noexcept { return iterator_begin; }
+    iterator                   end()       noexcept { return iterator_end; }
+    const_iterator             end() const noexcept { return iterator_end; }
+    const_iterator            cend() const noexcept { return iterator_end; }
+    // reverse_iterator        rbegin()       noexcept { return       reverse_iterator(iterator_end); }
+    // const_reverse_iterator  rbegin() const noexcept { return const_reverse_iterator(iterator_end); }
+    // const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(iterator_end); }
+    // reverse_iterator          rend()       noexcept { return       reverse_iterator(iterator_begin); }
+    // const_reverse_iterator    rend() const noexcept { return const_reverse_iterator(iterator_begin); }
+    // const_reverse_iterator   crend() const noexcept { return const_reverse_iterator(iterator_begin); }
 
 
     template <typename T>
@@ -251,7 +251,7 @@ template<typename E>
 Deque<E>::Deque(int count, const E& value)
 {
     initialize_map(count);
-    uninitialized_fill(it_bg, it_ed, value);
+    uninitialized_fill(iterator_begin, iterator_end, value);
 }
 
 /**
@@ -265,7 +265,7 @@ Deque<E>::Deque(const Deque& that)
 {
     // 初始化满足that大小的映射
     initialize_map(that.size());
-    uninitialized_copy(that.it_bg, that.it_ed, it_bg);
+    uninitialized_copy(that.iterator_begin, that.iterator_end, iterator_begin);
 }
 
 /**
@@ -279,8 +279,8 @@ Deque<E>::Deque(Deque&& that) noexcept
 {
     M = that.M;
     map = that.map;
-    it_bg = that.it_bg;
-    it_ed = that.it_ed;
+    iterator_begin = that.iterator_begin;
+    iterator_end = that.iterator_end;
     that.map = nullptr; // 指向空指针，退出被析构
 }
 
@@ -291,17 +291,17 @@ template<typename E>
 Deque<E>::~Deque()
 {
     // 析构掉所有区块内的元素
-    if (it_bg.block == it_ed.block)
-        data_allocator::destroy(it_bg.current, it_ed.current);
+    if (iterator_begin.block == iterator_end.block)
+        data_allocator::destroy(iterator_begin.current, iterator_end.current);
     else
     {
-        data_allocator::destroy(it_bg.current, it_ed.tail);
-        for (E** i = it_bg.block + 1; i < it_ed.block; ++i)
+        data_allocator::destroy(iterator_begin.current, iterator_end.tail);
+        for (E** i = iterator_begin.block + 1; i < iterator_end.block; ++i)
             data_allocator::destroy(*i, *i + BLOCK_SIZE);
-        data_allocator::destroy(it_ed.head, it_ed.current);
+        data_allocator::destroy(iterator_end.head, iterator_end.current);
     }
     // 移除所有的区块
-    remove_block(it_bg.block, it_ed.block + 1);
+    remove_block(iterator_begin.block, iterator_end.block + 1);
     // 释放映射空间
     map_allocator::deallocate(map, M);
 }
@@ -341,8 +341,8 @@ void Deque<E>::initialize_map(int count)
     E** block_end = block_begin + num_blocks;
     // 分配区块，区块映射位于中央位置，便于向两端扩展
     insert_block(block_begin, block_end);
-    it_bg = iterator(block_begin, *block_begin);
-    it_ed = iterator(block_end - 1, *(block_end - 1) + count % BLOCK_SIZE);
+    iterator_begin = iterator(block_begin, *block_begin);
+    iterator_end = iterator(block_end - 1, *(block_end - 1) + count % BLOCK_SIZE);
 }
 
 /**
@@ -359,15 +359,15 @@ void Deque<E>::reserve_map(int new_count, bool at_front)
     {
         E** new_map = map_allocator::allocate(new_count);
         // 如果at_front，则将新增容量安排在映射头部，否则头部剩余容量不变
-        E** new_block_begin = new_map + (it_bg.block - map)
+        E** new_block_begin = new_map + (iterator_begin.block - map)
                                      + (at_front ? new_count - M : 0);
         // 复制区块映射指针到新的映射，不改变区块
-        std::copy(it_bg.block, it_ed.block + 1, new_block_begin);
+        std::copy(iterator_begin.block, iterator_end.block + 1, new_block_begin);
         map_allocator::deallocate(map, M);
         map = new_map;
         M = new_count;
-        it_bg.set_block(new_block_begin);
-        it_ed.set_block(new_block_begin + size() - 1);
+        iterator_begin.set_block(new_block_begin);
+        iterator_end.set_block(new_block_begin + size() - 1);
     }
 }
 
@@ -402,12 +402,12 @@ template<typename E>
 void Deque<E>::insert_block_at_front()
 {
     // 头部映射满，则扩容映射到两倍，新增容量安排在头部
-    if (it_bg.block == map)
+    if (iterator_begin.block == map)
         reserve_map(2 * M, true);
-    it_bg.block - 1 = data_allocator::allocate(BLOCK_SIZE);
+    iterator_begin.block - 1 = data_allocator::allocate(BLOCK_SIZE);
     // 重置头迭代器的指向
-    it_bg.set_block(it_bg.block - 1);
-    it_bg.current = it_bg.tail;
+    iterator_begin.set_block(iterator_begin.block - 1);
+    iterator_begin.current = iterator_begin.tail;
 }
 
 /**
@@ -418,12 +418,12 @@ template<typename E>
 void Deque<E>::insert_block_at_back()
 {
     // 尾部映射满，则扩容映射到两倍，新增容量安排在尾部
-    if (it_ed.block == map + M - 1)
+    if (iterator_end.block == map + M - 1)
         reserve_map(2 * M, false);
-    it_ed.block + 1 = data_allocator::allocate(BLOCK_SIZE);
+    iterator_end.block + 1 = data_allocator::allocate(BLOCK_SIZE);
     // 重置尾迭代器的指向
-    it_ed.set_block(it_ed.block + 1);
-    it_ed.current = it_ed.head;
+    iterator_end.set_block(iterator_end.block + 1);
+    iterator_end.current = iterator_end.head;
 }
 
 /**
@@ -448,10 +448,10 @@ template<typename E>
 void Deque<E>::remove_block_at_front()
 {
     // 释放空区块
-    data_allocator::deallocate(*it_bg.block);
+    data_allocator::deallocate(*iterator_begin.block);
     // 重置头迭代器的指向
-    it_bg.set_block(it_bg.block + 1);
-    it_bg.current = it_bg.head;
+    iterator_begin.set_block(iterator_begin.block + 1);
+    iterator_begin.current = iterator_begin.head;
 }
 
 /**
@@ -462,10 +462,10 @@ template<typename E>
 void Deque<E>::remove_block_at_back()
 {
     // 释放空区块
-    data_allocator::deallocate(*it_ed.block);
+    data_allocator::deallocate(*iterator_end.block);
     // 重置尾迭代器的指向
-    it_ed.set_block(it_ed.block - 1);
-    it_ed.current = it_ed.tail;
+    iterator_end.set_block(iterator_end.block - 1);
+    iterator_end.current = iterator_end.tail;
 }
 
 /**
@@ -477,16 +477,16 @@ void Deque<E>::shrink_to_fit()
     // Note: g++在头尾区块的剩余容量之和大于一个区块时会选择收缩
     //       一个区块的容量，这个操作的代价很高昂.
     //       因此这里选择仅释放多余的映射容量，不负责调整区块.
-    int new_count = it_ed.block + 1 - it_bg.block + 2;
+    int new_count = iterator_end.block + 1 - iterator_begin.block + 2;
 
     E** new_map = map_allocator::allocate(new_count);
-    std::copy(it_bg.block, it_ed.block + 1, new_map + 1);
+    std::copy(iterator_begin.block, iterator_end.block + 1, new_map + 1);
     map_allocator::deallocate(map, M);
     map = new_map;
     M = new_count;
     // 新的映射头尾保留一个空映射
-    it_bg.set_block(map + 1);
-    it_ed.set_block(map + M - 2);
+    iterator_begin.set_block(map + 1);
+    iterator_end.set_block(map + M - 2);
 }
 
 /**
@@ -541,10 +541,10 @@ template<typename E>
 void Deque<E>::insert_front(E elem)
 {
     // 头迭代器区块满，则添加新区块到区块映射头部
-    if (it_bg.current == it_bg.head)
+    if (iterator_begin.current == iterator_begin.head)
         insert_block_at_front();
-    --it_bg.current;
-    data_allocator::construct(it_bg.current, std::move(elem));
+    --iterator_begin.current;
+    data_allocator::construct(iterator_begin.current, std::move(elem));
 }
 
 /**
@@ -557,10 +557,10 @@ template<typename E>
 void Deque<E>::insert_back(E elem)
 {
     // 尾迭代器区块满，则添加新区块到区块映射尾部
-    if (it_ed.current == it_ed.tail)
+    if (iterator_end.current == iterator_end.tail)
         insert_block_at_back();
-    data_allocator::construct(it_ed.current, std::move(elem));
-    ++it_ed.current;
+    data_allocator::construct(iterator_end.current, std::move(elem));
+    ++iterator_end.current;
 }
 
 /**
@@ -572,16 +572,16 @@ void Deque<E>::insert_back(E elem)
 template<typename E>
 void Deque<E>::insert(iterator pos, E elem)
 {
-    if      (pos == it_bg) insert_front(std::move(elem));
-    else if (pos == it_ed) insert_back(std::move(elem));
+    if      (pos == iterator_begin) insert_front(std::move(elem));
+    else if (pos == iterator_end) insert_back(std::move(elem));
     else
     {
         // 插入位置位于前半部分，则元素前移
-        if (pos - it_bg < (size() >> 1))
+        if (pos - iterator_begin < (size() >> 1))
         {
             // 用头部添加的方式预先安排好区块分配，并前移头部元素
             insert_front(front());
-            std::copy(std::next(it_bg, 2), pos, std::next(it_bg));
+            std::copy(std::next(iterator_begin, 2), pos, std::next(iterator_begin));
             // 这时pos指向和原迭代器偏移相同的位置
             pos = std::prev(pos);
         }
@@ -590,7 +590,7 @@ void Deque<E>::insert(iterator pos, E elem)
         {
             // 用尾部添加的方式预先安排好区块分配，并后移尾部元素
             insert_back(back());
-            std::copy_backward(pos, std::prev(it_ed, 2), std::prev(it_ed));
+            std::copy_backward(pos, std::prev(iterator_end, 2), std::prev(iterator_end));
         }
         *pos = std::move(elem);
     }
@@ -607,9 +607,9 @@ void Deque<E>::remove_front()
 {
     if (empty())
         throw std::out_of_range("Deque::remove_front");
-    data_allocator::destroy(it_bg.current);
-    it_bg.current++;
-    if (it_bg.current == it_bg.tail)
+    data_allocator::destroy(iterator_begin.current);
+    iterator_begin.current++;
+    if (iterator_begin.current == iterator_begin.tail)
         remove_block_at_front();
 }
 
@@ -624,9 +624,9 @@ void Deque<E>::remove_back()
 {
     if (empty())
         throw std::out_of_range("Deque::remove_back");
-    --it_ed.current;
-    data_allocator::destroy(it_end.current);
-    if (it_ed.current == it_ed.head)
+    --iterator_end.current;
+    data_allocator::destroy(iterator_end.current);
+    if (iterator_end.current == iterator_end.head)
         remove_block_at_back();
 }
 
@@ -642,15 +642,15 @@ void Deque<E>::remove(iterator pos)
     if(!valid(pos))
         throw std::out_of_range("Deque::remove");
     // 移除位置位于前半部分，则元素前移
-    if (pos - it_bg < (size() >> 1))
+    if (pos - iterator_begin < (size() >> 1))
     {
-        std::copy_backward(it_bg, pos, std::next(it_bg));
+        std::copy_backward(iterator_begin, pos, std::next(iterator_begin));
         remove_front();
     }
     // 移除位置位于后半部分，则元素后移
     else
     {
-        std::copy(std::next(pos), it_ed, pos);
+        std::copy(std::next(pos), iterator_end, pos);
         remove_back();
     }
 }
@@ -667,8 +667,8 @@ void Deque<E>::swap(Deque<E>& that)
     using std::swap;
     swap(M, that.M);
     swap(map, that.map);
-    swap(it_bg, that.it_bg);
-    swap(it_ed, that.it_ed);
+    swap(iterator_begin, that.iterator_begin);
+    swap(iterator_end, that.iterator_end);
 }
 
 /**
@@ -679,20 +679,20 @@ void Deque<E>::clear()
 {
     E** central_block = map + size() / 2;
     // 析构掉所有区块内的元素
-    if (it_bg.block == it_ed.block)
-        data_allocator::destroy(it_bg.current, it_ed.current);
+    if (iterator_begin.block == iterator_end.block)
+        data_allocator::destroy(iterator_begin.current, iterator_end.current);
     else
     {
-        data_allocator::destroy(it_bg.current, it_ed.tail);
-        for (E** i = it_bg.block + 1; i < it_ed.block; ++i)
+        data_allocator::destroy(iterator_begin.current, iterator_end.tail);
+        for (E** i = iterator_begin.block + 1; i < iterator_end.block; ++i)
             data_allocator::destroy(*i, *i + BLOCK_SIZE);
-        data_allocator::destroy(it_ed.head, it_ed.current);
+        data_allocator::destroy(iterator_end.head, iterator_end.current);
     }
-    // 移除[it_bg.block, it_ed.block)范围的区块空间
-    remove_block(it_bg.block, it_ed.block);
+    // 移除[iterator_begin.block, iterator_end.block)范围的区块空间
+    remove_block(iterator_begin.block, iterator_end.block);
     // 最后一个区块映射放到映射中央
-    std::swap(central_block, it_ed.block);
-    it_bg = it_ed;
+    std::swap(central_block, iterator_end.block);
+    iterator_begin = iterator_end;
 }
 
 /**
