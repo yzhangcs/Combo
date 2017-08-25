@@ -21,7 +21,7 @@ option(CPPLIB_BUILD_TEST "Build CppLib tests." OFF)
 
 # Compiler config
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -std=c++11 ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 endif ()

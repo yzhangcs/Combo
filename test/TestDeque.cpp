@@ -160,20 +160,31 @@ TEST_F(TestDeque, Modifiers)
     EXPECT_NO_THROW({
         insert_n(deque, scale, true);
         for (int i = 0; i < scale; ++i)
-            EXPECT_EQ(std::to_string(i), deque.remove_front());
+        {
+            EXPECT_EQ(std::to_string(i), deque.front());
+            deque.remove_front();
+        }
         insert_n(deque, scale, false);
         for (int i = 0; i < scale; ++i)
-            EXPECT_EQ(std::to_string(i), deque.remove_back());
-
-
-        for (int i = 0; i < scale; ++i)
-            deque.insert(deque.begin(), std::to_string(i));
-        for (int i = 0; i < scale; ++i)
-            EXPECT_EQ(std::to_string(i), deque.remove(std::prev(deque.end())));
-        for (int i = 0; i < scale; ++i)
-            deque.insert(deque.end(), std::to_string(i));
-        for (int i = 0; i < scale; ++i)
-            EXPECT_EQ(std::to_string(i), deque.remove(deque.begin()));
+        {
+            EXPECT_EQ(std::to_string(i), deque.back());
+            deque.remove_back();
+        }
+//
+//        for (int i = 0; i < scale; ++i)
+//            deque.insert(deque.begin(), std::to_string(i));
+//        for (int i = 0; i < scale; ++i)
+//        {
+//            EXPECT_EQ(std::to_string(i), deque.back());
+//            deque.remove(std::prev(deque.end());
+//        }
+//        for (int i = 0; i < scale; ++i)
+//            deque.insert(deque.end(), std::to_string(i));
+//        for (int i = 0; i < scale; ++i)
+//        {
+//            EXPECT_EQ(std::to_string(i), deque.front());
+//            deque.remove(deque.begin());
+//        }
     });
     EXPECT_THROW(deque.remove_back(), std::out_of_range);
     EXPECT_THROW(deque.remove_front(), std::out_of_range);
@@ -189,7 +200,10 @@ TEST_F(TestDeque, Modifiers)
     b.swap(a);
     EXPECT_EQ(scale, b.size());
     for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), b.remove_front());
+    {
+        EXPECT_EQ(std::to_string(i), deque.front());
+        deque.remove_front();
+    }
 }
 
 TEST_F(TestDeque, Other)
