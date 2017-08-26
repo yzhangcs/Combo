@@ -201,8 +201,8 @@ TEST_F(TestDeque, Modifiers)
     EXPECT_EQ(scale, b.size());
     for (int i = 0; i < scale; ++i)
     {
-        EXPECT_EQ(std::to_string(i), deque.front());
-        deque.remove_front();
+        EXPECT_EQ(std::to_string(i), b.front());
+        b.remove_front();
     }
 }
 

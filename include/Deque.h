@@ -8,8 +8,9 @@
 #pragma once
 #include <iostream>
 #include <iterator>
+#include <memory>
 
-template<typename E, typename Ref, typename Ptr>
+template<typename E, typename Ref>
 class DequeIterator;
 
 /**
@@ -26,13 +27,15 @@ private:
     using allocator_traits     = std::allocator_traits<allocator_type>;
     using map_allocator_traits = std::allocator_traits<map_allocator_type>;
 public:
-    using iterator               = DequeIterator<E, E*, E&>;
-    using const_iterator         = DequeIterator<E, const E*, const E&>;
+    using iterator               = DequeIterator<E, E&>;
+    using const_iterator         = DequeIterator<E, E&>;
 //	using reverse_iterator       = std::reverse_iterator<iterator>;
 //	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 private:
-    static constexpr int BLOCK_SIZE = (sizeof(E) < 512 ? 512 / sizeof(E) : 1); // 区块大小
-    static constexpr int DEFAULT_MAP_SIZE = 10; // 默认映射大小
+    // 区块大小
+    static constexpr int BLOCK_SIZE = {sizeof(E) < 512 ? 512 / sizeof(E) : 1};
+    // 默认映射大小
+    static constexpr int const& DEFAULT_MAP_SIZE = 10; // reference constant expression
     allocator_type allocator;
     map_allocator_type map_allocator;
 
@@ -136,21 +139,18 @@ private:
     iterator it_end;   // 队尾迭代器
 };
 
-template<typename E, typename Ref, typename Ptr>
+template<typename E, typename Ref>
 class DequeIterator
 {
     friend class Deque<E>;
 public:
     using iterator_category = std::random_access_iterator_tag;
     using value_type        = E;
-    using difference_type   = ptrdiff_t;
-    using pointer = Ptr;
-    using reference = Ref;
-private:
-    static constexpr int BLOCK_SIZE = (sizeof(E) < 512 ? 512 / sizeof(E) : 1); // 区块大小
+    using difference_type   = std::ptrdiff_t;
+    using pointer           = E*;
+    using reference         = E&;
 
-    using iterator       = DequeIterator<E, E*, E&>;
-    using const_iterator = DequeIterator<E, const E*, const E&>;
+    static constexpr int BLOCK_SIZE = (sizeof(E) < 512 ? 512 / sizeof(E) : 1); // 区块大小
 public:
     DequeIterator() noexcept
 	: block(nullptr), current(nullptr), head(nullptr), tail(nullptr) {}
@@ -266,7 +266,7 @@ template<typename E>
 Deque<E>::Deque(int count, const E& value)
 {
     initialize_map(count);
-    uninitialized_fill(it_begin, it_end, value);
+    std::uninitialized_fill(it_begin, it_end, value);
 }
 
 /**
@@ -280,7 +280,7 @@ Deque<E>::Deque(const Deque& that)
 {
     // 初始化满足that大小的映射
     initialize_map(that.size());
-    uninitialized_copy(that.it_begin, that.it_end, it_begin);
+    std::uninitialized_copy(that.it_begin, that.it_end, it_begin);
 }
 
 /**
@@ -575,11 +575,11 @@ void Deque<E>::insert_front(E elem)
 template<typename E>
 void Deque<E>::insert_back(E elem)
 {
+    allocator_traits::construct(allocator, it_end.current, std::move(elem));
+    ++it_end.current;
     // 尾迭代器区块满，则添加新区块到区块映射尾部
     if (it_end.current == it_end.tail)
         insert_block_at_back();
-    allocator_traits::construct(allocator, it_end.current, std::move(elem));
-    ++it_end.current;
 }
 
 /**
@@ -643,10 +643,10 @@ void Deque<E>::remove_back()
 {
     if (empty())
         throw std::out_of_range("Deque::remove_back");
-    --it_end.current;
-    allocator_traits::destroy(allocator, it_end.current);
     if (it_end.current == it_end.head)
         remove_block_at_back();
+    --it_end.current;
+    allocator_traits::destroy(allocator, it_end.current);
 }
 
 /**
@@ -693,11 +693,13 @@ void Deque<E>::swap(Deque<E>& that)
 template<typename E>
 void Deque<E>::clear()
 {
-    E** central_block = map + size() / 2;
+    E** central_block = map + M / 2;
     // 析构掉所有区块内的元素
     if (it_begin.block == it_end.block)
+    {
     	for (auto i = it_begin.current; i < it_end.current; ++i)
     		allocator_traits::destroy(allocator, i);
+    }
     else
     {
     	for (auto i = it_begin.current; i < it_begin.tail; ++i)
