@@ -5,27 +5,26 @@
 
 using std::string;
 
-class TestQueue : public testing::Test 
+class TestQueue : public testing::Test
 {
 protected:
     Queue<string> queue;
     Queue<string> a;
     Queue<string> b;
     Queue<string> c;
-    string str;    
-    int scale;
+    size_t scale;
 public:
     virtual void SetUp() { scale = 32; }
     virtual void TearDown() {}
 
-    void enqueue_n(Queue<string>& s, int n)
+    void enqueue_n(Queue<string>& s, size_t n)
     {
-        for (int i = 0; i < n; ++i)
+        for (size_t i = 0; i < n; ++i)
             s.enqueue(std::to_string(i));
     }
-    void dequeue_n(Queue<string>& s, int n)
+    void dequeue_n(Queue<string>& s, size_t n)
     {
-        for (int i = 0; i < n; ++i)
+        for (size_t i = 0; i < n; ++i)
             s.dequeue();
     }
 };
@@ -42,36 +41,35 @@ TEST_F(TestQueue, Basic)
     });
 }
 
+TEST_F(TestQueue, Capacity)
+{
+    EXPECT_TRUE(queue.empty());
+    EXPECT_EQ(size_t(0), queue.size());
+
+    enqueue_n(queue, scale);
+    EXPECT_EQ(scale, queue.size());
+    dequeue_n(queue, scale);
+    EXPECT_TRUE(queue.empty());
+}
+
 TEST_F(TestQueue, ElementAccess)
 {
     EXPECT_THROW(queue.front(), std::out_of_range);
     EXPECT_THROW(queue.back(), std::out_of_range);
     EXPECT_NO_THROW({
-        for (int i = 0; i < scale; ++i)
+        for (size_t i = 0; i < scale; ++i)
         {
-            str = std::to_string(i);
-            queue.enqueue(str);
-            EXPECT_EQ(str, queue.back());
+            queue.enqueue(std::to_string(i));
+            EXPECT_EQ(std::to_string(i), queue.back());
         }
-        for (int i = 0; i < scale; ++i)
+        for (size_t i = 0; i < scale; ++i)
         {
-            str = queue.front();
-            EXPECT_EQ(str, queue.dequeue());
+            EXPECT_EQ(std::to_string(i), queue.front());
+            queue.dequeue();
         }
     });
     EXPECT_THROW(queue.front(), std::out_of_range);
     EXPECT_THROW(queue.back(), std::out_of_range);
-}
-
-TEST_F(TestQueue, Capacity)
-{
-    EXPECT_TRUE(queue.empty());
-    EXPECT_EQ(0, queue.size());
-    
-    enqueue_n(queue, scale);
-    EXPECT_EQ(scale, queue.size());
-    dequeue_n(queue, scale);
-    EXPECT_TRUE(queue.empty());
 }
 
 TEST_F(TestQueue, Modifiers)
@@ -79,22 +77,28 @@ TEST_F(TestQueue, Modifiers)
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
     EXPECT_NO_THROW({
         enqueue_n(queue, scale);
-        for (int i = 0; i < scale; ++i)
-            EXPECT_EQ(std::to_string(i), queue.dequeue());
+        for (size_t i = 0; i < scale; ++i)
+        {
+            EXPECT_EQ(std::to_string(i), queue.front());
+            queue.dequeue();
+        }
     });
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
 
     enqueue_n(queue, scale);
     queue.clear();
     EXPECT_TRUE(queue.empty());
-    EXPECT_EQ(0, queue.size());
+    EXPECT_EQ(size_t(0), queue.size());
     EXPECT_THROW(queue.dequeue(), std::out_of_range);
 
     enqueue_n(a, scale);
     b.swap(a);
     EXPECT_EQ(scale, b.size());
-    for (int i = 0; i < scale; ++i)
-        EXPECT_EQ(std::to_string(i), b.dequeue());
+    for (size_t i = 0; i < scale; ++i)
+    {
+        EXPECT_EQ(std::to_string(i), queue.front());
+        queue.dequeue();
+    }
 }
 
 TEST_F(TestQueue, Other)

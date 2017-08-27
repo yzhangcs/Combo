@@ -12,42 +12,45 @@
 /**
  * 使用模板实现的后进先出栈.
  */
-template<typename E, typename C = Deque<E>>
+template<typename E, typename Container = Deque<E>>
 class Stack
 {
-private:
-    C container;
-public:
-    explicit Stack() : container() {}
-    Stack(const Stack& that) : container(that.container) {}
-    Stack(Stack&& that) noexcept : container(std::move(that.container)) {}
-    ~Stack() {}
-
-    // 返回栈当前大小
-    int size() const { return container.size(); }
-    // 判断是否为空栈
-    bool empty() const { return container.empty(); }
-
-    // 返回const栈顶引用
-    const E& top() const { return container.back(); }
-    // 返回栈顶引用
-    E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); }
-
-    // 入栈函数
-    void push(E elem) { container.insert_back(std::move(elem)); }
-    // 出栈函数
-    void pop() { container.remove_back(); }
-    // 内容与另一个Stack对象交换
-    void swap(Stack& that) { container.swap(that.container); }
-    // 清空栈元素
-    void clear() { container.clear(); }
-
     template <typename T, typename C>
     friend bool operator==(const Stack<T, C>& lhs, const Stack<T, C>& rhs);
     template <typename T, typename C>
     friend bool operator!=(const Stack<T, C>& lhs, const Stack<T, C>& rhs);
     template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Stack<T, C>& stack);
+public:
+    using container_type  = Container;
+    using value_type      = typename Container::value_type;
+    using size_type       = typename Container::size_type;
+    using reference       = typename Container::reference;
+    using const_reference = typename Container::const_reference;
+public:
+    // 构造函数隐式声明
+    Stack() = default;
+
+    // 判断是否为空栈
+    bool empty() const { return c.empty(); }
+    // 返回栈元素的数量
+    size_type size() const { return c.size(); }
+
+    // 返回栈顶引用
+    reference top() { return c.back(); }
+    // 返回const栈顶引用
+    const_reference top() const { return c.back(); }
+
+    // 入栈函数
+    void push(E elem) { c.insert_back(std::move(elem)); }
+    // 出栈函数
+    void pop() { c.remove_back(); }
+    // 内容与另一个Stack对象交换
+    void swap(Stack& that) { c.swap(that.c); }
+    // 清空栈元素
+    void clear() { c.clear(); }
+private:
+    container_type c;
 };
 
 /**
@@ -61,7 +64,7 @@ public:
 template<typename E, typename containerainer>
 bool operator==(const Stack<E, containerainer>& lhs, const Stack<E, containerainer>& rhs)
 {
-    return lhs.container == rhs.container;
+    return lhs.c == rhs.c;
 }
 
 /**
@@ -88,7 +91,7 @@ bool operator!=(const Stack<E, containerainer>& lhs, const Stack<E, containerain
 template<typename E, typename containerainer>
 std::ostream& operator<<(std::ostream& os, const Stack<E, containerainer>& stack)
 {
-    return os << stack.container;
+    return os << stack.c;
 }
 
 /**

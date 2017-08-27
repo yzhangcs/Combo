@@ -59,12 +59,12 @@ $ git clone https://github.com/zy2625/CppLib.git
 ## Contents
 
 * [Deque](#deque)
+* [Queue](#queue)
+* [Stack](#stack)
 <!-- * [Heap](#heap)
 * [List](#list)
 * [PriorityQueue](#priorityqueue)
-* [Queue](#queue)
 * [Random](#random)
-* [Stack](#stack)
 * [Timer](#timer)
 * [UnionFind](#unionfind)
 * [Vector](#vector) -->
@@ -135,7 +135,7 @@ H E A P - E X A M - P L E -
 ./bin/PriorityQueue data/tinyPQ.txt
 Q X P (6 left on priority queue)
 ``` -->
-<!--
+
 ### Queue
 
 * [Queue](https://github.com/zy2625/CppLib/blob/master/include/Queue.h)
@@ -149,7 +149,7 @@ to be or not to - be - - that - - - is
 ./bin/Queue data/tobe.txt
 to be or not to be (2 left on queue)
 ```
-
+<!--
 ### Random
 
 * [Random](https://github.com/zy2625/CppLib/blob/master/include/Random.h)
@@ -231,7 +231,7 @@ InsertionSort 0.142  0.564  2.104  8.467  35.204 138.59 561.15 3.959\1.98
 SelectionSort 0.26   0.996  4.531  15.89  63.395 255.18 1023.2 3.931\1.97
 BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
 ``` -->
-<!--
+
 ### Stack
 
 * [Stack](https://github.com/zy2625/CppLib/blob/master/include/Stack.h)
@@ -258,7 +258,7 @@ Timestamp: 1499677940528
 Timestamp: 1499677941023
 It takes 0.495s to sum the sqrt 100000000 times
 ```
-
+<!--
 ### UnionFind
 
 * [QuickFind](https://github.com/zy2625/CppLib/blob/master/include/QuickFind.h)

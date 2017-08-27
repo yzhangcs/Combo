@@ -12,46 +12,49 @@
 /**
  * 使用模板实现的先进先出队列.
  */
-template<typename E, typename C = Deque<E>>
+template<typename E, typename Container = Deque<E>>
 class Queue
 {
-private:
-    C container;
-public:
-    explicit Queue() : container() {}
-    Queue(const Queue& that) : container(that.container) {}
-    Queue(Queue&& that) noexcept : container(std::move(that.container)) {}
-    ~Queue() {}
-
-    // 返回队列当前大小
-    int size() const { return container.size(); }
-    // 判断是否为空队列
-    bool empty() const { return container.empty(); }
-
-    // 返回const队首引用
-    const E& front() const { return container.front(); }
-    // 返回const队尾引用
-    const E& back() const { return container.back(); }
-    // 返回队首引用
-    E& front() { return const_cast<E&>(static_cast<const Queue&>(*this).front()); }
-    // 返回队尾引用
-    E& back() { return const_cast<E&>(static_cast<const Queue&>(*this).back()); }
-
-    // 入队函数
-    void enqueue(E elem) { container.insert_back(std::move(elem)); }
-    // 出队函数
-    void dequeue() { container.remove_front(); }
-    // 内容与另一个Queue对象交换
-    void swap(Queue& that) { container.swap(that.container); }
-    // 清空队列，不释放空间，队列容量不变
-    void clear() { container.clear(); }
-
     template <typename T, typename C>
     friend bool operator==(const Queue<T, C>& lhs, const Queue<T, C>& rhs);
     template <typename T, typename C>
     friend bool operator!=(const Queue<T, C>& lhs, const Queue<T, C>& rhs);
     template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Queue<T, C>& queue);
+public:
+    using container_type  = Container;
+    using value_type      = typename Container::value_type;
+    using size_type       = typename Container::size_type;
+    using reference       = typename Container::reference;
+    using const_reference = typename Container::const_reference;
+public:
+    // 构造函数隐式声明
+    Queue() = default;
+
+    // 判断是否为空队列
+    bool empty() const { return c.empty(); }
+    // 返回队列元素的数量
+    size_type size() const { return c.size(); }
+
+    // 返回队首引用
+    reference front() { return c.front(); }
+    // 返回const队首引用
+    const_reference front() const { return c.front(); }
+    // 返回队尾引用
+    reference back() { return c.back(); }
+    // 返回const队尾引用
+    const_reference back() const { return c.back(); }
+
+    // 入队函数
+    void enqueue(E elem) { c.insert_back(std::move(elem)); }
+    // 出队函数
+    void dequeue() { c.remove_front(); }
+    // 内容与另一个Queue对象交换
+    void swap(Queue& that) { c.swap(that.c); }
+    // 清空队列，不释放空间，队列容量不变
+    void clear() { c.clear(); }
+private:
+    container_type c;
 };
 
 /**
@@ -62,10 +65,10 @@ public:
  * @return true: 相等
  *         false: 不等
  */
-template<typename E, typename C>
-bool operator==(const Queue<E, C>& lhs, const Queue<E, C>& rhs)
+template<typename E, typename Container>
+bool operator==(const Queue<E, Container>& lhs, const Queue<E, Container>& rhs)
 {
-    return lhs.container == rhs.container;
+    return lhs.c == rhs.c;
 }
 
 /**
@@ -76,8 +79,8 @@ bool operator==(const Queue<E, C>& lhs, const Queue<E, C>& rhs)
  * @return true: 不等
  *         false: 相等
  */
-template<typename E, typename C>
-bool operator!=(const Queue<E, C>& lhs, const Queue<E, C>& rhs)
+template<typename E, typename Container>
+bool operator!=(const Queue<E, Container>& lhs, const Queue<E, Container>& rhs)
 {
     return !(lhs == rhs);
 }
@@ -89,10 +92,10 @@ bool operator!=(const Queue<E, C>& lhs, const Queue<E, C>& rhs)
  *        queue: 要输出的队列
  * @return 输出流对象
  */
-template<typename E, typename C>
-std::ostream& operator<<(std::ostream& os, const Queue<E, C>& queue)
+template<typename E, typename Container>
+std::ostream& operator<<(std::ostream& os, const Queue<E, Container>& queue)
 {
-    return os << queue.container;
+    return os << queue.c;
 }
 
 /**
@@ -101,8 +104,8 @@ std::ostream& operator<<(std::ostream& os, const Queue<E, C>& queue)
  * @param lhs: Queue对象lhs
  *        rhs: Queue对象rhs
  */
-template<typename E, typename C>
-void swap(Queue<E, C>& lhs, Queue<E, C>& rhs)
+template<typename E, typename Container>
+void swap(Queue<E, Container>& lhs, Queue<E, Container>& rhs)
 {
     lhs.swap(rhs);
 }

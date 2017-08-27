@@ -38,7 +38,7 @@ public:
     List(List&& that) noexcept;
     ~List();
 
-    // 返回链表当前大小
+    // 返回链表元素的数量
     int size() const { return n; }
     // 判断是否为空链表
     bool empty() const { return n == 0; }

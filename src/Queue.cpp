@@ -3,7 +3,7 @@
  * Execution:    ./demo data/tobe.txt
  * Dependencies: Queue.h
  *
- * % more data/tobe.txt 
+ * % more data/tobe.txt
  * to be or not to - be - - that - - - is
  *
  * % ./demo data/tobe.txt
@@ -20,7 +20,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    Queue<string> demo = Queue<string>();  
+    Queue<string> demo = Queue<string>();
     ifstream fin;
     string elem;
 
@@ -40,7 +40,10 @@ int main(int argc, char* argv[])
         if (elem != "-")
             demo.enqueue(elem);
         else
-            cout << demo.dequeue() << " ";
+        {
+            cout << demo.front() << " ";
+            demo.dequeue();
+        }
     }
     cout << "(" << demo.size() << " left on queue)" << endl;
     fin.close();

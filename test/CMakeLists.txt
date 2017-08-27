@@ -34,9 +34,9 @@ endif()
 # Add test executables
 set(TEST_CPPLIB_LIST
     TestDeque.cpp
+    TestQueue.cpp
+    TestStack.cpp
     # TestList.cpp
-    # TestQueue.cpp
-    # TestStack.cpp
     # TestVector.cpp
     # TestBinaryHeap.cpp
     # TestIndexHeap.cpp

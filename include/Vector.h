@@ -38,7 +38,7 @@ public:
     Vector(Vector&& that) noexcept;
     ~Vector() { delete[] pv; }
 
-    // 返回Vector当前大小
+    // 返回Vector元素的数量
     int size() const { return n; }
     // 返回Vector容量
     int capacity() const { return N; }
@@ -142,7 +142,7 @@ Vector<E>::Vector(Vector&& that) noexcept
 template<typename E>
 void Vector<E>::reserve(int count)
 {
-    // 保证新的容量不小于Vector当前大小
+    // 保证新的容量不小于Vector元素的数量
     assert(count >= size());
 
     Vector tmp(count);

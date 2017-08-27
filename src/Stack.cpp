@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    Stack<string> demo = Stack<string>();    
+    Stack<string> demo = Stack<string>();
     ifstream fin;
     string elem;
 
@@ -27,8 +27,11 @@ int main(int argc, char* argv[])
     {
         if (elem != "-")
             demo.push(elem);
-        else 
-            cout << demo.pop() << " ";
+        else
+        {
+            cout << demo.top() << " ";
+            demo.pop();
+        }
     }
     cout << "(" << demo.size() << " left on stack)" << endl;
     fin.close();
