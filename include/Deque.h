@@ -10,7 +10,7 @@
 #include <iterator>
 #include <memory>
 
-template<typename E, typename Ref>
+template<typename E, typename Ptr, typename Ref>
 class DequeIterator;
 
 /**
@@ -27,10 +27,10 @@ private:
     using allocator_traits     = std::allocator_traits<allocator_type>;
     using map_allocator_traits = std::allocator_traits<map_allocator_type>;
 public:
-    using iterator               = DequeIterator<E, E&>;
-    using const_iterator         = DequeIterator<E, E&>;
-//	using reverse_iterator       = std::reverse_iterator<iterator>;
-//	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using iterator               = DequeIterator<E, E*, E&>;
+    using const_iterator         = DequeIterator<E, const E*, const E&>;
+	using reverse_iterator       = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 private:
     // 区块大小
     static constexpr int BLOCK_SIZE = {sizeof(E) < 512 ? 512 / sizeof(E) : 1};
@@ -38,30 +38,11 @@ private:
     static constexpr int const& DEFAULT_MAP_SIZE = 10; // reference constant expression
     allocator_type allocator;
     map_allocator_type map_allocator;
-
-    // Note: 将map视为「Vector of blocks」，map的操作类似于Vector
-    // 初始化映射
-    void initialize_map(int count);
-    // 重新安排映射的容量
-    void reserve_map(int new_count, bool at_front);
-    // 添加区块到指定区块映射范围
-    void insert_block(E** block_begin, E** block_end);
-    // 添加区块到区块映射头部
-    void insert_block_at_front();
-    // 添加区块到区块映射尾部
-    void insert_block_at_back();
-    // 移除指定区块映射范围的区块
-    void remove_block(E** block_begin, E** block_end);
-    // 移除区块映射头部的区块
-    void remove_block_at_front();
-    // 移除区块映射尾部的区块
-    void remove_block_at_back();
-    // 检查迭代器是否合法
-    bool valid(int i) const { return i >= 0 && i < size(); }
-    // // 得到allocator
-    // allocator_type allocator const noexcept { return allocator_type(); }
-    // // 得到map_allocator
-	// map_allocator_type map_allocator const noexcept { return map_allocator_type(); }
+private:
+    int M;   // 区块个数
+    E** map; // 区块映射
+    iterator it_begin; // 队首迭代器
+    iterator it_end;   // 队尾迭代器
 public:
     Deque() { initialize_map(0); }
     explicit Deque(int count, const E& value = E());
@@ -112,20 +93,6 @@ public:
     // 清空双端队列
     void clear();
 
-    iterator        begin()       noexcept { return it_begin; }
-	const_iterator  begin() const noexcept { return it_begin; }
-	const_iterator cbegin() const noexcept { return it_begin; }
-    iterator          end()       noexcept { return it_end; }
-    const_iterator    end() const noexcept { return it_end; }
-    const_iterator   cend() const noexcept { return it_end; }
-//	reverse_iterator        rbegin()       noexcept { return       reverse_iterator(it_end); }
-//	const_reverse_iterator  rbegin() const noexcept { return const_reverse_iterator(it_end); }
-//	const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(it_end); }
-//	reverse_iterator          rend()       noexcept { return       reverse_iterator(it_begin); }
-//	const_reverse_iterator    rend() const noexcept { return const_reverse_iterator(it_begin); }
-//	const_reverse_iterator   crend() const noexcept { return const_reverse_iterator(it_begin); }
-
-
     template <typename T>
     friend bool operator==(const Deque<T>& lhs, const Deque<T>& rhs);
     template <typename T>
@@ -133,30 +100,75 @@ public:
     template <typename T>
     friend std::ostream& operator<<(std::ostream& os, const Deque<T>& deque);
 private:
-    int M;   // 区块个数
-    E** map; // 区块映射
-    iterator it_begin; // 队首迭代器
-    iterator it_end;   // 队尾迭代器
+    // Note: 将map视为「Vector of blocks」，map的操作类似于Vector
+    // 初始化映射
+    void initialize_map(int count);
+    // 重新安排映射的容量
+    void reserve_map(int new_count, bool at_front);
+    // 添加区块到指定区块映射范围
+    void insert_block(E** block_begin, E** block_end);
+    // 添加区块到区块映射头部
+    void insert_block_at_front();
+    // 添加区块到区块映射尾部
+    void insert_block_at_back();
+    // 移除指定区块映射范围的区块
+    void remove_block(E** block_begin, E** block_end);
+    // 移除区块映射头部的区块
+    void remove_block_at_front();
+    // 移除区块映射尾部的区块
+    void remove_block_at_back();
+    // 检查迭代器是否合法
+    bool valid(int i) const { return i >= 0 && i < size(); }
+    // // 得到allocator
+    // allocator_type allocator const noexcept { return allocator_type(); }
+    // // 得到map_allocator
+	// map_allocator_type map_allocator const noexcept { return map_allocator_type(); }
+public:
+    iterator        begin()       noexcept { return it_begin; }
+    iterator          end()       noexcept { return it_end; }
+	const_iterator  begin() const noexcept { return it_begin; }
+    const_iterator    end() const noexcept { return it_end; }
+	const_iterator cbegin() const noexcept { return it_begin; }
+    const_iterator   cend() const noexcept { return it_end; }
+	reverse_iterator        rbegin()       noexcept { return reverse_iterator(it_end); }
+	reverse_iterator          rend()       noexcept { return reverse_iterator(it_begin); }
+	const_reverse_iterator  rbegin() const noexcept { return const_reverse_iterator(it_end); }
+	const_reverse_iterator    rend() const noexcept { return const_reverse_iterator(it_begin); }
+	const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(it_end); }
+	const_reverse_iterator   crend() const noexcept { return const_reverse_iterator(it_begin); }
 };
 
-template<typename E, typename Ref>
+template<typename E, typename Ptr, typename Ref>
 class DequeIterator
 {
     friend class Deque<E>;
+    friend class DequeIterator<E, E*, E&>;
+    friend class DequeIterator<E, const E*, const E&>;
 public:
+    // iterator traits
     using iterator_category = std::random_access_iterator_tag;
     using value_type        = E;
     using difference_type   = std::ptrdiff_t;
     using pointer           = E*;
     using reference         = E&;
-
+    // specialization of DequeIterator
+    using iterator          = DequeIterator<E, E*, E&>;
+    using const_iterator    = DequeIterator<E, const E*, const E&>;
+private:
     static constexpr int BLOCK_SIZE = (sizeof(E) < 512 ? 512 / sizeof(E) : 1); // 区块大小
+private:
+    E** block;  // 区块映射指针
+    E* current; // 区块当前位置指针
+    E* head; // 区块头指针
+    E* tail; // 区块尾指针
 public:
     DequeIterator() noexcept
 	: block(nullptr), current(nullptr), head(nullptr), tail(nullptr) {}
     DequeIterator(E** block, E* current) noexcept
 	: block(block), current(current), head(*block), tail(head + BLOCK_SIZE) {}
-    DequeIterator(const DequeIterator& that) noexcept
+    DequeIterator(const iterator& that) noexcept
+	: block(that.block), current(that.current), head(that.head), tail(that.tail) {}
+    DequeIterator(const const_iterator& that) noexcept
 	: block(that.block), current(that.current), head(that.head), tail(that.tail) {}
 
     E& operator*() const noexcept
@@ -242,11 +254,6 @@ public:
     bool operator>=(const DequeIterator& that) const noexcept
     { return !(*this < that); }
 private:
-    E** block;  // 区块映射指针
-    E* current; // 区块当前位置指针
-    E* head; // 区块头指针
-    E* tail; // 区块尾指针
-
     // 跳转到指定区块，current的修改交给调用者
     void set_block(E** new_block)
     {

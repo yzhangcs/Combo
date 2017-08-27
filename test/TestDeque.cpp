@@ -51,7 +51,7 @@ TEST_F(TestDeque, Basic)
     EXPECT_NO_THROW({
         Deque<string> s1;
         Deque<string> s2(scale);
-        Deque<string> s3(scale, "hello world");
+        Deque<string> s3(scale, "Hello World!");
         Deque<string> s4(s1);
         Deque<string> s5(Deque<string>());
 
@@ -123,9 +123,9 @@ TEST_F(TestDeque, ElementAccess)
 
 TEST_F(TestDeque, Iterators)
 {
-    EXPECT_EQ(deque.begin(), deque.end());
+    EXPECT_TRUE(deque.begin() == deque.end());
     insert_n(deque, scale);
-    EXPECT_NE(deque.begin(), deque.end());
+    EXPECT_FALSE(deque.begin() == deque.end());
 
     auto bg = deque.begin();
     auto ed = deque.end();
@@ -134,10 +134,10 @@ TEST_F(TestDeque, Iterators)
 
     for (int i = 0; i < scale; ++i)
         EXPECT_EQ(std::to_string(i), *bg++);
-    EXPECT_EQ(bg, deque.end());
+    EXPECT_TRUE(bg == deque.end());
     for (int i = scale - 1; i >= 0; --i)
         EXPECT_EQ(std::to_string(i), *--ed);
-    EXPECT_EQ(ed, deque.begin());
+    EXPECT_TRUE(ed == deque.begin());
 
 //    for (int i = scale - 1; i >= 0; --i)
 //        EXPECT_EQ(std::to_string(i), *rbg++);
