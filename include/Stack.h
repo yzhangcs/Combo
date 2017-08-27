@@ -12,35 +12,35 @@
 /**
  * 使用模板实现的后进先出栈.
  */
-template<typename E, typename Container = Deque<E>>
+template<typename E, typename C = Deque<E>>
 class Stack
 {
 private:
-    Container cont;
+    C container;
 public:
-    explicit Stack() : cont() {}
-    Stack(const Stack& that) : cont(that.cont) {}
-    Stack(Stack&& that) noexcept : cont(std::move(that.cont)) {}
+    explicit Stack() : container() {}
+    Stack(const Stack& that) : container(that.container) {}
+    Stack(Stack&& that) noexcept : container(std::move(that.container)) {}
     ~Stack() {}
 
     // 返回栈当前大小
-    int size() const { return cont.size(); }
+    int size() const { return container.size(); }
     // 判断是否为空栈
-    bool empty() const { return cont.empty(); }
+    bool empty() const { return container.empty(); }
 
     // 返回const栈顶引用
-    const E& top() const { return cont.back(); }
+    const E& top() const { return container.back(); }
     // 返回栈顶引用
     E& top() { return const_cast<E&>(static_cast<const Stack&>(*this).top()); }
 
     // 入栈函数
-    void push(E elem) { cont.insert_back(std::move(elem)); }
+    void push(E elem) { container.insert_back(std::move(elem)); }
     // 出栈函数
-    void pop() { cont.remove_back(); }
+    void pop() { container.remove_back(); }
     // 内容与另一个Stack对象交换
-    void swap(Stack& that) { cont.swap(that.cont); }
+    void swap(Stack& that) { container.swap(that.container); }
     // 清空栈元素
-    void clear() { cont.clear(); }
+    void clear() { container.clear(); }
 
     template <typename T, typename C>
     friend bool operator==(const Stack<T, C>& lhs, const Stack<T, C>& rhs);
@@ -58,10 +58,10 @@ public:
  * @return true: 相等
  *         false: 不等
  */
-template<typename E, typename Container>
-bool operator==(const Stack<E, Container>& lhs, const Stack<E, Container>& rhs)
+template<typename E, typename containerainer>
+bool operator==(const Stack<E, containerainer>& lhs, const Stack<E, containerainer>& rhs)
 {
-    return lhs.cont == rhs.cont;
+    return lhs.container == rhs.container;
 }
 
 /**
@@ -72,8 +72,8 @@ bool operator==(const Stack<E, Container>& lhs, const Stack<E, Container>& rhs)
  * @return true: 不等
  *         false: 相等
  */
-template<typename E, typename Container>
-bool operator!=(const Stack<E, Container>& lhs, const Stack<E, Container>& rhs)
+template<typename E, typename containerainer>
+bool operator!=(const Stack<E, containerainer>& lhs, const Stack<E, containerainer>& rhs)
 {
     return !(lhs == rhs);
 }
@@ -85,10 +85,10 @@ bool operator!=(const Stack<E, Container>& lhs, const Stack<E, Container>& rhs)
  *        stack: 要输出的栈
  * @return 输出流对象
  */
-template<typename E, typename Container>
-std::ostream& operator<<(std::ostream& os, const Stack<E, Container>& stack)
+template<typename E, typename containerainer>
+std::ostream& operator<<(std::ostream& os, const Stack<E, containerainer>& stack)
 {
-    return os << stack.cont;
+    return os << stack.container;
 }
 
 /**
@@ -97,8 +97,8 @@ std::ostream& operator<<(std::ostream& os, const Stack<E, Container>& stack)
  * @param lhs: Stack对象lhs
  *        rhs: Stack对象rhs
  */
-template<typename E, typename Container>
-void swap(Stack<E, Container>& lhs, Stack<E, Container>& rhs)
+template<typename E, typename containerainer>
+void swap(Stack<E, containerainer>& lhs, Stack<E, containerainer>& rhs)
 {
     lhs.swap(rhs);
 }
