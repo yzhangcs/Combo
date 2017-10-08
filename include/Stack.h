@@ -18,8 +18,6 @@ class Stack
     template <typename T, typename C>
     friend bool operator==(const Stack<T, C>& lhs, const Stack<T, C>& rhs);
     template <typename T, typename C>
-    friend bool operator!=(const Stack<T, C>& lhs, const Stack<T, C>& rhs);
-    template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Stack<T, C>& stack);
 public:
     using container_type  = Container;
@@ -61,8 +59,8 @@ private:
  * @return true: 相等
  *         false: 不等
  */
-template<typename E, typename containerainer>
-bool operator==(const Stack<E, containerainer>& lhs, const Stack<E, containerainer>& rhs)
+template<typename E, typename Container>
+bool operator==(const Stack<E, Container>& lhs, const Stack<E, Container>& rhs)
 {
     return lhs.c == rhs.c;
 }
@@ -75,8 +73,8 @@ bool operator==(const Stack<E, containerainer>& lhs, const Stack<E, containerain
  * @return true: 不等
  *         false: 相等
  */
-template<typename E, typename containerainer>
-bool operator!=(const Stack<E, containerainer>& lhs, const Stack<E, containerainer>& rhs)
+template<typename E, typename Container>
+bool operator!=(const Stack<E, Container>& lhs, const Stack<E, Container>& rhs)
 {
     return !(lhs == rhs);
 }
@@ -88,8 +86,8 @@ bool operator!=(const Stack<E, containerainer>& lhs, const Stack<E, containerain
  *        stack: 要输出的栈
  * @return 输出流对象
  */
-template<typename E, typename containerainer>
-std::ostream& operator<<(std::ostream& os, const Stack<E, containerainer>& stack)
+template<typename E, typename Container>
+std::ostream& operator<<(std::ostream& os, const Stack<E, Container>& stack)
 {
     return os << stack.c;
 }
@@ -100,8 +98,8 @@ std::ostream& operator<<(std::ostream& os, const Stack<E, containerainer>& stack
  * @param lhs: Stack对象lhs
  *        rhs: Stack对象rhs
  */
-template<typename E, typename containerainer>
-void swap(Stack<E, containerainer>& lhs, Stack<E, containerainer>& rhs)
+template<typename E, typename Container>
+void swap(Stack<E, Container>& lhs, Stack<E, Container>& rhs)
 {
     lhs.swap(rhs);
 }

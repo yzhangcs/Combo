@@ -18,8 +18,6 @@ class Queue
     template <typename T, typename C>
     friend bool operator==(const Queue<T, C>& lhs, const Queue<T, C>& rhs);
     template <typename T, typename C>
-    friend bool operator!=(const Queue<T, C>& lhs, const Queue<T, C>& rhs);
-    template <typename T, typename C>
     friend std::ostream& operator<<(std::ostream& os, const Queue<T, C>& queue);
 public:
     using container_type  = Container;
