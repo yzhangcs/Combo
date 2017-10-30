@@ -9,6 +9,9 @@
 #include <iostream>
 #include <iterator>
 
+namespace cpplib
+{
+
 /**
  * 使用模板实现的链表.
  * 实现了链表的双向迭代器.
@@ -24,14 +27,6 @@ class List
         Node() : elem(), prev(this), next(this) {}
         Node(E elem) : elem(std::move(elem)), prev(this), next(this) {}
     };
-private:
-    int n; // 链表大小
-    Node* sentinel; // 哨兵指针
-
-    // 定位指定元素
-    Node* locate(int i) const;
-    // 检查索引是否合法
-    bool valid(int i) const { return i >= 0 && i < n; }
 public:
     List() : n(0), sentinel(new Node) {}
     List(const List& that);
@@ -123,6 +118,14 @@ public:
     };
     iterator begin() const { return iterator(sentinel->next); }
     iterator end() const { return iterator(sentinel); }
+private:
+	int n; // 链表大小
+	Node* sentinel; // 哨兵指针
+
+	// 定位指定元素
+	Node* locate(int i) const;
+	// 检查索引是否合法
+	bool valid(int i) const { return i >= 0 && i < n; }
 };
 
 /**
@@ -467,3 +470,4 @@ void swap(List<E>& lhs, List<E>& rhs)
     lhs.swap(rhs);
 }
 
+} // namespace cpplib
