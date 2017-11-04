@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Compilation:  g++ -IQueue -IStack -ISearch demo.cpp -o demo
  * Execution:    ./demo data/ip.csv
- * Dependencies: BinarySearchMap.h      BinarySearchSet.h 
- *               BinarySearchTreeMap.h  LinearProbingHashMap.h 
+ * Dependencies: BinarySearchMap.h      BinarySearchSet.h
+ *               BinarySearchTreeMap.h  LinearProbingHashMap.h
  *               RedBlackTreeMap.h      SeparateChainingHashMap.h
- *               SequentialSearchMap.h 
+ *               SequentialSearchMap.h
  *
  * % ./demo data/ip.csv
  * Domain Name: www.google.com
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
     while (getline(fin, line))
-    {		
+    {
         stringstream ss(line);
         getline(ss, key, ',');
         getline(ss, val, ',');

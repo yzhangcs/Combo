@@ -119,13 +119,13 @@ public:
     iterator begin() const { return iterator(sentinel->next); }
     iterator end() const { return iterator(sentinel); }
 private:
-	int n; // 链表大小
-	Node* sentinel; // 哨兵指针
+    int n; // 链表大小
+    Node* sentinel; // 哨兵指针
 
-	// 定位指定元素
-	Node* locate(int i) const;
-	// 检查索引是否合法
-	bool valid(int i) const { return i >= 0 && i < n; }
+    // 定位指定元素
+    Node* locate(int i) const;
+    // 检查索引是否合法
+    bool valid(int i) const { return i >= 0 && i < n; }
 };
 
 /**

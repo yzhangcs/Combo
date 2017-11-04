@@ -272,7 +272,7 @@ Deque<E>& Deque<E>::operator=(Deque<E> that)
 template<typename E>
 Deque<E>& Deque<E>::operator=(std::initializer_list<value_type> ilist)
 {
-	Deque tmp(ilist);
+    Deque tmp(ilist);
     // *this与tmp互相交换，退出时tmp被析构
     swap(tmp);
     return *this;
