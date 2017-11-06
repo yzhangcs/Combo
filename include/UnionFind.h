@@ -12,7 +12,7 @@
  */
 class UnionFind
 {
-private: 
+private:
     int n;          // 并查集大小
     int components; // 连通分量的数量
     int* id;        // id[i]为i的父触点.
@@ -27,15 +27,15 @@ public:
     ~UnionFind();
 
     // 判断p与q是否属于同一个连通分量
-    bool connected(int p, int q) { return find(p) == find(q); } 
+    bool connected(int p, int q) { return find(p) == find(q); }
     // 返回连通分量数
-    int count() { return components; } 
+    int count() { return components; }
     // 找到p所属连通分量的标识符
-    int find(int p); 
+    int find(int p);
     // 合并p与q所属的连通分量
-    void join(int p, int q); 
+    void join(int p, int q);
     // 内容与另一个UnionFind对象交换
-    void swap(UnionFind& that); 
+    void swap(UnionFind& that);
 
     UnionFind& operator=(UnionFind that);
 };
@@ -43,7 +43,7 @@ public:
 /**
  * 并查集构造函数，初始化并查集.
  * 将每个触点都初始化为一个单独的连通分量.
- * 
+ *
  * @param size: 指定的并查集大小
  */
 UnionFind::UnionFind(int size)
@@ -75,7 +75,7 @@ UnionFind::UnionFind(const UnionFind& that)
     for (int i = 0; i < n; i++)
     {
         id[i] = that.id[i];
-        ht[i] = that.ht[i]; 
+        ht[i] = that.ht[i];
     }
 }
 
@@ -113,7 +113,7 @@ UnionFind::~UnionFind()
  */
 int UnionFind::find(int p)
 {
-    if (!valid(p)) 
+    if (!valid(p))
         throw std::out_of_range("UnionFind::find() index out of range.");
     // p所属连通分量的根触点的id值作为该连通分量的标识符
     while (p != id[p])
@@ -141,10 +141,10 @@ void UnionFind::join(int p, int q)
     // 高度较低的树合并到较高的树，使合并后树的高度尽可能小
     if      (ht[rootP] < ht[rootQ]) id[rootP] = rootQ; // p合并到q
     else if (ht[rootP] > ht[rootQ]) id[rootQ] = rootP; // q合并到p
-    else 
+    else
     {
         // 两棵子树高度相等，合并后树的高度需要增加
-        id[rootQ] = rootP; 
+        id[rootQ] = rootP;
         ht[rootP]++;
     }
     components--;
@@ -157,8 +157,7 @@ void UnionFind::join(int p, int q)
  */
 void UnionFind::swap(UnionFind& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
+    using std::swap;
     swap(n, that.n);
     swap(components, that.components);
     swap(id, that.id);
@@ -174,7 +173,6 @@ void UnionFind::swap(UnionFind& that)
  */
 UnionFind& UnionFind::operator=(UnionFind that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }

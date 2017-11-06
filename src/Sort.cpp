@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Compilation:  g++ -IRandom -ISort -ITimer demo.cpp -o demo
- * Execution:    ./demo
- * Dependencies: Random.h        Timer.h 
- *               BubbleSort.h    HeapSort.h  
- *               InsertionSort.h MergeSort.h     
- *               QuickSort.h     Quick3waySort.h 
+ * Compilation:  g++ -IRandom -ISort -ITimer Sort.cpp -o sort
+ * Execution:    ./sort
+ * Dependencies: Random.h        Timer.h
+ *               BubbleSort.h    HeapSort.h
+ *               InsertionSort.h MergeSort.h
+ *               QuickSort.h     Quick3waySort.h
  *               SelectionSort.h ShellSort.h
  *
- * % ./demo
+ * % ./sort
  * Running time of sorting algorithms in doubling test:
  * SORT\SCALE    10000  20000  40000  80000  160000 320000 640000 ratio\lg ratio
  * HeapSort      0.004  0.007  0.015  0.032  0.086  0.169  0.345  2.076\1.05
@@ -17,7 +17,7 @@
  * MergeSort     0.002  0.006  0.011  0.026  0.053  0.117  0.23   2.041\1.03
  * InsertionSort 0.142  0.564  2.104  8.467  35.204 138.59 561.15 3.959\1.98
  * SelectionSort 0.26   0.996  4.531  15.89  63.395 255.18 1023.2 3.931\1.97
- * BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99  
+ * BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
  ******************************************************************************/
 
 #include <cmath>
@@ -56,14 +56,14 @@ int main()
         cout << std::left << setw(7) << i;
     cout << "ratio\\lg ratio";
     cout << endl;
-    doublingTest(*demo, 10000, "HeapSort");
-    doublingTest(*demo, 10000, "QuickSort");
-    doublingTest(*demo, 10000, "Quick3waySort");
-    doublingTest(*demo, 10000, "ShellSort");
-    doublingTest(*demo, 10000, "MergeSort");
+    // doublingTest(*demo, 10000, "HeapSort");
+    // doublingTest(*demo, 10000, "QuickSort");
+    // doublingTest(*demo, 10000, "Quick3waySort");
+    // doublingTest(*demo, 10000, "ShellSort");
+    // doublingTest(*demo, 10000, "MergeSort");
     doublingTest(*demo, 10000, "InsertionSort");
-    doublingTest(*demo, 10000, "SelectionSort");
-    doublingTest(*demo, 10000, "BubbleSort");
+    // doublingTest(*demo, 10000, "SelectionSort");
+    // doublingTest(*demo, 10000, "BubbleSort");
     delete demo;
     return 0;
 }
@@ -73,14 +73,14 @@ double timeOfSort(K (&keys)[n], int lo, int hi, string alg)
 {
     Timer timer;
 
-    if (alg == "HeapSort")      HeapSort::sort(keys, lo, hi);
+    // if (alg == "HeapSort")      HeapSort::sort(keys, lo, hi);
     if (alg == "InsertionSort") InsertionSort::sort(keys, lo, hi);
-    if (alg == "QuickSort")     QuickSort::sort(keys, lo, hi);
-    if (alg == "Quick3waySort") Quick3waySort::sort(keys, lo, hi);
-    if (alg == "MergeSort")     MergeSort::sort(keys, lo, hi);
-    if (alg == "ShellSort")     ShellSort::sort(keys, lo, hi);
-    if (alg == "SelectionSort") SelectionSort::sort(keys, lo, hi);
-    if (alg == "BubbleSort")    BubbleSort::sort(keys, lo, hi);
+    // if (alg == "QuickSort")     QuickSort::sort(keys, lo, hi);
+    // if (alg == "Quick3waySort") Quick3waySort::sort(keys, lo, hi);
+    // if (alg == "MergeSort")     MergeSort::sort(keys, lo, hi);
+    // if (alg == "ShellSort")     ShellSort::sort(keys, lo, hi);
+    // if (alg == "SelectionSort") SelectionSort::sort(keys, lo, hi);
+    // if (alg == "BubbleSort")    BubbleSort::sort(keys, lo, hi);
     return timer.elapsed();
 }
 
@@ -101,6 +101,6 @@ void doublingTest(K (&keys)[n], int start, string alg)
             ratio = (currTime / lastTime + ratio) / 2;
         lastTime = currTime;
     }
-    cout << setw(5) << setprecision(4) << ratio << "\\" 
+    cout << setw(5) << setprecision(4) << ratio << "\\"
          << setw(5) << setprecision(3) << log2(ratio) << endl;
 }

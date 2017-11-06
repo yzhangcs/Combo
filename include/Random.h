@@ -46,27 +46,27 @@ public:
     // 生成一个在[a, b)范围内呈均匀分布的随机实数
     static double uniform(double a, double b);
     // 生成基于bernoulli分布的随机值
-    static bool bernoulli(double p = 0.5); 
+    static bool bernoulli(double p = 0.5);
     // 生成基于标准正态分布的随机值
-    static double normal(); 
+    static double normal();
     // 生成基于正态分布的随机值
-    static double normal(double mu, double sigma) 
+    static double normal(double mu, double sigma)
     { return mu + sigma * normal(); };
     // 生成基于几何分布的随机值
-    static int geometric(double p); 
+    static int geometric(double p);
     // 生成基于poisson分布的随机值
-    static int poisson(double lambda); 
+    static int poisson(double lambda);
     // 生成基于指数分布的随机值
-    static double exponential(double lambda); 
-    
+    static double exponential(double lambda);
+
     // 随机打乱数组所有元素
     template<typename E, int n>
-    static void shuffle(E (&elems)[n]) { shuffle(elems, 0, n); } 
+    static void shuffle(E (&elems)[n]) { shuffle(elems, 0, n); }
     // 随机打乱数组指定范围的元素
     template<typename E, int n>
-    static void shuffle(E (&elems)[n], int lo, int hi); 
+    static void shuffle(E (&elems)[n], int lo, int hi);
     template<typename RandomAccessIterator>
-    static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi); 
+    static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi);
 };
 
 size_t Random::seed = time(nullptr); // 默认使用时间作为种子
@@ -200,8 +200,7 @@ template<typename E, int n>
 void Random::shuffle(E (&elems)[n], int lo, int hi)
 {
     assert(lo >= 0 && hi <= n && lo <= hi);
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
+    using std::swap;
     for (int i = lo; i < hi; ++i)
         swap(elems[Random::random(lo, i + 1)], elems[i]);
 }
@@ -217,8 +216,8 @@ template<typename RandomAccessIterator>
 static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi)
 {
     int n = hi - lo;
-
+    // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap;
-    for (int i = 0; i < n; ++i) 
+    for (int i = 0; i < n; ++i)
         swap(lo[Random::random(i + 1)], lo[i]);
 }

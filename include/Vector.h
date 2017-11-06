@@ -281,7 +281,6 @@ const E& Vector<E>::at(int i) const
 template<typename E>
 void Vector<E>::swap(Vector<E>& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap;
     swap(n, that.n);
     swap(N, that.N);
@@ -310,7 +309,6 @@ const E& Vector<E>::operator[](int i) const
 template<typename E>
 Vector<E>& Vector<E>::operator=(Vector<E> that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }

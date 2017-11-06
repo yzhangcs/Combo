@@ -12,7 +12,7 @@
  */
 class QuickFind
 {
-private: 
+private:
     int n;          // 并查集大小
     int components; // 连通分量的数量
     int* id;        // 指向所有触点的指针
@@ -23,18 +23,18 @@ public:
     explicit QuickFind(int size);
     QuickFind(const QuickFind& that);
     QuickFind(QuickFind&& that) noexcept;
-    ~QuickFind() { delete[] id; }  
+    ~QuickFind() { delete[] id; }
 
     // 判断p与q是否属于同一个连通分量
-    bool connected(int p, int q); 
+    bool connected(int p, int q);
     // 返回连通分量数
-    int count() { return components; } 
+    int count() { return components; }
     // 得到p所属连通分量的标识符
-    int find(int p); 
+    int find(int p);
     // 合并p与q所属的连通分量
-    void join(int p, int q); 
+    void join(int p, int q);
     // 内容与另一个QuickFind对象交换
-    void swap(QuickFind& that); 
+    void swap(QuickFind& that);
 
     QuickFind& operator=(QuickFind that);
 };
@@ -42,7 +42,7 @@ public:
 /**
  * 并查集构造函数，初始化并查集.
  * 将每个触点都初始化为一个单独的连通分量.
- * 
+ *
  * @param size: 指定的并查集大小
  */
 QuickFind::QuickFind(int size)
@@ -94,11 +94,11 @@ QuickFind::QuickFind(QuickFind&& that) noexcept
  * @throws std::out_of_range: 触点不合法
  */
 bool QuickFind::connected(int p, int q)
-{ 
-    if (!valid(p) || !valid(q)) 
+{
+    if (!valid(p) || !valid(q))
         throw std::out_of_range("QuickFind::connected() index out of range.");
     // 相同id值表示属于同一个连通分量
-    return id[p] == id[q]; 
+    return id[p] == id[q];
 }
 
 /**
@@ -110,7 +110,7 @@ bool QuickFind::connected(int p, int q)
  */
 int QuickFind::find(int p)
 {
-    if (!valid(p)) 
+    if (!valid(p))
         throw std::out_of_range("QuickFind::find() index out of range.");
     return id[p];
 }
@@ -124,14 +124,14 @@ int QuickFind::find(int p)
  */
 void QuickFind::join(int p, int q)
 {
-    if (!valid(p) || !valid(q)) 
+    if (!valid(p) || !valid(q))
         throw std::out_of_range("QuickFind::join() index out of range.");
 
     int pid = id[p];
     int qid = id[q];
 
     // 已经属于同一个连通分量中则返回
-    if (pid == qid) return; 
+    if (pid == qid) return;
     // 合并p所属连通分量触点到q所属的连通分量
     for (int i = 0; i < n; ++i)
         if (id[i] == pid) id[i] = qid; // 与p在同一分量的触点标识符改成qid
@@ -145,8 +145,7 @@ void QuickFind::join(int p, int q)
  */
 void QuickFind::swap(QuickFind& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
+    using std::swap;
     swap(n, that.n);
     swap(components, that.components);
     swap(id, that.id);
@@ -161,7 +160,6 @@ void QuickFind::swap(QuickFind& that)
  */
 QuickFind& QuickFind::operator=(QuickFind that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }

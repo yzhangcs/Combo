@@ -257,7 +257,6 @@ Deque<E>::~Deque()
 template<typename E>
 Deque<E>& Deque<E>::operator=(Deque<E> that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }
@@ -518,7 +517,6 @@ void Deque<E>::remove(const_iterator first, const_iterator last)
 template<typename E>
 void Deque<E>::swap(Deque<E>& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap;
     swap(M, that.M);
     swap(map, that.map);

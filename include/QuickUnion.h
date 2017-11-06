@@ -12,7 +12,7 @@
  */
 class QuickUnion
 {
-private: 
+private:
     int n;          // 并查集大小
     int components; // 连通分量的数量
     int* id;        // id[i]为i的父触点.
@@ -23,18 +23,18 @@ public:
     explicit QuickUnion(int size);
     QuickUnion(const QuickUnion& that);
     QuickUnion(QuickUnion&& that) noexcept;
-    ~QuickUnion() { delete[] id; }  
+    ~QuickUnion() { delete[] id; }
 
     // 判断p与q是否属于同一个连通分量
-    bool connected(int p, int q) { return find(p) == find(q); } 
+    bool connected(int p, int q) { return find(p) == find(q); }
     // 返回连通分量数
-    int count() { return components; } 
+    int count() { return components; }
     // 找到p所属连通分量的标识符
-    int find(int p);  
+    int find(int p);
     // 合并p与q所属的连通分量
     void join(int p, int q);
     // 内容与另一个QuickUnion对象交换
-    void swap(QuickUnion& that); 
+    void swap(QuickUnion& that);
 
     QuickUnion& operator=(QuickUnion that);
 };
@@ -42,7 +42,7 @@ public:
 /**
  * 并查集构造函数，初始化并查集.
  * 将每个触点都初始化为一个单独的连通分量.
- * 
+ *
  * @param size: 指定的并查集大小
  */
 QuickUnion::QuickUnion(int size)
@@ -52,7 +52,7 @@ QuickUnion::QuickUnion(int size)
     id = new int[n];
     // 每个触点的id值设置为自身，作为一个单独连通分量的根触点
     for (int i = 0; i < n; i++)
-        id[i] = i; 
+        id[i] = i;
 }
 
 /**
@@ -93,7 +93,7 @@ QuickUnion::QuickUnion(QuickUnion&& that) noexcept
  */
 int QuickUnion::find(int p)
 {
-    if (!valid(p)) 
+    if (!valid(p))
         throw std::out_of_range("QuickUnion::find() index out of range.");
     // p所属连通分量的根触点的id值作为该连通分量的标识符
     while (p != id[p])
@@ -115,7 +115,7 @@ void QuickUnion::join(int p, int q)
     // 已经属于同一个连通分量中则返回
     if (rootP == rootQ) return;
     // p所在连通分量的根触点指向q所在连通分量的根触点，合并为一个连通分量
-    id[rootP] = rootQ; 
+    id[rootP] = rootQ;
     components--;
 }
 
@@ -126,8 +126,7 @@ void QuickUnion::join(int p, int q)
  */
 void QuickUnion::swap(QuickUnion& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
+    using std::swap;
     swap(n, that.n);
     swap(components, that.components);
     swap(id, that.id);
@@ -142,7 +141,6 @@ void QuickUnion::swap(QuickUnion& that)
  */
 QuickUnion& QuickUnion::operator=(QuickUnion that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }

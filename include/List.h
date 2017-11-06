@@ -19,6 +19,8 @@ namespace cpplib
 template<typename E>
 class List
 {
+	using iterator = class ListIterator;
+
     struct Node
     {
         E elem;
@@ -341,7 +343,6 @@ const E& List<E>::back() const
 template<typename E>
 void List<E>::swap(List<E>& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
     using std::swap;
     swap(n, that.n);
     swap(sentinel, that.sentinel);
@@ -378,7 +379,6 @@ void List<E>::clear()
 template<typename E>
 List<E>& List<E>::operator=(List<E> that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }

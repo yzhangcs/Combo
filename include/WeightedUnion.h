@@ -12,7 +12,7 @@
  */
 class WeightedUnion
 {
-private: 
+private:
     int n;          // 并查集大小
     int components; // 连通分量的数量
     int* id;        // id[i]为i的父触点.
@@ -29,13 +29,13 @@ public:
     // 判断p与q是否属于同一个连通分量
     bool connected(int p, int q) { return find(p) == find(q); }
     // 返回连通分量数
-    int count() { return components; } 
+    int count() { return components; }
     // 找到p所属连通分量的标识符
-    int find(int p); 
+    int find(int p);
     // 合并p与q所属的连通分量
-    void join(int p, int q); 
-    // 内容与另一个WeightedUnion对象交换 
-    void swap(WeightedUnion& that); 
+    void join(int p, int q);
+    // 内容与另一个WeightedUnion对象交换
+    void swap(WeightedUnion& that);
 
     WeightedUnion& operator=(WeightedUnion that);
 };
@@ -43,7 +43,7 @@ public:
 /**
  * 并查集构造函数，初始化并查集.
  * 将每个触点都初始化为一个单独的连通分量.
- * 
+ *
  * @param size: 指定的并查集大小
  */
 WeightedUnion::WeightedUnion(int size)
@@ -113,7 +113,7 @@ WeightedUnion::~WeightedUnion()
  */
 int WeightedUnion::find(int p)
 {
-    if (!valid(p)) 
+    if (!valid(p))
         throw std::out_of_range("WeightedUnion::find() index out of range.");
     // p所属连通分量的根触点的id值作为该连通分量的标识符
     while (p != id[p])
@@ -135,7 +135,7 @@ void WeightedUnion::join(int p, int q)
     // 已经属于同一个连通分量中则返回
     if (rootP == rootQ) return;
     // 小的连通分量合并到大的连通分量，使合并后树的高度尽可能小
-    if (sz[rootP] < sz[rootQ]) 
+    if (sz[rootP] < sz[rootQ])
     {
         id[rootP] = rootQ;
         sz[rootQ] += sz[rootP];
@@ -155,8 +155,7 @@ void WeightedUnion::join(int p, int q)
  */
 void WeightedUnion::swap(WeightedUnion& that)
 {
-    // 如果没有针对类型的特化swap，则使用std::swap
-    using std::swap; 
+    using std::swap;
     swap(n, that.n);
     swap(components, that.components);
     swap(id, that.id);
@@ -172,7 +171,6 @@ void WeightedUnion::swap(WeightedUnion& that)
  */
 WeightedUnion& WeightedUnion::operator=(WeightedUnion that)
 {
-    // *this与that互相交换，退出时that被析构
     swap(that);
     return *this;
 }
