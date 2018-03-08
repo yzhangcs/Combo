@@ -1,4 +1,4 @@
-# CppLib(TEMP)
+# CppLib
 
 ## Introduction
 
