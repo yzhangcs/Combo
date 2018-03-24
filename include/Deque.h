@@ -10,7 +10,7 @@
 #include <iterator>
 #include <memory>
 
-namespace cpplib
+namespace combo
 {
 
 // 根据size值确定区块可存储元素个数
@@ -928,4 +928,4 @@ void uninitialized_copy(const DequeIterator<E, E*, E&>& first,
 
 }
 
-} // namespace cpplib
+} // namespace combo

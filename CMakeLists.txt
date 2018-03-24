@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.2)
 
-project(CppLib)
+project(Combo)
 
 # Disable in-source build
 if ("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
@@ -17,7 +17,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # Options
-option(CPPLIB_BUILD_TEST "Build CppLib tests." OFF)
+option(CPPLIB_BUILD_TEST "Build Combo tests." OFF)
 
 # Compiler config
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")

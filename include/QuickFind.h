@@ -7,6 +7,9 @@
 
 #pragma once
 
+namespace combo
+{
+
 /**
  * 快速查找的并查集.
  */
@@ -174,3 +177,5 @@ void swap(QuickFind& lhs, QuickFind& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace combo

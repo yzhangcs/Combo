@@ -9,6 +9,9 @@
 #include <iostream>
 #include "Deque.h"
 
+namespace combo
+{
+
 /**
  * 使用模板实现的后进先出栈.
  */
@@ -103,3 +106,5 @@ void swap(Stack<E, Container>& lhs, Stack<E, Container>& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace combo

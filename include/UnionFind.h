@@ -7,6 +7,9 @@
 
 #pragma once
 
+namespace combo
+{
+
 /**
  * 带路径压缩的加权快速合并的并查集.
  */
@@ -187,3 +190,5 @@ void swap(UnionFind& lhs, UnionFind& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace combo

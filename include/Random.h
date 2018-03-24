@@ -16,6 +16,9 @@ using std::mt19937;
 using std::uniform_int_distribution;
 using std::uniform_real_distribution;
 
+namespace combo
+{
+
 /**
  * 随机类.
  * 提供了生成指定范围随机数的静态方法，其中生成器为mt19937（使用Mersenne
@@ -221,3 +224,5 @@ static void shuffle(RandomAccessIterator lo, RandomAccessIterator hi)
     for (int i = 0; i < n; ++i)
         swap(lo[Random::random(i + 1)], lo[i]);
 }
+
+} // namespace combo

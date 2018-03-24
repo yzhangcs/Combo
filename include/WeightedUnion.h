@@ -7,6 +7,9 @@
 
 #pragma once
 
+namespace combo
+{
+
 /**
  * 加权快速合并的并查集.
  */
@@ -185,3 +188,5 @@ void swap(WeightedUnion& lhs, WeightedUnion& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace combo

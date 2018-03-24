@@ -1,4 +1,4 @@
-# CppLib
+# Combo
 
 ## Introduction
 
@@ -18,7 +18,7 @@ C++ Library
 1. Clone
 
 ```bash
-$ git clone https://github.com/zy2625/CppLib.git
+$ git clone https://github.com/zy2625/Combo.git
 ```
 
 2. Build
@@ -73,7 +73,7 @@ $ git clone https://github.com/zy2625/CppLib.git
 
 ### Deque
 
-* [Deque](https://github.com/zy2625/CppLib/blob/master/include/Deque.h)
+* [Deque](https://github.com/zy2625/Combo/blob/master/include/Deque.h)
 
 #### Usage
 
@@ -88,8 +88,8 @@ As stack: to be not that or be (2 left on deque)
 
 <!-- ### Heap
 
-* [BinaryHeap](https://github.com/zy2625/CppLib/blob/master/include/BinaryHeap.h)
-* [IndexHeap](https://github.com/zy2625/CppLib/blob/master/include/IndexHeap.h)
+* [BinaryHeap](https://github.com/zy2625/Combo/blob/master/include/BinaryHeap.h)
+* [IndexHeap](https://github.com/zy2625/Combo/blob/master/include/IndexHeap.h)
 
 #### Usage
 
@@ -103,8 +103,8 @@ P X P (8 left on heap)
 
 <!-- ### List
 
-* [Vector](https://github.com/zy2625/CppLib/blob/master/include/Vector.h)
-* [List](https://github.com/zy2625/CppLib/blob/master/include/List.h)
+* [Vector](https://github.com/zy2625/Combo/blob/master/include/Vector.h)
+* [List](https://github.com/zy2625/Combo/blob/master/include/List.h)
 
 #### Usage
 
@@ -124,7 +124,7 @@ x.remove_front(): 0 1 2 3 4 5 6 7 8 9 10 11
 
 <!-- ### PriorityQueue
 
-* [PriorityQueue](https://github.com/zy2625/CppLib/blob/master/include/PriorityQueue.h)
+* [PriorityQueue](https://github.com/zy2625/Combo/blob/master/include/PriorityQueue.h)
 
 #### Usage
 
@@ -138,7 +138,7 @@ Q X P (6 left on priority queue)
 
 ### Queue
 
-* [Queue](https://github.com/zy2625/CppLib/blob/master/include/Queue.h)
+* [Queue](https://github.com/zy2625/Combo/blob/master/include/Queue.h)
 
 #### Usage
 
@@ -152,7 +152,7 @@ to be or not to be (2 left on queue)
 <!--
 ### Random
 
-* [Random](https://github.com/zy2625/CppLib/blob/master/include/Random.h)
+* [Random](https://github.com/zy2625/Combo/blob/master/include/Random.h)
 
 #### Usage
 
@@ -185,13 +185,13 @@ Normal Distribution:
 
 <!-- ### Search
 
-* [BinarySearchMap](https://github.com/zy2625/CppLib/blob/master/include/BinarySearchMap.h)
-* [BinarySearchSet](https://github.com/zy2625/CppLib/blob/master/include/BinarySearchSet.h)
-* [BinarySearchTreeMap](https://github.com/zy2625/CppLib/blob/master/include/BinarySearchTreeMap.h)
-* [LinearProbingHashMap](https://github.com/zy2625/CppLib/blob/master/include/LinearProbingHashMap.h)
-* [RedBlackTreeMap](https://github.com/zy2625/CppLib/blob/master/include/RedBlackTreeMap.h)
-* [SeparateChainingHashMap](https://github.com/zy2625/CppLib/blob/master/include/SeparateChainingHashMap.h)
-* [SequentialSearchMap](https://github.com/zy2625/CppLib/blob/master/include/SequentialSearchMap.h)
+* [BinarySearchMap](https://github.com/zy2625/Combo/blob/master/include/BinarySearchMap.h)
+* [BinarySearchSet](https://github.com/zy2625/Combo/blob/master/include/BinarySearchSet.h)
+* [BinarySearchTreeMap](https://github.com/zy2625/Combo/blob/master/include/BinarySearchTreeMap.h)
+* [LinearProbingHashMap](https://github.com/zy2625/Combo/blob/master/include/LinearProbingHashMap.h)
+* [RedBlackTreeMap](https://github.com/zy2625/Combo/blob/master/include/RedBlackTreeMap.h)
+* [SeparateChainingHashMap](https://github.com/zy2625/Combo/blob/master/include/SeparateChainingHashMap.h)
+* [SequentialSearchMap](https://github.com/zy2625/Combo/blob/master/include/SequentialSearchMap.h)
 
 #### Usage
 
@@ -207,14 +207,14 @@ Not Found!
 
 <!-- ### Sort
 
-* [BubbleSort](https://github.com/zy2625/CppLib/blob/master/include/BubbleSort.h)
-* [HeapSort](https://github.com/zy2625/CppLib/blob/master/include/HeapSort.h)
-* [InsertionSort](https://github.com/zy2625/CppLib/blob/master/include/InsertionSort.h)
-* [MergeSort](https://github.com/zy2625/CppLib/blob/master/include/MergeSort.h)
-* [QuickSort](https://github.com/zy2625/CppLib/blob/master/include/QuickSort.h)
-* [Quick3waySort](https://github.com/zy2625/CppLib/blob/master/include/Quick3waySort.h)
-* [SelectionSort](https://github.com/zy2625/CppLib/blob/master/include/SelectionSort.h)
-* [ShellSort](https://github.com/zy2625/CppLib/blob/master/include/ShellSort.h)
+* [BubbleSort](https://github.com/zy2625/Combo/blob/master/include/BubbleSort.h)
+* [HeapSort](https://github.com/zy2625/Combo/blob/master/include/HeapSort.h)
+* [InsertionSort](https://github.com/zy2625/Combo/blob/master/include/InsertionSort.h)
+* [MergeSort](https://github.com/zy2625/Combo/blob/master/include/MergeSort.h)
+* [QuickSort](https://github.com/zy2625/Combo/blob/master/include/QuickSort.h)
+* [Quick3waySort](https://github.com/zy2625/Combo/blob/master/include/Quick3waySort.h)
+* [SelectionSort](https://github.com/zy2625/Combo/blob/master/include/SelectionSort.h)
+* [ShellSort](https://github.com/zy2625/Combo/blob/master/include/ShellSort.h)
 
 #### Usage
 
@@ -234,7 +234,7 @@ BubbleSort    0.534  2.126  8.532  34.823 139.19 560.43 2259.6 3.965\1.99
 
 ### Stack
 
-* [Stack](https://github.com/zy2625/CppLib/blob/master/include/Stack.h)
+* [Stack](https://github.com/zy2625/Combo/blob/master/include/Stack.h)
 
 #### Usage
 
@@ -248,7 +248,7 @@ to be or not to be (2 left on stack)
 
 ### Timer
 
-* [Timer](https://github.com/zy2625/CppLib/blob/master/include/Timer.h)
+* [Timer](https://github.com/zy2625/Combo/blob/master/include/Timer.h)
 
 #### Usage
 
@@ -261,10 +261,10 @@ It takes 0.495s to sum the sqrt 100000000 times
 <!--
 ### UnionFind
 
-* [QuickFind](https://github.com/zy2625/CppLib/blob/master/include/QuickFind.h)
-* [QuickUnion](https://github.com/zy2625/CppLib/blob/master/include/QuickUnion.h)
-* [UnionFind](https://github.com/zy2625/CppLib/blob/master/include/UnionFind.h)
-* [WeightedUnion](https://github.com/zy2625/CppLib/blob/master/include/WeightedUnion.h)
+* [QuickFind](https://github.com/zy2625/Combo/blob/master/include/QuickFind.h)
+* [QuickUnion](https://github.com/zy2625/Combo/blob/master/include/QuickUnion.h)
+* [UnionFind](https://github.com/zy2625/Combo/blob/master/include/UnionFind.h)
+* [WeightedUnion](https://github.com/zy2625/Combo/blob/master/include/WeightedUnion.h)
 
 #### Usage
 

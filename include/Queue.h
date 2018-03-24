@@ -9,6 +9,9 @@
 #include <iostream>
 #include "Deque.h"
 
+namespace combo
+{
+
 /**
  * 使用模板实现的先进先出队列.
  */
@@ -107,3 +110,5 @@ void swap(Queue<E, Container>& lhs, Queue<E, Container>& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace combo

@@ -9,7 +9,7 @@
 #include <iostream>
 #include <iterator>
 
-namespace cpplib
+namespace combo
 {
 
 /**
@@ -470,4 +470,4 @@ void swap(List<E>& lhs, List<E>& rhs)
     lhs.swap(rhs);
 }
 
-} // namespace cpplib
+} // namespace combo

@@ -10,6 +10,9 @@
 #include <iostream>
 #include <iterator>
 
+namespace combo
+{
+
 /**
  * 使用模板实现的Vector.
  * 由动态连续数组存储Vector.
@@ -400,3 +403,5 @@ void swap(Vector<E>& lhs, Vector<E>& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace combo
