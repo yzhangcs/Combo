@@ -1,0 +1,23 @@
+BasedOnStyle: LLVM
+
+AlignConsecutiveAssignments: true
+AlignOperands: true
+AlignTrailingComments: true
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Allman
+ColumnLimit: 0
+IndentWidth: 4
+IndentCaseLabels: false
+SortIncludes: true
+
+---
+Language: Cpp
+Standard: Auto
+
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+FixNamespaceComments: true
+SpaceAfterCStyleCast: true
+SortUsingDeclarations: true
